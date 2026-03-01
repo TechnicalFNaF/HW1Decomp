@@ -1,8 +1,8 @@
 #include "FNAFEditorSettings.h"
 
-UFNAFEditorSettings::UFNAFEditorSettings() {
-	this->GameType = EFNAFGameType::Normal;
-	this->HasHalloweenDLC = true;
+UFNAFEditorSettings::UFNAFEditorSettings(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	GameType = EFNAFGameType::Normal;
+	HasHalloweenDLC = true;
 }
-
-

@@ -9,12 +9,13 @@ UCLASS(Config=EditorUserSettings)
 class FREDDYS_API UFNAFEditorSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
+
 public:
+	UFNAFEditorSettings(const FObjectInitializer& ObjectInitializer);
+	
 	UPROPERTY(Config, EditAnywhere)
 	EFNAFGameType GameType;
 	
 	UPROPERTY(Config, EditAnywhere)
 	bool HasHalloweenDLC;
-	
-	UFNAFEditorSettings();
 };
