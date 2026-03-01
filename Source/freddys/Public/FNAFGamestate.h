@@ -1,14 +1,30 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
-#include "GLGameState.h"
-#include "GLVictoryState.h"
 #include "FNAFGamestate.generated.h"
 
+UENUM()
+enum class GLVictoryState : uint8 
+{
+    InProgress,
+    Victory,
+    Defeat,
+};
+
+UENUM()
+enum class GLGameState : uint8
+{
+    PreInit,
+    Init,
+    Progress,
+    Completed,
+};
+
 UCLASS()
-class FREDDYS_API AFNAFGamestate : public AGameState {
+class FREDDYS_API AFNAFGamestate : public AGameState 
+{
     GENERATED_BODY()
-public:
+
 protected:
     UPROPERTY(BlueprintReadWrite)
     GLVictoryState VictoryState;

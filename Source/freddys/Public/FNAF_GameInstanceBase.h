@@ -1,10 +1,16 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "EFNAFDLCType.h"
-#include "EFNAFGameType.h"
-#include "Templates/SubclassOf.h"
+#include "FNAF_Collectables.h"
+
 #include "FNAF_GameInstanceBase.generated.h"
+
+UENUM()
+enum class EFNAFDLCType : uint8
+{
+    BaseGame,
+    Halloween,
+};
 
 class USaveGame;
 class UUserWidget;

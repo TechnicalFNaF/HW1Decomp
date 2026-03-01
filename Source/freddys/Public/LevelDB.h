@@ -1,15 +1,40 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "GameLevels.h"
+#include "Engine/DataTable.h"
 #include "LevelDB.generated.h"
 
-class ULevelDB;
-class UWorld;
+
+UENUM()
+enum ELevelType 
+{
+    Playable,
+    Visual
+};
+
+USTRUCT(BlueprintType)
+struct FGameLevels : public FTableRowBase 
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    int32 TokenRequired;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    TSoftObjectPtr<UWorld> Level;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    int32 LevelID;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    TEnumAsByte<ELevelType> LevelType;
+};
 
 UCLASS(BlueprintType)
-class FREDDYS_API ULevelDB : public UObject {
+class FREDDYS_API ULevelDB : public UObject 
+{
     GENERATED_BODY()
+
 public:
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     TArray<FGameLevels> GameLevels;

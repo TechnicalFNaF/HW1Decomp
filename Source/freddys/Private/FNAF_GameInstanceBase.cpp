@@ -28,10 +28,12 @@ bool UFNAF_GameInstanceBase::HasDLC(EFNAFDLCType DLC) const
         return true;
     }
 
-    return ViveportDLCValid;
+    return true;
+    //return ViveportDLCValid;
 }
 
-bool UFNAF_GameInstanceBase::GetViveportDLCValid() const {
+bool UFNAF_GameInstanceBase::GetViveportDLCValid() const 
+{
     return false;
 }
 
@@ -42,10 +44,11 @@ FString UFNAF_GameInstanceBase::GetPrimaryGPUBrand()
 
 FString UFNAF_GameInstanceBase::GetGPUBrandName() 
 {
-    return FPlatformMisc::GetCPUBrand();
+    return FPlatformMisc::GetCPUBrand(); // Bug, Inappropriately named function
 }
 
-EFNAFGameType UFNAF_GameInstanceBase::GetGameType() const {
+EFNAFGameType UFNAF_GameInstanceBase::GetGameType() const 
+{
     return EFNAFGameType::Demo;
 }
 

@@ -1,7 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "FNAF_Collectables.h"
 #include "Engine/DeveloperSettings.h"
-#include "EFNAFGameType.h"
+
 #include "FNAFEditorSettings.generated.h"
 
 UCLASS(Config=EditorUserSettings)

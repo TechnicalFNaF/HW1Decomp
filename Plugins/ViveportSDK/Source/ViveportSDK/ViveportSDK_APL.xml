@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--ViveportSDK plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- init section is always evaluated once per architecture -->
+    <init>
+        <log text="ViveportSDK---- init"/>
+        <setBool result="bSupported" value="false"/>
+	    <isArch arch="armeabi-v7a">
+	        <setBool result="bSupported" value="true"/>
+	    </isArch>
+	    <isArch arch="arm64-v8a">
+	        <setBool result="bSupported" value="true"/>
+	    </isArch>
+    </init>
+
+    <!-- optional updates applied to AndroidManifest.xml -->
+    <androidManifestUpdates>
+         <addPermission android:name="com.viveport.CHECK_LICENSE" />
+         <!--<loopElements tag="activity">
+             <setStringFromAttribute result="activityName" tag="$" name="android:name"/>
+             <setBoolIsEqual result="bSplashActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.SplashActivity"/>
+                 <if condition="bSplashActivity">
+                     <true>
+                         <setElement result="intentInfo" value="category"/>
+                         <addAttribute tag="$intentInfo" name="android:name" value="com.htc.intent.category.VRAPP"/>
+                         <addElement tag="intent-filter" name="intentInfo"/>
+                     </true>
+                 </if>
+             <setBoolIsEqual result="bGameActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.GameActivity"/>
+             <if condition="bGameActivity">
+                 <true>
+                     <addElements tag="$">
+                         <intent-filter>
+                             <action android:name="android.intent.action.MAIN" />
+                             <category android:name="com.htc.intent.category.VRAPP" />
+                         </intent-filter>
+                     </addElements>
+                 </true>
+             </if>
+         </loopElements>-->
+    </androidManifestUpdates>
+
+    <!-- optional additions to proguard -->
+    <proguardAdditions>
+        <insert>
+            -keep class com.htc.store.licensing.** { *; }
+            -keep class com.htc.store.licensing.util.** { *; }
+            -keep class com.htc.viveport.** { *; }
+            -keep class com.htc.viveport.impl.** { *; }
+            -keep class com.htc.viveport.internal.** { *; }
+            -keep class com.htc.viveport.impl.UnrealEngine.** { *; }
+        </insert>
+    </proguardAdditions>
+
+    <!-- optional files or directories to copy to Intermediate/Android/APK -->
+    <resourceCopies>
+        <copyFile src="$S(PluginDir)/../../Libs/ViveportSDK.jar"  dst="$S(BuildDir)/libs/ViveportSDK.jar" />
+        <isArch arch="armeabi-v7a">
+            <copyFile src="$S(PluginDir)/../../ThirdParty/Viveport/jniLibs/armeabi-v7a/libViveportSdkJni.so"
+                      dst="$S(BuildDir)/libs/armeabi-v7a/libViveportSdkJni.so" />
+        </isArch>
+        <isArch arch="arm64-v8a">
+            <copyFile src="$S(PluginDir)/../../ThirdParty/Viveport/jniLibs/arm64-v8a/libViveportSdkJni.so"
+                      dst="$S(BuildDir)/libs/arm64-v8a/libViveportSdkJni.so" />
+        </isArch>
+    </resourceCopies>
+
+    <!-- optional libraries to load in GameActivity.java before libUE4.so -->
+    <soLoadLibrary>
+        <if condition="bSupported">
+            <true>
+                <loadLibrary name="ViveportSdkJni" failmsg="Failed to load ViveportSdkJni library" />
+            </true>
+        </if>
+    </soLoadLibrary>
+</root>

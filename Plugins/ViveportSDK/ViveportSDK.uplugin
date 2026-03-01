@@ -1,0 +1,24 @@
+{
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "1.7.2.3",
+    "FriendlyName": "ViveportSDK",
+    "Description": "Viveport Platform SDK",
+    "Category": "Online System",
+    "CreatedBy": "HTC Corporation",
+    "CreatedByURL": "https://www.viveport.com/",
+    "DocsURL": "https://developer.viveport.com/documents/sdk/",
+    "MarketplaceURL": "",
+    "SupportURL": "https://developer.viveport.com/",
+    "Modules": [
+        {
+            "Name": "ViveportSDK",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        }
+    ],
+    "EnabledByDefault": true,
+    "CanContainContent": false,
+    "IsBetaVersion": false,
+    "Installed": false
+}
