@@ -1,20 +1,20 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "ESWGEditor.h"
-#include "ESWGPlatform.h"
 #include "SWGPlatformUtilFunctions.generated.h"
 
 UCLASS(BlueprintType)
-class SWGPLATFORMUTIL_API USWGPlatformUtilFunctions : public UBlueprintFunctionLibrary {
+class SWGPLATFORMUTIL_API USWGPlatformUtilFunctions : public UBlueprintFunctionLibrary 
+{
     GENERATED_BODY()
+
 public:
     USWGPlatformUtilFunctions();
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="Platform"))
     static void SwitchOnPlatform(ESWGPlatform& Platform);
     
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, meta = (ExpandEnumAsExecs = "Editor"))
     static void IsInEditorSwitch(ESWGEditor& Editor);
     
     UFUNCTION(BlueprintPure)
