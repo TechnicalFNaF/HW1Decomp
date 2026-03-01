@@ -6,16 +6,28 @@
 USTRUCT()
 struct FSaveFileFormat 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
+
+	int score;
+	int tokensEarnt;
+	FString playerName;
 };
 
+// Unused to my knowledge
 UCLASS()
 class FREDDYS_API USWS_SaveGame : public USaveGame 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
+	
+	FSaveFileFormat* SaveFile;
 
-    USWS_SaveGame();
+	/*
+	* Do not exist in executable, probably unused
+	*
+	* public struct FSaveFileFormat* LoadSaveFile(class FString, int)
+	* public void SaveGame(class FString, bool, int)
+	* public struct FSaveFileFormat* LoadGame()
+	*/
 };
-
