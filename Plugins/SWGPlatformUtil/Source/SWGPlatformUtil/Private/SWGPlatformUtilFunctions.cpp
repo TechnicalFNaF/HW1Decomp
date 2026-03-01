@@ -1,24 +1,47 @@
 #include "SWGPlatformUtilFunctions.h"
 
-USWGPlatformUtilFunctions::USWGPlatformUtilFunctions() {
+#include "SWGPlatformSettings.h"
+
+void USWGPlatformUtilFunctions::SwitchOnPlatform(ESWGPlatform& Platform) 
+{
+	Platform = GetBuildPlatform();
 }
 
-void USWGPlatformUtilFunctions::SwitchOnPlatform(ESWGPlatform& Platform) {
+void USWGPlatformUtilFunctions::IsInEditorSwitch(ESWGEditor& Editor) 
+{
+	Editor = IsInEditor() ? ESWGEditor::InEditor : ESWGEditor::NotInEditor;
 }
 
-void USWGPlatformUtilFunctions::IsInEditorSwitch(ESWGEditor& Editor) {
+bool USWGPlatformUtilFunctions::IsInEditor() 
+{
+	return FPlatformProperties::HasEditorOnlyData();
 }
 
-bool USWGPlatformUtilFunctions::IsInEditor() {
-    return false;
+FString USWGPlatformUtilFunctions::GetVersionString() 
+{
+	static FString VersionString = TEXT("unversioned");
+	return VersionString;
 }
 
-FString USWGPlatformUtilFunctions::GetVersionString() {
-    return TEXT("");
+ESWGPlatform USWGPlatformUtilFunctions::GetBuildPlatform() 
+{
+#if PLATFORM_WINDOWS 
+	return ESWGPlatform::Steam;
+#endif
+
+#if PLATFORM_ANDROID
+	return ESWGPlatform::Oculus;
+#endif
+
+#if PLATFORM_PS4
+	return ESWGPlatform::PS4;
+#endif
+
+#if PLATFORM_SWITCH
+	return ESWGPlatform::Switch;
+#endif
+
+#if PLATFORM_XBOXONE
+	return ESWGPlatform::XBoxOne;
+#endif
 }
-
-ESWGPlatform USWGPlatformUtilFunctions::GetBuildPlatform() {
-    return ESWGPlatform::Steam;
-}
-
-

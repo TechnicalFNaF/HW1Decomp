@@ -28,8 +28,5 @@ class SWGPLATFORMUTIL_API USWGPlatformSettings : public UDeveloperSettings
 private:
     UPROPERTY(Config, EditAnywhere)
     ESWGPlatform BuildPlatform;
-    
-public:
-	USWGPlatformSettings();
 };
 

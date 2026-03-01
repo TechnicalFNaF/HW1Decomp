@@ -9,7 +9,6 @@ class SWGPLATFORMUTIL_API USWGPlatformUtilFunctions : public UBlueprintFunctionL
     GENERATED_BODY()
 
 public:
-    USWGPlatformUtilFunctions();
 
     UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="Platform"))
     static void SwitchOnPlatform(ESWGPlatform& Platform);
@@ -25,6 +24,5 @@ public:
     
     UFUNCTION(BlueprintPure)
     static ESWGPlatform GetBuildPlatform();
-    
 };
 
