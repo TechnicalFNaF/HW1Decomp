@@ -1,14 +1,22 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EFlowGraphFlowType.h"
 #include "FlowGraphNode.generated.h"
 
 class UFlowGraphConnector;
 
+UENUM()
+enum class EFlowGraphFlowType : uint8 
+{
+    HasFlow,
+    NoFlow,
+};
+
 UCLASS()
-class FREDDYS_API AFlowGraphNode : public AActor {
+class FREDDYS_API AFlowGraphNode : public AActor 
+{
     GENERATED_BODY()
+
 public:
 private:
     UPROPERTY(EditAnywhere)

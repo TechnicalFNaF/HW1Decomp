@@ -4,7 +4,6 @@
 #include "Engine/DataTable.h"
 #include "LevelDB.generated.h"
 
-
 UENUM()
 enum ELevelType 
 {

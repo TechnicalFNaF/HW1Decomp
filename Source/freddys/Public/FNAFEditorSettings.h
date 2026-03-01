@@ -6,7 +6,8 @@
 #include "FNAFEditorSettings.generated.h"
 
 UCLASS(Config=EditorUserSettings)
-class FREDDYS_API UFNAFEditorSettings : public UDeveloperSettings {
+class FREDDYS_API UFNAFEditorSettings : public UDeveloperSettings
+{
     GENERATED_BODY()
 public:
     UPROPERTY(Config, EditAnywhere)
@@ -16,6 +17,4 @@ public:
     bool HasHalloweenDLC;
     
     UFNAFEditorSettings();
-
 };
-

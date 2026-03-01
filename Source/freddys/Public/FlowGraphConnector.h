@@ -1,16 +1,18 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "OnFlowGraphConnectedDelegate.h"
-#include "OnFlowGraphDisconnectedDelegate.h"
 #include "FlowGraphConnector.generated.h"
 
-class AFlowGraphNode;
-class UFlowGraphConnector;
+UDELEGATE() DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFlowGraphConnected, UFlowGraphConnector*, OtherConnector);
+UDELEGATE() DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFlowGraphDisconnected);
 
 UCLASS(Blueprintable, ClassGroup=Custom, Config=Game, meta=(BlueprintSpawnableComponent))
-class FREDDYS_API UFlowGraphConnector : public USceneComponent {
+class FREDDYS_API UFlowGraphConnector : public USceneComponent 
+{
     GENERATED_BODY()
+
+    friend class AFlowGraphNode;
+
 public:
     UPROPERTY(BlueprintAssignable)
     FOnFlowGraphConnected OnFlowGraphConnected;

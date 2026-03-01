@@ -1,13 +1,15 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "AIBaseAxisDirection.h"
-#include "AIScareDirection.h"
+#include "NPCBaseInterface.h"
+
 #include "AICommonFunctionalities.generated.h"
 
 UCLASS(BlueprintType)
-class FREDDYS_API UAICommonFunctionalities : public UBlueprintFunctionLibrary {
+class FREDDYS_API UAICommonFunctionalities : public UBlueprintFunctionLibrary 
+{
     GENERATED_BODY()
+
 public:
     UAICommonFunctionalities();
 
@@ -19,6 +21,5 @@ public:
     
     UFUNCTION(BlueprintCallable)
     static bool isHorizontalAxis(AIScareDirection Direction);
-    
 };
 

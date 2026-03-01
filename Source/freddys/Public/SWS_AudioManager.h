@@ -1,21 +1,12 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "UObject/NoExportTypes.h"
+#include "SWS_AudioStatics.h"
 #include "GameFramework/Actor.h"
-#include "AudioHandle.h"
 #include "SWS_AudioManager.generated.h"
 
-class ASWS_AudioManager;
-class UDataTable;
-class UObject;
-class USoundAttenuation;
-class USoundBase;
-class USoundConcurrency;
-class USoundCue;
-
 UCLASS()
-class FREDDYS_API ASWS_AudioManager : public AActor {
+class FREDDYS_API ASWS_AudioManager : public AActor 
+{
     GENERATED_BODY()
 public:
 private:
@@ -57,6 +48,5 @@ public:
     
     UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
     static ASWS_AudioManager* GetAudioManager(UObject* WorldContextObject);
-    
 };
 
