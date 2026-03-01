@@ -1,10 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "UObject/NoExportTypes.h"
-#include "UObject/NoExportTypes.h"
-#include "EGrabSnapType.h"
-#include "EVRHandType.h"
+#include "SWGVRTypes.h"
 #include "SWGGrabbable.generated.h"
 
 class ASWGVRCharacter;

@@ -1,29 +1,101 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "UObject/NoExportTypes.h"
-#include "UObject/NoExportTypes.h"
 #include "GameFramework/Character.h"
 #include "Engine/EngineTypes.h"
 #include "HeadMountedDisplayTypes.h"
-#include "ESWGVRControllerType.h"
-#include "EVRHandType.h"
-#include "HeldGrabbableInfo.h"
-#include "MotionControllerInfo.h"
-#include "OnControllerTrackingChangedDelegate.h"
-#include "OnGrabbableEventDelegate.h"
+#include "SWGVRTypes.h"
 #include "SWGVRCharacter.generated.h"
 
-class AActor;
-class UArrowComponent;
-class UCameraComponent;
-class UMotionControllerComponent;
-class UPrimitiveComponent;
-class USceneComponent;
-class USphereComponent;
+USTRUCT(BlueprintType)
+struct FHeldCollisionInfo 
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bUsePhysics;
+
+    UPROPERTY(BlueprintReadWrite)
+    TEnumAsByte<ECollisionEnabled::Type> Collision;
+};
+
+USTRUCT(BlueprintType)
+struct FHeldGrabbableInfo 
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bUsePhysics;
+
+    UPROPERTY(BlueprintReadWrite)
+    TEnumAsByte<ECollisionEnabled::Type> Collision;
+
+    UPROPERTY(BlueprintReadOnly)
+    TMap<UPrimitiveComponent*, FHeldCollisionInfo> PrimitiveCollisionInfo;
+
+    UPROPERTY(BlueprintReadOnly)
+    EGrabSnapType GrabSnapType;
+
+    UPROPERTY(BlueprintReadWrite)
+    FVector AttachmentRelativeLocation;
+
+    UPROPERTY(BlueprintReadWrite)
+    FRotator AttachmentRelativeRotation;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool IsLerpingToHand;
+};
+
+USTRUCT(BlueprintType)
+struct FMotionControllerInfo 
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly)
+    FVector OldWorldPosition;
+
+    UPROPERTY(BlueprintReadOnly)
+    FVector Velocity;
+
+    UPROPERTY(BlueprintReadOnly)
+    FVector InstantaneousVelocity;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<FVector> PreviousPositions;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<AActor*> HoveredObjects;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<AActor*> HoveredGrabbables;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<AActor*> HeldGrabbables;
+
+    UPROPERTY(BlueprintReadOnly)
+    TMap<AActor*, FHeldGrabbableInfo> HeldInfo;
+
+    UPROPERTY(BlueprintReadOnly)
+    AActor* ClosestGrabbableActor;
+
+    UPROPERTY(BlueprintReadOnly)
+    float ClosestGrabbableDistance;
+
+    UPROPERTY(BlueprintReadOnly)
+    AActor* ClosestHoveredActor;
+
+    UPROPERTY(BlueprintReadOnly, Instanced)
+    UPrimitiveComponent* ClosestHoveredComponent;
+
+    UPROPERTY(BlueprintReadOnly)
+    float ClosestDistance;
+
+    UPROPERTY(BlueprintReadOnly)
+    bool bIsTracked;
+};
 
 UCLASS()
-class SWGVR_API ASWGVRCharacter : public ACharacter {
+class SWGVR_API ASWGVRCharacter : public ACharacter 
+{
     GENERATED_BODY()
 public:
     UPROPERTY(BlueprintAssignable)
@@ -40,7 +112,7 @@ public:
     
 protected:
     UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
-    UCameraComponent* CameraComp;
+    class UCameraComponent* CameraComp;
     
     UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
     USceneComponent* VROriginComp;
@@ -52,22 +124,22 @@ protected:
     bool bPositionalHeadTracking;
     
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-    UMotionControllerComponent* LeftHandComponent;
+    class UMotionControllerComponent* LeftHandComponent;
     
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-    UMotionControllerComponent* RightHandComponent;
+    class UMotionControllerComponent* RightHandComponent;
     
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-    UMotionControllerComponent* PadMotionComponent;
+    class UMotionControllerComponent* PadMotionComponent;
     
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-    USphereComponent* LeftHandTrigger;
+    class USphereComponent* LeftHandTrigger;
     
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-    USphereComponent* RightHandTrigger;
+    class USphereComponent* RightHandTrigger;
     
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-    USphereComponent* PadTrigger;
+    class USphereComponent* PadTrigger;
     
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
     USceneComponent* LeftAttachPoint;
@@ -79,7 +151,7 @@ protected:
     USceneComponent* PadAttachPoint;
     
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-    UArrowComponent* PadInteractionPointer;
+    class UArrowComponent* PadInteractionPointer;
     
     UPROPERTY(BlueprintReadOnly, EditAnywhere)
     EVRHandType HandsThatGrab;

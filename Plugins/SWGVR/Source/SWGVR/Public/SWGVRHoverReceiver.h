@@ -1,18 +1,20 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "EVRHandType.h"
+#include "SWGVRTypes.h"
 #include "SWGVRHoverReceiver.generated.h"
 
 class ASWGVRCharacter;
 class UPrimitiveComponent;
 
 UINTERFACE(Blueprintable, MinimalAPI)
-class USWGVRHoverReceiver : public UInterface {
+class USWGVRHoverReceiver : public UInterface 
+{
     GENERATED_BODY()
 };
 
-class ISWGVRHoverReceiver : public IInterface {
+class ISWGVRHoverReceiver : public IInterface 
+{
     GENERATED_BODY()
 public:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
