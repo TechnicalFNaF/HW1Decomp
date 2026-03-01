@@ -84,35 +84,32 @@ public class ViveportSDK : ModuleRules
             if (Target.Platform == UnrealTargetPlatform.Win64)
             {
                 PublicAdditionalLibraries.Add("viveport_api64.lib");
-                PublicAdditionalLibraries.Add("viveport_ext_api64.lib");
             }
             else
             {
                 PublicAdditionalLibraries.Add("viveport_api.lib");
-                PublicAdditionalLibraries.Add("viveport_ext_api.lib");
             }
+            PublicAdditionalLibraries.Add("viveport_ext_api.lib");
             PublicLibraryPaths.Add(LibrariesPath);
             if (Target.Platform == UnrealTargetPlatform.Win64)
             {
                 PublicDelayLoadDLLs.Add("viveport_api64.dll");
-                PublicDelayLoadDLLs.Add("viveport_ext_api64.dll");
             }
             else
             {
                 PublicDelayLoadDLLs.Add("viveport_api.dll");
-                PublicDelayLoadDLLs.Add("viveport_ext_api.dll");
             }
             
+            PublicDelayLoadDLLs.Add("viveport_ext_api.dll");
             if (Target.Platform == UnrealTargetPlatform.Win64)
             {
                 RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibrariesPath, "viveport_api64.dll")));
-                RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibrariesPath, "viveport_ext_api64.dll")));
             }
             else
             {
                 RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibrariesPath, "viveport_api.dll")));
-                RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibrariesPath, "viveport_ext_api.dll")));
             }
+            RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibrariesPath, "viveport_ext_api.dll")));
         }
         else if (Target.Platform == UnrealTargetPlatform.Android)
         {
@@ -124,7 +121,6 @@ public class ViveportSDK : ModuleRules
             System.Console.WriteLine("_______________________ Path " + PluginPath);
             AdditionalPropertiesForReceipt.Add(new ReceiptProperty("AndroidPlugin", Path.Combine(PluginPath, "ViveportSDK_APL.xml")));
             PublicAdditionalLibraries.Add(ThirdPartyPath + "Viveport/jniLibs/armeabi-v7a/libViveportSdkJni.so");
-            PublicAdditionalLibraries.Add(ThirdPartyPath + "Viveport/jniLibs/arm64-v8a/libViveportSdkJni.so");
         }
 
         if (isLibrarySupported)

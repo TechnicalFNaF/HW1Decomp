@@ -366,3 +366,29 @@ VIVEPORT_API void IViveportDeeplink_GoToAppWithBranchName(StatusCallback2 cb, co
 VIVEPORT_API void IViveportDeeplink_GoToStore(StatusCallback2 cb, const char* viveportId);
 VIVEPORT_API void IViveportDeeplink_GoToAppOrGoToStore(StatusCallback2 cb, const char* viveportId, const char* launchData);
 VIVEPORT_API int IViveportDeeplink_GetAppLaunchData(char* userID, int size);
+
+/**
+* Social API
+*/
+
+struct IViveportSocial
+{
+    virtual void GetInAppFriendList(StatusCallback2 callback, const char* viveportKey) = 0;
+    virtual void RegisterFriendRequestCountCallback(StatusCallback2 callback, const char* viveportKey) = 0;
+    virtual void GetUserProfile(StatusCallback2 callback, const char* viveportKey) = 0;
+    virtual void GetUserProfileWithId(StatusCallback2 callback, const char* publidId, const char* viveportKey) = 0;
+    virtual void ShowSendFriendRequestOverlay(const char* publicId, const char* viveportKey) = 0;
+    virtual void ShowPendingFriendRequestListOverlay(const char* viveportKey) = 0;
+    virtual void GetUserConsentStatus(StatusCallback2 callback, const char* viveportKey) = 0;
+    virtual void ShowConsentOverlay(StatusCallback2 callback, const char* viveportKey) = 0;
+};
+
+VIVEPORT_API IViveportSocial* ViveportSocial();
+VIVEPORT_API void IViveportSocial_GetInAppFriendList(StatusCallback2 callback, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_RegisterFriendRequestCountCallback(StatusCallback2 callback, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_GetUserProfile(StatusCallback2 callback, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_GetUserProfileWithId(StatusCallback2 callback, const char* publicId, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_ShowSendFriendRequestOverlay(const char* publicId, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_ShowPendingFriendRequestListOverlay(const char* viveportKey);
+VIVEPORT_API void IViveportSocial_GetUserConsentStatus(StatusCallback2 callback, const char* viveportKey);
+VIVEPORT_API void IViveportSocial_ShowConsentOverlay(StatusCallback2 callback, const char* viveportKey);

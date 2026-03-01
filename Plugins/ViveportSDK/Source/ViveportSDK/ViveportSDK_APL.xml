@@ -8,9 +8,6 @@
 	    <isArch arch="armeabi-v7a">
 	        <setBool result="bSupported" value="true"/>
 	    </isArch>
-	    <isArch arch="arm64-v8a">
-	        <setBool result="bSupported" value="true"/>
-	    </isArch>
     </init>
 
     <!-- optional updates applied to AndroidManifest.xml -->
@@ -58,10 +55,6 @@
         <isArch arch="armeabi-v7a">
             <copyFile src="$S(PluginDir)/../../ThirdParty/Viveport/jniLibs/armeabi-v7a/libViveportSdkJni.so"
                       dst="$S(BuildDir)/libs/armeabi-v7a/libViveportSdkJni.so" />
-        </isArch>
-        <isArch arch="arm64-v8a">
-            <copyFile src="$S(PluginDir)/../../ThirdParty/Viveport/jniLibs/arm64-v8a/libViveportSdkJni.so"
-                      dst="$S(BuildDir)/libs/arm64-v8a/libViveportSdkJni.so" />
         </isArch>
     </resourceCopies>
 

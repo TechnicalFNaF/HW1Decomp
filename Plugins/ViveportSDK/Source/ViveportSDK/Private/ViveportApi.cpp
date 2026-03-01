@@ -5,7 +5,7 @@
 #include "ViveportSDKPrivatePCH.h"
 #include "viveport_ext_api.h"
 
-#define VIVEPORTSDK_VERSION "1.7.2.3"
+#define VIVEPORTSDK_VERSION "1.7.1.54"
 
 void InitHandler(int nResult);
 void ShutdownHandler(int nResult);

@@ -65,7 +65,7 @@ public:
                 file_path2 = FPaths::Combine(
                     *FPaths::ProjectDir(),
                     TEXT("Plugins/ViveportSDK/ThirdParty/Viveport/Libraries/Win64"),
-                    TEXT("viveport_ext_api64.dll")
+                    TEXT("viveport_ext_api.dll")
                     );
                 FPlatformProcess::GetDllHandle(*file_path2);
             }

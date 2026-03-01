@@ -1,9 +1,7 @@
 #pragma once
 
 #if defined( _WIN32 )
-#if defined( viveport_ext_api_STATIC )
-#define VIVEPORT_EXT_API extern "C"
-#elif defined( viveport_ext_api_EXPORTS )
+#ifdef viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C" __declspec(dllexport)
 #else  // viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C" __declspec(dllimport)
@@ -12,7 +10,7 @@
 #define __cdecl    /* nothing */
 #define __fastcall /* nothing */
 #define __stdcall  /* nothing */
-#if defined( viveport_ext_api_EXPORTS )
+#ifdef viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C" __attribute__ ((visibility("default")))
 #else  // viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C"
@@ -21,12 +19,13 @@
 #define __cdecl    /* nothing */
 #define __fastcall /* nothing */
 #define __stdcall  /* nothing */
-#if defined( viveport_ext_api_EXPORTS )
+#ifdef viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C"
 #else  // viveport_ext_api_EXPORTS
 #define VIVEPORT_EXT_API extern "C"
 #endif // viveport_ext_api_EXPORTS
 #endif
+
 
 /**
  * Top-level API
