@@ -1,22 +1,21 @@
 #include "FNAFGamestate.h"
 
-AFNAFGamestate::AFNAFGamestate(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-    this->VictoryState = GLVictoryState::InProgress;
-    this->GameState = GLGameState::PreInit;
+void AFNAFGamestate::SetVictoryCondition_Implementation(GLVictoryState state) // param name does not match the one in header
+{
+    VictoryState = state;
 }
 
-void AFNAFGamestate::SetVictoryCondition_Implementation(GLVictoryState victory) {
+void AFNAFGamestate::SetGameState_Implementation(GLGameState state) // param name does not match the one in header
+{
+    GameState = state;
 }
 
-void AFNAFGamestate::SetGameState_Implementation(GLGameState State) {
+GLVictoryState AFNAFGamestate::GetVictoryCondition_Implementation()
+{
+    return VictoryState;
 }
 
-GLVictoryState AFNAFGamestate::GetVictoryCondition_Implementation() {
-    return GLVictoryState::InProgress;
+GLGameState AFNAFGamestate::GetGameState_Implementation()
+{
+    return GameState;
 }
-
-GLGameState AFNAFGamestate::GetGameState_Implementation() {
-    return GLGameState::PreInit;
-}
-
-

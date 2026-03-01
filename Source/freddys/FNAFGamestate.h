@@ -33,8 +33,6 @@ protected:
     GLGameState GameState;
     
 public:
-    AFNAFGamestate(const FObjectInitializer& ObjectInitializer);
-
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     void SetVictoryCondition(GLVictoryState victory);
     
