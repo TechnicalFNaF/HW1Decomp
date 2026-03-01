@@ -5,9 +5,9 @@
 
 UCLASS()
 class FREDDYS_API UGameConstants : public UBlueprintFunctionLibrary {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    UGameConstants();
+	UGameConstants();
 
 };
 

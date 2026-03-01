@@ -5,9 +5,9 @@
 
 UCLASS()
 class FREDDYS_API AAICharacterBase : public ACharacter {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    AAICharacterBase(const FObjectInitializer& ObjectInitializer);
+	AAICharacterBase(const FObjectInitializer& ObjectInitializer);
 
 };
 

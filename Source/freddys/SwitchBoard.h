@@ -5,9 +5,9 @@
 
 UCLASS()
 class FREDDYS_API ASwitchBoard : public AActor {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    ASwitchBoard(const FObjectInitializer& ObjectInitializer);
+	ASwitchBoard(const FObjectInitializer& ObjectInitializer);
 
 };
 

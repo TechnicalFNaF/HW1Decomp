@@ -6,44 +6,44 @@
 UENUM()
 enum class GLVictoryState : uint8 
 {
-    InProgress,
-    Victory,
-    Defeat,
+	InProgress,
+	Victory,
+	Defeat,
 };
 
 UENUM()
 enum class GLGameState : uint8
 {
-    PreInit,
-    Init,
-    Progress,
-    Completed,
+	PreInit,
+	Init,
+	Progress,
+	Completed,
 };
 
 UCLASS()
 class FREDDYS_API AFNAFGamestate : public AGameState 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 protected:
-    UPROPERTY(BlueprintReadWrite)
-    GLVictoryState VictoryState;
-    
-    UPROPERTY(BlueprintReadWrite)
-    GLGameState GameState;
-    
+	UPROPERTY(BlueprintReadWrite)
+	GLVictoryState VictoryState;
+	
+	UPROPERTY(BlueprintReadWrite)
+	GLGameState GameState;
+	
 public:
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    void SetVictoryCondition(GLVictoryState victory);
-    
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    void SetGameState(GLGameState State);
-    
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    GLVictoryState GetVictoryCondition();
-    
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    GLGameState GetGameState();
-    
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetVictoryCondition(GLVictoryState victory);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetGameState(GLGameState State);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	GLVictoryState GetVictoryCondition();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	GLGameState GetGameState();
+	
 };
 

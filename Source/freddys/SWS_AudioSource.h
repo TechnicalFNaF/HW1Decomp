@@ -13,21 +13,21 @@ class USoundCue;
 
 UCLASS()
 class FREDDYS_API ASWS_AudioSource : public AActor {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    USoundCue* SoundCueFile;
-    
-    ASWS_AudioSource(const FObjectInitializer& ObjectInitializer);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	USoundCue* SoundCueFile;
+	
+	ASWS_AudioSource(const FObjectInitializer& ObjectInitializer);
 
-    UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
-    void StopAudio(UObject* WorldContextObject);
-    
-    UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
-    void PlayAudio(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
-    
-    UFUNCTION()
-    void DestroyHandle();
-    
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
+	void StopAudio(UObject* WorldContextObject);
+	
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
+	void PlayAudio(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
+	
+	UFUNCTION()
+	void DestroyHandle();
+	
 };
 
