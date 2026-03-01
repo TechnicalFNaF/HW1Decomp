@@ -1,10 +1,7 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "FNAFGameMode.generated.h"
-
-class ULevelDB;
 
 UCLASS(NonTransient)
 class FREDDYS_API AFNAFGameMode : public AGameMode
@@ -13,10 +10,10 @@ class FREDDYS_API AFNAFGameMode : public AGameMode
 	
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<ULevelDB> LevelDBClass;
+	TSubclassOf<class ULevelDB> LevelDBClass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	ULevelDB* LevelDBInstance;
+	class ULevelDB* LevelDBInstance;
 	
 	UFUNCTION(BlueprintCallable)
 	void SpawnLevelDB();
