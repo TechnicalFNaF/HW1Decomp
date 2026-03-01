@@ -9,19 +9,19 @@ class ULevelDB;
 UCLASS(NonTransient)
 class FREDDYS_API AFNAFGameMode : public AGameMode
 {
-    GENERATED_BODY()
-    
+	GENERATED_BODY()
+	
 public:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    TSubclassOf<ULevelDB> LevelDBClass;
-    
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<ULevelDB> LevelDBClass;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ULevelDB* LevelDBInstance;
-    
-    UFUNCTION(BlueprintCallable)
-    void SpawnLevelDB();
-    
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnSetLevelDB();
+	
+	UFUNCTION(BlueprintCallable)
+	void SpawnLevelDB();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSetLevelDB();
 };
 

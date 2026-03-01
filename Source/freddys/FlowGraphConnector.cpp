@@ -1,27 +1,27 @@
 #include "FlowGraphConnector.h"
 
 UFlowGraphConnector::UFlowGraphConnector(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-    this->ConnectedTo = NULL;
-    this->FlowConnectorDistance = 100.00f;
+	this->ConnectedTo = NULL;
+	this->FlowConnectorDistance = 100.00f;
 }
 
 
 
 
 bool UFlowGraphConnector::HasFlow() const {
-    return false;
+	return false;
 }
 
 AFlowGraphNode* UFlowGraphConnector::GetNodeOwner() const {
-    return NULL;
+	return NULL;
 }
 
 AFlowGraphNode* UFlowGraphConnector::GetConnectedNode() const {
-    return NULL;
+	return NULL;
 }
 
 UFlowGraphConnector* UFlowGraphConnector::GetConnectedConnector() const {
-    return NULL;
+	return NULL;
 }
 
 void UFlowGraphConnector::Disconnect() {

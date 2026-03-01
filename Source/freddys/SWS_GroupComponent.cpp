@@ -22,11 +22,11 @@ void USWS_GroupComponent::ModifyGroupPitchMultiplier(float Pitch) {
 }
 
 int32 USWS_GroupComponent::GetTotalFrequency() {
-    return 0;
+	return 0;
 }
 
 int32 USWS_GroupComponent::GetTotalAmplitude() {
-    return 0;
+	return 0;
 }
 
 

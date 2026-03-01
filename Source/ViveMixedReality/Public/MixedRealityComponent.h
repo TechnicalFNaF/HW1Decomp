@@ -5,9 +5,9 @@
 
 UCLASS()
 class AMixedRealityComponent : public AActor {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    AMixedRealityComponent(const FObjectInitializer& ObjectInitializer);
+	AMixedRealityComponent(const FObjectInitializer& ObjectInitializer);
 
 };
 

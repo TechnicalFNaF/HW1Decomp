@@ -1,7 +1,7 @@
 #include "SWS_AudioSource.h"
 
 ASWS_AudioSource::ASWS_AudioSource(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-    this->SoundCueFile = NULL;
+	this->SoundCueFile = NULL;
 }
 
 void ASWS_AudioSource::StopAudio(UObject* WorldContextObject) {

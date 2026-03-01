@@ -10,18 +10,18 @@ class APlayerCameraManager;
 
 UCLASS(BlueprintType)
 class UViveMixedRealityBPLibrary : public UBlueprintFunctionLibrary {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    UViveMixedRealityBPLibrary();
+	UViveMixedRealityBPLibrary();
 
-    UFUNCTION(BlueprintCallable)
-    static void EnableMixedReality(AMixedRealityComponent* pMixedRealityComponent, int32 pCameraTrackerID);
-    
-    UFUNCTION(BlueprintCallable)
-    static void DisableMixedReality(AMixedRealityComponent* pMixedRealityComponent);
-    
-    UFUNCTION(BlueprintCallable)
-    static void AddMixedRealityComponent(AMixedRealityComponent*& pMixedRealityComponent, AActor* pVRPawnTarget, FLinearColor pChromaColor, APlayerCameraManager* pCharacterCamera);
-    
+	UFUNCTION(BlueprintCallable)
+	static void EnableMixedReality(AMixedRealityComponent* pMixedRealityComponent, int32 pCameraTrackerID);
+	
+	UFUNCTION(BlueprintCallable)
+	static void DisableMixedReality(AMixedRealityComponent* pMixedRealityComponent);
+	
+	UFUNCTION(BlueprintCallable)
+	static void AddMixedRealityComponent(AMixedRealityComponent*& pMixedRealityComponent, AActor* pVRPawnTarget, FLinearColor pChromaColor, APlayerCameraManager* pCharacterCamera);
+	
 };
 

@@ -8,21 +8,21 @@ class UPrimitiveComponent;
 
 UCLASS()
 class FREDDYS_API ASwitchboardbuttons : public AActor {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
 protected:
-    UPROPERTY(EditAnywhere)
-    FString buttonID;
-    
+	UPROPERTY(EditAnywhere)
+	FString buttonID;
+	
 public:
-    ASwitchboardbuttons(const FObjectInitializer& ObjectInitializer);
+	ASwitchboardbuttons(const FObjectInitializer& ObjectInitializer);
 
-    UFUNCTION(BlueprintImplementableEvent)
-    void OnSwitchBoardButtonPessed(const FString& buttonidentification);
-    
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSwitchBoardButtonPessed(const FString& buttonidentification);
+	
 protected:
-    UFUNCTION()
-    void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-    
+	UFUNCTION()
+	void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 };
 
