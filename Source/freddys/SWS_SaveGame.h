@@ -13,7 +13,7 @@ struct FSaveFileFormat
 	FString playerName;
 };
 
-// Unused to my knowledge
+/* Unused to my knowledge */
 UCLASS()
 class FREDDYS_API USWS_SaveGame : public USaveGame 
 {
