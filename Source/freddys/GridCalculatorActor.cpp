@@ -1,5 +1,6 @@
 #include "GridCalculatorActor.h"
 #include "Components/SceneComponent.h"
+#include "Engine/World.h"
 
 AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -14,8 +15,6 @@ AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectIniti
 
 void AGridCalculatorActor::BeginPlay()
 {
-	Super::BeginPlay();
-
 	int GridSize = GridHeight * GridWidth;
 
 	PassabilityMap.SetNum(GridSize);
@@ -25,9 +24,42 @@ void AGridCalculatorActor::BeginPlay()
 
 	const FVector ForwardVec = GetActorForwardVector();
 	const FVector RightVec = GetActorRightVector();
-	const FVector ActorLoc = GetActorLocation();
+	const FVector WorldLoc = GetActorLocation();
 
-	// TODO: Continue from 14069F8E5
+	// Probably wrong, TODO diff
+	
+	auto CalcPosition = [this, ForwardVec, RightVec, WorldLoc](int32 X, int32 Y)
+	{
+		const float Cell = GridCellSize;
+		return WorldLoc + ForwardVec * (X * Cell) + RightVec * (Y * Cell);
+	};
+
+	auto CheckCell = [this, CalcPosition](int32 X, int32 Y)
+	{
+		FHitResult Hit;
+
+		FVector A = CalcPosition(X, Y);
+		FVector B = CalcPosition(X + 1, Y);
+		FVector C = CalcPosition(X + 1, Y + 1);
+		FVector D = CalcPosition(X, Y + 1);
+
+		bool b0 = !GetWorld()->LineTraceSingleByChannel(Hit, A, B, ECC_Visibility);
+		bool b1 = !GetWorld()->LineTraceSingleByChannel(Hit, B, C, ECC_Visibility);
+		bool b2 = !GetWorld()->LineTraceSingleByChannel(Hit, C, D, ECC_Visibility);
+		bool b3 = !GetWorld()->LineTraceSingleByChannel(Hit, D, A, ECC_Visibility);
+
+		return (uint32)b0 | (uint32)b1 << 8 | (uint32)b2 << 16 | (uint32)b3 << 24;
+	};
+
+	for (int32 X = 0; X < GridWidth; ++X)
+	{
+		for (int32 Y = 0; Y < GridHeight; ++Y)
+		{
+			PassabilityMap[X + Y * GridWidth] = CheckCell(X, Y);
+		}
+	}
+	
+	Super::BeginPlay();
 }
 
 void AGridCalculatorActor::Tick(float DeltaSeconds)
