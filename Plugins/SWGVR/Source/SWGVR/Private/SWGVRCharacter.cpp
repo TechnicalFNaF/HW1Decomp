@@ -9,6 +9,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "MotionControllerComponent.h"
+#include "SWGGrabbable.h"
 #include "SWGVRCameraLocator.h"
 #include "SWGVRHoverReceiver.h"
 #include "SWGVRPlayerControllerBase.h"
@@ -317,6 +318,24 @@ void ASWGVRCharacter::SendOnHoverBeginEvents(UPrimitiveComponent* OverlappedComp
 
 void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand, FMotionControllerInfo& ControllerInfo)
 {
+	if (IsInVRMode())
+	{
+		if (OtherActor->Implements<USWGVRHoverReceiver>())
+		{
+			if (OtherActor == ControllerInfo.ClosestHoveredActor)
+			{
+				ISWGVRHoverReceiver::Execute_OnVRHoverEnd(OtherActor, this, Hand);
+				OnHoverEnd(OtherActor, Hand);
+				ControllerInfo.ClosestDistance = NEW_INFINITY;
+			}
+			ControllerInfo.HoveredObjects.Remove(OtherActor);
+		}
+
+		if (OtherActor->Implements<USWGGrabbable>())
+		{
+			ControllerInfo.HoveredGrabbables.Remove(OtherActor);
+		}
+	}
 }
 
 void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
