@@ -93,144 +93,17 @@ struct FMotionControllerInfo
 	bool bIsTracked;
 };
 
+struct FPerformanceInfo
+{
+	float TimeStamp;
+	float FPS;
+};
+
 UCLASS()
 class SWGVR_API ASWGVRCharacter : public ACharacter 
 {
 	GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintAssignable)
-	FOnControllerTrackingChanged OnControllerTrackingChanged;
-	
-	UPROPERTY(BlueprintAssignable)
-	FOnControllerTrackingChanged OnControllerDeviceChanged;
-	
-	UPROPERTY(BlueprintAssignable)
-	FOnGrabbableEvent OnActorGrabbed;
-	
-	UPROPERTY(BlueprintAssignable)
-	FOnGrabbableEvent OnActorReleased;
-	
-protected:
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
-	class UCameraComponent* CameraComp;
-	
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
-	USceneComponent* VROriginComp;
-	
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
-	USceneComponent* VRCameraAdjuster;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	bool bPositionalHeadTracking;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-	class UMotionControllerComponent* LeftHandComponent;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-	class UMotionControllerComponent* RightHandComponent;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-	class UMotionControllerComponent* PadMotionComponent;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-	class USphereComponent* LeftHandTrigger;
-	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
-	class USphereComponent* RightHandTrigger;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-	class USphereComponent* PadTrigger;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-	USceneComponent* LeftAttachPoint;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-	USceneComponent* RightAttachPoint;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-	USceneComponent* PadAttachPoint;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
-	class UArrowComponent* PadInteractionPointer;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	EVRHandType HandsThatGrab;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName LeftGrabActionName;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName RightGrabActionName;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float ThrowMagnitude;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	bool bGrabClosest;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	bool bHoldMultiple;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	EVRHandType HandsThatInteract;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName LeftInteractActionName;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName RightInteractActionName;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TEnumAsByte<EHMDTrackingOrigin::Type> VRTrackingOrigin;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	bool bUseEyeOffsetForEyeTracking;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float EyeOffset;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	bool bUseHandForPad;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	EVRHandType HandToUseAsPad;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float PadLineTraceDistance;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float LerpGrabSpeed;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	bool bPerfCounterEnabled;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float FPSMin;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float FPSMax;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float FPSAverageOverTime;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float FPSImmediate;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float PerfCounterSeconds;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float PerfCounterImmediateSeconds;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	float TotalPerfSeconds;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	int32 FrameCounterForAverage;
-	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	bool VRModeEnabled;
-	
+
 public:
 	ASWGVRCharacter(const FObjectInitializer& ObjectInitializer);
 
@@ -353,5 +226,153 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex);
 	
-};
+public:
 
+	UPROPERTY(BlueprintAssignable)
+	FOnControllerTrackingChanged OnControllerTrackingChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnControllerTrackingChanged OnControllerDeviceChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnGrabbableEvent OnActorGrabbed;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnGrabbableEvent OnActorReleased;
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
+	class UCameraComponent* CameraComp;
+
+	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
+	USceneComponent* VROriginComp;
+
+	UPROPERTY(BlueprintReadOnly, Instanced, VisibleAnywhere)
+	USceneComponent* VRCameraAdjuster;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	bool bPositionalHeadTracking;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
+	class UMotionControllerComponent* LeftHandComponent;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
+	class UMotionControllerComponent* RightHandComponent;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
+	class UMotionControllerComponent* PadMotionComponent;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
+	class USphereComponent* LeftHandTrigger;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Instanced)
+	class USphereComponent* RightHandTrigger;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
+	class USphereComponent* PadTrigger;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
+	USceneComponent* LeftAttachPoint;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
+	USceneComponent* RightAttachPoint;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
+	USceneComponent* PadAttachPoint;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced)
+	class UArrowComponent* PadInteractionPointer;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	EVRHandType HandsThatGrab;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FName LeftGrabActionName;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FName RightGrabActionName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float ThrowMagnitude;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bGrabClosest;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bHoldMultiple;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	EVRHandType HandsThatInteract;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FName LeftInteractActionName;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FName RightInteractActionName;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TEnumAsByte<EHMDTrackingOrigin::Type> VRTrackingOrigin;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bUseEyeOffsetForEyeTracking;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float EyeOffset;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bUseHandForPad;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	EVRHandType HandToUseAsPad;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float PadLineTraceDistance;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float LerpGrabSpeed;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bPerfCounterEnabled;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float FPSMin;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float FPSMax;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float FPSAverageOverTime;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float FPSImmediate;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float PerfCounterSeconds;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float PerfCounterImmediateSeconds;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	float TotalPerfSeconds;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 FrameCounterForAverage;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool VRModeEnabled;
+
+	bool WasPreviouslyInVR;
+
+	TArray<FPerformanceInfo> PerformanceList;
+
+	FMotionControllerInfo LeftController;
+	FMotionControllerInfo RightController;
+	TSet<AActor*> TrackedActors;
+
+	bool bIsUsingPadForHand;
+	float m_previousWorldToMeters;
+
+	FVector NonVROffset;
+	bool bUseNonVROffset;
+};
