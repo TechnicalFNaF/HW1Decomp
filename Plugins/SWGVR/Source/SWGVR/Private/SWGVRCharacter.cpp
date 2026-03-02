@@ -646,6 +646,12 @@ void ASWGVRCharacter::SetVRModeEnabled(bool enable)
 
 void ASWGVRCharacter::SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex)
 {
+	FMotionControllerInfo& HandInfo = GetHandInfo(Hand);
+	if (ItemIndex >= 0 && ItemIndex < HandInfo.HeldGrabbables.Num())
+	{
+		FHeldGrabbableInfo& GrabbableInfo = HandInfo.HeldInfo[HandInfo.HeldGrabbables[ItemIndex]];
+		GrabbableInfo.AttachmentRelativeLocation = NewOffset;
+	}
 }
 
 void ASWGVRCharacter::SetCameraWorldRotation(const FRotator& Rotation)
@@ -952,8 +958,128 @@ void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveVal
 }
 
 void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* OtherControllerInfo, AActor* hoverActor,
-                                  EVRHandType OtherHand, USceneComponent* AttachmentComp,
-                                  FMotionControllerInfo* ControllerInfo)
+	EVRHandType OtherHand, USceneComponent* AttachmentComp,
+	FMotionControllerInfo* ControllerInfo)
 {
-	// TODO
+	bool canGrab = false;
+	EGrabSnapType SnapType = EGrabSnapType::None;
+	bool snapLocation = false;
+	bool snapRotation = false;
+
+	FVector AttachmentOffsetLocation;
+	FRotator AttachmentOffsetRotation;
+
+	FHeldGrabbableInfo GrabbableInfo;
+
+	if (IsValid(hoverActor))
+	{
+		if (hoverActor->Implements<USWGGrabbable>())
+		{
+			//	EVRHandType Hand, bool& canGrab, EGrabSnapType& SnapType, bool& snapLocation, bool& snapRotation, FVector& AttachmentOffsetLocation, FRotator& AttachmentOffsetRotation
+			ISWGGrabbable::Execute_AttemptGrab(hoverActor, this, Hand, canGrab, SnapType, snapLocation, snapRotation, AttachmentOffsetLocation, AttachmentOffsetRotation);
+		}
+
+		if (canGrab)
+		{
+			if (OtherControllerInfo->HeldGrabbables.Contains(hoverActor) || ReleaseGrabbableInternal(hoverActor, OtherHand, false, FVector::ZeroVector, OtherControllerInfo))
+			{
+				if (!bHoldMultiple)
+				{
+					ReleaseAll(Hand, true, false, FVector::ZeroVector);
+				}
+
+				if (hoverActor->Implements<USWGVRHoverReceiver>())
+				{
+					ISWGVRHoverReceiver::Execute_OnVRHoverEnd(hoverActor, this, Hand);
+					OnHoverEnd(hoverActor, Hand);
+				}
+
+				if (!hoverActor)
+				{
+					OnGrab(hoverActor, Hand);
+					OnActorGrabbed.Broadcast(this, hoverActor, Hand);
+					ISWGGrabbable::Execute_OnVRGrabbed(hoverActor, this, Hand);
+				}
+
+				if (!hoverActor)
+				{
+					OnGrab(hoverActor, Hand);
+					OnActorGrabbed.Broadcast(this, hoverActor, Hand);
+					ISWGGrabbable::Execute_OnVRGrabbed(hoverActor, this, Hand);;
+				}
+
+				FRotator HoverActorRot = hoverActor->GetActorRotation();
+				if (SnapType != EGrabSnapType::SnapToHand)
+					goto LABEL_55;
+
+				if (SnapType == EGrabSnapType::SnapToHand)
+				{
+					EAttachmentRule Rule = (EAttachmentRule)((SnapType != EGrabSnapType::LocationToHand) + 1);
+					hoverActor->AttachToComponent(AttachmentComp, FAttachmentTransformRules(Rule, Rule, EAttachmentRule::KeepWorld, false));
+					// TODO: Verify
+
+					if (snapLocation)
+					{
+						hoverActor->AddActorLocalOffset(AttachmentOffsetLocation);
+					}
+
+					if (snapRotation)
+					{
+						hoverActor->AddActorLocalRotation(AttachmentOffsetRotation);
+					}
+				}
+				else
+				{
+					if (bIsUsingPadForHand || USWGVRUtil::GetPlayType() == EVRPlayType::UsingVR)
+					{
+						GrabbableInfo.AttachmentRelativeLocation = AttachmentOffsetLocation;
+						GrabbableInfo.AttachmentRelativeRotation = AttachmentOffsetRotation;
+						GrabbableInfo.IsLerpingToHand = true;
+					}
+					else
+					{
+						GrabbableInfo.IsLerpingToHand = false;
+
+						LABEL_55:
+
+						FVector HoverLocation = hoverActor->GetActorLocation();
+						FVector InversedLocation = AttachmentComp->GetComponentTransform().InverseTransformPosition(HoverLocation);
+
+						GrabbableInfo.AttachmentRelativeLocation = HoverLocation;
+
+						FRotator HoverRotation = hoverActor->GetActorRotation();
+						FQuat InversedRotation = AttachmentComp->GetComponentTransform().InverseTransformRotation(HoverRotation.Quaternion());
+
+						GrabbableInfo.AttachmentRelativeRotation = HoverRotation;
+
+						if (UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(hoverActor->GetRootComponent()))
+						{
+							GrabbableInfo.Collision = PrimitiveComp->GetCollisionEnabled();
+							GrabbableInfo.bUsePhysics = PrimitiveComp->IsSimulatingPhysics();
+
+							PrimitiveComp->SetSimulatePhysics(false);
+							PrimitiveComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+						}
+						GrabbableInfo.GrabSnapType = SnapType;
+
+						ControllerInfo->HoveredGrabbables.Remove(hoverActor);
+						ControllerInfo->HeldGrabbables.Add(hoverActor);
+
+						if (!TrackedActors.Contains(hoverActor))
+						{
+							TrackedActors.Add(hoverActor);
+							hoverActor->OnDestroyed.AddDynamic(this, &ASWGVRCharacter::OnHeldActorDestroyed);
+						}
+						GrabbableInfo.PrimitiveCollisionInfo.Empty(); // Maybe wrong?
+
+						ControllerInfo->HeldInfo.Add(hoverActor, GrabbableInfo);
+
+						OnGrab(hoverActor, Hand);
+						OnActorGrabbed.Broadcast(this, hoverActor, Hand);
+						ISWGGrabbable::Execute_OnVRGrabbed(hoverActor, this, Hand);
+					}
+				}
+			}
+		}
+	}
 }
