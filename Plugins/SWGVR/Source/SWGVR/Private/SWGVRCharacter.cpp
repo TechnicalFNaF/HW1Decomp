@@ -321,32 +321,42 @@ void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand,
 
 void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 {
+	// Does nothing
 }
 
 void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
 {
+	// Does nothing
 }
 
 void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
 {
+	// TODO
 }
 
 bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce,
 	const FVector& Velocity, FMotionControllerInfo* ControllerInfo)
 {
+	// TODO
 	return false;
 }
 
 void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
 {
+	// Does nothing
 }
 
 void ASWGVRCharacter::SendOnVRInteract(UObject* Object, EVRHandType Hand)
 {
+	// Does nothing
 }
 
 void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
 {
+	if (static_cast<bool>(Hand & HandsThatInteract))
+	{
+		// TODO
+	}
 }
 
 void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent,
@@ -527,8 +537,7 @@ void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOve
 
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
 {
-	// inaccurate, game uses "&" idk why
-	if (Hand == EVRHandType::Right)
+	if (static_cast<bool>(Hand & EVRHandType::Right))
 	{
 		// todo maybe not copy here
 		TArray<AActor*> grabbableList = RightController.HeldGrabbables;
@@ -538,8 +547,7 @@ void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVe
 		}
 	}
 	
-	// inaccurate, game uses "&" idk why
-	if (Hand == EVRHandType::Left)
+	if (static_cast<bool>(Hand & EVRHandType::Left))
 	{
 		// todo maybe not copy here
 		TArray<AActor*> grabbableList = LeftController.HeldGrabbables;

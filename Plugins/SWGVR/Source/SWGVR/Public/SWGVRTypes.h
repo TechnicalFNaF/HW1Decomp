@@ -31,6 +31,7 @@ enum class EVRHandType : uint8
 	Right,
 	Both,
 };
+ENUM_CLASS_FLAGS(EVRHandType);
 
 UDELEGATE() DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnControllerTrackingChanged);
 UDELEGATE() DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnGrabbableEvent, class ASWGVRCharacter*, Sender, class AActor*, DroppedActor, EVRHandType, Hand);
