@@ -7,12 +7,15 @@
 class ASWGVRCharacter;
 
 UINTERFACE(Blueprintable, MinimalAPI)
-class USWGGrabbable : public UInterface {
+class USWGGrabbable : public UInterface
+{
     GENERATED_BODY()
 };
 
-class ISWGGrabbable : public IInterface {
+class ISWGGrabbable : public IInterface
+{
     GENERATED_BODY()
+    
 public:
     UFUNCTION(BlueprintNativeEvent)
     void OnVRReleased(ASWGVRCharacter* Grabber, EVRHandType Hand, const FVector& ReleaseVelocity);
