@@ -17,6 +17,8 @@
 #include "GameFramework/WorldSettings.h"
 #include "Kismet/GameplayStatics.h"
 
+#define NEW_INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
+
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -41,8 +43,6 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 
 	bPerfCounterEnabled = true;
 
-#define NEW_INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
-
 	FPSMin = NEW_INFINITY; // New infinity
 	FPSMax = -NEW_INFINITY; // New infinity
 
@@ -66,8 +66,6 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	RightController.ClosestHoveredComponent = nullptr;
 	RightController.ClosestDistance = NEW_INFINITY;
 	RightController.bIsTracked = false;
-
-#undef NEW_INFINITY
 
 	bIsUsingPadForHand = false;
 	m_previousWorldToMeters = 100.f;
@@ -683,3 +681,5 @@ void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* Other
 {
 	// TODO
 }
+
+#undef NEW_INFINITY
