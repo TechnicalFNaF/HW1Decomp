@@ -19,7 +19,8 @@
 #include "GameFramework/WorldSettings.h"
 #include "Kismet/GameplayStatics.h"
 
-#define NEW_INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
+#undef INFINITY
+#define INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
 
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -45,8 +46,8 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 
 	bPerfCounterEnabled = true;
 
-	FPSMin = NEW_INFINITY; // New infinity
-	FPSMax = -NEW_INFINITY; // New infinity
+	FPSMin = INFINITY;
+	FPSMax = -INFINITY;
 
 	FPSAverageOverTime = 0.f;
 	PerfCounterSeconds = 0.f;
@@ -56,17 +57,17 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	WasPreviouslyInVR = true;
 
 	LeftController.ClosestGrabbableActor = nullptr;
-	LeftController.ClosestGrabbableDistance = NEW_INFINITY;
+	LeftController.ClosestGrabbableDistance = INFINITY;
 	LeftController.ClosestHoveredActor = nullptr;
 	LeftController.ClosestHoveredComponent = nullptr;
-	LeftController.ClosestDistance = NEW_INFINITY;
+	LeftController.ClosestDistance = INFINITY;
 	LeftController.bIsTracked = false;
 
 	RightController.ClosestGrabbableActor = nullptr;
-	RightController.ClosestGrabbableDistance = NEW_INFINITY;
+	RightController.ClosestGrabbableDistance = INFINITY;
 	RightController.ClosestHoveredActor = nullptr;
 	RightController.ClosestHoveredComponent = nullptr;
-	RightController.ClosestDistance = NEW_INFINITY;
+	RightController.ClosestDistance = INFINITY;
 	RightController.bIsTracked = false;
 
 	bIsUsingPadForHand = false;
@@ -306,7 +307,7 @@ void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo
 
 	if (ControllerInfo.ClosestHoveredActor == DestroyedActor)
 	{
-		ControllerInfo.ClosestDistance = NEW_INFINITY;
+		ControllerInfo.ClosestDistance = INFINITY;
 		ControllerInfo.ClosestHoveredActor = nullptr;
 	}
 }
@@ -351,7 +352,7 @@ void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand,
 			{
 				ISWGVRHoverReceiver::Execute_OnVRHoverEnd(OtherActor, this, Hand);
 				OnHoverEnd(OtherActor, Hand);
-				ControllerInfo.ClosestDistance = NEW_INFINITY;
+				ControllerInfo.ClosestDistance = INFINITY;
 			}
 			ControllerInfo.HoveredObjects.Remove(OtherActor);
 		}
@@ -418,7 +419,14 @@ void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputCompone
 {
 	if (static_cast<bool>(Hand & HandsThatInteract))
 	{
-		// TODO
+		FInputActionBinding InteractionBinding = FInputActionBinding(ActionName, IE_Pressed);
+		FInputActionHandlerSignature& PressedDelegate = InteractionBinding.ActionDelegate.GetDelegateForManualSet();
+
+		PressedDelegate.BindLambda([this, Hand]()
+		{
+				OnInteractAction(Hand);
+		});
+		PlayerInputComponent->AddActionBinding(InteractionBinding);
 	}
 }
 
@@ -477,7 +485,7 @@ void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDi
                                        TArray<AActor*>& actorList)
 {
 	closestActor = nullptr;
-	closestDist = NEW_INFINITY;
+	closestDist = INFINITY;
 	
 	for (auto Actor : actorList)
 	{
@@ -849,5 +857,3 @@ void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* Other
 {
 	// TODO
 }
-
-#undef NEW_INFINITY
