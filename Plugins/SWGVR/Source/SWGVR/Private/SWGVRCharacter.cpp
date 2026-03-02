@@ -1,4 +1,6 @@
 #include "SWGVRCharacter.h"
+#include "FileHelper.h"
+
 #include "Components/ArrowComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
@@ -102,13 +104,44 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	//PadInteractionPointer->SetupAttachment(PadMotionComponent); --- They do not do this? so they do not attach this arrow to anything?
 }
 
-void ASWGVRCharacter::StopFrameCounters() {
+void ASWGVRCharacter::StopFrameCounters() 
+{
+	if (bPerfCounterEnabled)
+	{
+		bPerfCounterEnabled = false;
+		
+		FString result = TEXT("Time,FPS\n");
+
+		for (int i = 0; i != PerformanceList.Num(); i++)
+		{
+			FPerformanceInfo PerfInfo = PerformanceList[i];
+			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS);
+
+			result.Append(PerfString);
+		}
+		FDateTime TimeNow = FDateTime::Now();
+
+		// They should really use GetNameSafe here not just GetName
+		FString LogPath = FString::Printf(TEXT("%s/Performance/%s_%d%.2d%.2d_%.2d%.2d_fps.txt"),
+			*FPaths::ProjectLogDir(), *GetWorld()->GetName(), TimeNow.GetYear(), TimeNow.GetMonth(), TimeNow.GetDay(), TimeNow.GetHour(), TimeNow.GetMinute());
+
+		FFileHelper::SaveStringToFile(result, *LogPath);
+	}
 }
 
-void ASWGVRCharacter::StartFrameCounters() {
+void ASWGVRCharacter::StartFrameCounters() 
+{
+	if (!bPerfCounterEnabled)
+	{
+		bPerfCounterEnabled = true;
+		TotalPerfSeconds = 0;
+		PerfCounterSeconds = 0.0;
+	}
 }
 
-void ASWGVRCharacter::SetVRModeEnabled(bool enable) {
+void ASWGVRCharacter::SetVRModeEnabled(bool enable) 
+{
+	VRModeEnabled = enable;
 }
 
 void ASWGVRCharacter::SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex) {
