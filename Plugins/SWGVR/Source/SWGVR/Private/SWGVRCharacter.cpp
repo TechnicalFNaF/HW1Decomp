@@ -378,7 +378,7 @@ void ASWGVRCharacter::StopFrameCounters()
 			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS);
 			// Why isn't this using timestamp as a datetime, that's probably more readable
 
-			result += *result.Append(PerfString);
+			result = result.Append(PerfString);
 		}
 		FDateTime TimeNow = FDateTime::Now();
 
