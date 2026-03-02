@@ -77,7 +77,7 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	VROriginComp->SetupAttachment(GetRootComponent());
 
 	VRCameraAdjuster = CreateDefaultSubobject<USceneComponent>("VRCameraAdjuster");
-	VROriginComp->SetupAttachment(VROriginComp);
+	VRCameraAdjuster->SetupAttachment(VROriginComp);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComp->SetupAttachment(VRCameraAdjuster);
@@ -89,7 +89,7 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	LeftHandTrigger = CreateDefaultSubobject<USphereComponent>("LeftHandTrigger");
 	LeftHandTrigger->SetupAttachment(LeftHandComponent);
 
-	LeftAttachPoint = CreateDefaultSubobject<USphereComponent>("LeftAttachPoint");
+	LeftAttachPoint = CreateDefaultSubobject<USceneComponent>("LeftAttachPoint");
 	LeftAttachPoint->SetupAttachment(LeftHandComponent);
 
 	RightHandComponent = CreateDefaultSubobject<UMotionControllerComponent>("RightHand");
@@ -99,11 +99,14 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	RightHandTrigger = CreateDefaultSubobject<USphereComponent>("RightHandTrigger");
 	RightHandTrigger->SetupAttachment(RightHandComponent);
 
-	RightAttachPoint = CreateDefaultSubobject<USphereComponent>("RightAttachPoint");
+	RightAttachPoint = CreateDefaultSubobject<USceneComponent>("RightAttachPoint");
 	RightAttachPoint->SetupAttachment(RightHandComponent);
 
 	PadMotionComponent = CreateDefaultSubobject<UMotionControllerComponent>("PadMotion");
 	PadMotionComponent->SetupAttachment(VRCameraAdjuster);
+
+	PadTrigger = CreateDefaultSubobject<USphereComponent>("PadTrigger");
+	PadTrigger->SetupAttachment(PadMotionComponent);
 
 	PadAttachPoint = CreateDefaultSubobject<USceneComponent>("PadAttachPoint");
 	PadAttachPoint->SetupAttachment(PadMotionComponent);
@@ -288,6 +291,22 @@ void ASWGVRCharacter::CheckPSVRHandStatus()
 
 void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor)
 {
+	if (bool Contained = ControllerInfo.HeldGrabbables.Contains(DestroyedActor))
+	{
+		ControllerInfo.HeldGrabbables.Remove(DestroyedActor);
+		ReleaseGrabbable(DestroyedActor, Contained, false, FVector::ZeroVector);
+	}
+
+	ControllerInfo.HeldGrabbables.Remove(DestroyedActor);
+	ControllerInfo.HeldInfo.Remove(DestroyedActor);
+	ControllerInfo.HoveredGrabbables.Remove(DestroyedActor);
+	ControllerInfo.HoveredObjects.Remove(DestroyedActor);
+
+	if (ControllerInfo.ClosestHoveredActor == DestroyedActor)
+	{
+		ControllerInfo.ClosestDistance = NEW_INFINITY;
+		ControllerInfo.ClosestHoveredActor = nullptr;
+	}
 }
 
 void ASWGVRCharacter::SendOnHoverBeginEvents(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -359,7 +378,7 @@ void ASWGVRCharacter::StopFrameCounters()
 			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS);
 			// Why isn't this using timestamp as a datetime, that's probably more readable
 
-			result += result.Append(PerfString);
+			result += *result.Append(PerfString);
 		}
 		FDateTime TimeNow = FDateTime::Now();
 
