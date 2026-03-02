@@ -15,8 +15,5 @@ UCLASS()
 class FREDDYS_API AFNAF_Collectables : public AActor 
 {
 	GENERATED_BODY()
-public:
-	AFNAF_Collectables(const FObjectInitializer& ObjectInitializer);
-
 };
 
