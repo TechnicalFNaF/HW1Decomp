@@ -9,7 +9,7 @@ UENUM()
 enum class EFlowGraphFlowType : uint8 
 {
 	HasFlow,
-	NoFlow,
+	NoFlow
 };
 
 UCLASS()
@@ -18,50 +18,58 @@ class FREDDYS_API AFlowGraphNode : public AActor
 	GENERATED_BODY()
 
 public:
+	AFlowGraphNode();
+
+	virtual void BeginPlay() override;
+	
 private:
 	UPROPERTY(EditAnywhere)
 	bool bIsFlowSource;
 	
 	UPROPERTY(Transient, VisibleAnywhere)
 	bool bIsConnectedToFlow;
-	
-public:
-	AFlowGraphNode(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable)
-	void UnregisterConnector(UFlowGraphConnector* Connector);
+	// todo make uproperty blah blah stale pointer
+	TSet<UFlowGraphConnector*> FlowConnectors;
+	static TSet<AFlowGraphNode*> FlowGraphSources;
+
+public:
+	void CalculateFlow();
 	
 	UFUNCTION(BlueprintCallable)
-	void SetFlowSource(bool EnableAsFlowSource);
-	
-	UFUNCTION(BlueprintCallable)
-	void RegisterConnector(UFlowGraphConnector* Connector);
+	void CheckConnections();
+
+	UFUNCTION(BlueprintPure)
+	bool HasFlow() const;
 	
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnFlowChanged();
+	void OnConnectorConnected(UFlowGraphConnector* MyConnector, UFlowGraphConnector* TheirConnector);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnConnectorDisconnected(UFlowGraphConnector* MyConnector);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnConnectorConnected(UFlowGraphConnector* MyConnector, UFlowGraphConnector* TheirConnector);
+	void OnFlowChanged();
 	
 public:
-	UFUNCTION(BlueprintPure)
-	bool IsFlowSource() const;
+	UFUNCTION(BlueprintCallable)
+	void SetFlowSource(bool EnableAsFlowSource);
+	
+	UFUNCTION(BlueprintCallable)
+	void UnregisterConnector(UFlowGraphConnector* Connector);
+	
+	UFUNCTION(BlueprintCallable)
+	void RegisterConnector(UFlowGraphConnector* Connector);
 	
 	UFUNCTION(BlueprintPure)
-	bool HasFlow() const;
+	bool IsFlowSource() const;
 	
 	UFUNCTION(BlueprintPure)
 	TArray<UFlowGraphConnector*> GetConnectors() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void FlowTypeSwitch(EFlowGraphFlowType& FlowType);
-	
-	UFUNCTION(BlueprintCallable)
-	void CheckConnections();
 	
 };
 
