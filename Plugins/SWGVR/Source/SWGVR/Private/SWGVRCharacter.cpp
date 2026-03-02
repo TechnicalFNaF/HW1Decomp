@@ -540,10 +540,45 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 	}
 }
 
-void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController,
+void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* MotionController,
                                            FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint)
 {
-	// TODO
+	if (IsInVRMode())
+	{
+		UMotionControllerComponent* ProcMotionComp = Cast<UMotionControllerComponent>(MotionController);
+		if (ProcMotionComp)
+		{
+			if (ControllerInfo.bIsTracked)
+			{
+				AActor* ClosestHoveredActor = ControllerInfo.ClosestHoveredActor;
+				ControllerInfo.bIsTracked = false;
+				ControllerInfo.ClosestDistance = INFINITY;
+				if (IsValid(ClosestHoveredActor))
+				{
+					if (ClosestHoveredActor->Implements<USWGVRHoverReceiver>())
+					{
+						ISWGVRHoverReceiver::Execute_OnVRHoverEnd(ControllerInfo.ClosestHoveredActor, this, Hand);
+						OnHoverEnd(ControllerInfo.ClosestHoveredActor, Hand);
+					}
+					ControllerInfo.ClosestHoveredActor = nullptr;
+				}
+				
+				ControllerInfo.HoveredGrabbables.Empty();
+				ControllerInfo.HoveredObjects.Empty();
+				ControllerInfo.OldWorldPosition = FVector::ZeroVector;
+				ControllerInfo.Velocity = FVector::ZeroVector;
+			}
+		}
+		else if (!ControllerInfo.bIsTracked)
+		{
+			ControllerInfo.bIsTracked = true;
+
+			ControllerInfo.OldWorldPosition = MotionController->GetComponentLocation();
+		}
+	}
+	
+	// TODO 140303B06
+	
 }
 
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
