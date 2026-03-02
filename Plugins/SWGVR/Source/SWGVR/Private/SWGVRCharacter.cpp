@@ -362,6 +362,21 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Pr
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
                                        TArray<AActor*>& actorList)
 {
+	closestActor = nullptr;
+	closestDist = NEW_INFINITY;
+	
+	for (auto Actor : actorList)
+	{
+		if (IsValid(Actor))
+		{
+			float Dist = FVector::DistSquared(CurrentLocation, Actor->GetActorLocation());
+			if (Dist < closestDist)
+			{
+				closestDist = Dist;
+				closestActor = Actor;
+			}
+		}
+	}
 }
 
 void ASWGVRCharacter::StopFrameCounters()
