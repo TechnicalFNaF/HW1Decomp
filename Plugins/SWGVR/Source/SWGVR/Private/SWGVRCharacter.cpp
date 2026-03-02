@@ -154,22 +154,36 @@ FName ASWGVRCharacter::GetPadTrackingSource() const {
 	return NAME_None;
 }
 
-FVector ASWGVRCharacter::GetHeldOffset(EVRHandType Hand, int32 ItemIndex) const {
-	return FVector{};
-}
-
-FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand) const
+FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
 {
 	static FMotionControllerInfo EmptyControllerInfo;
 	
-	// TODO
-	//if (Hand == EVRHandType::Left)
-	//	return LeftController;
-	//if (Hand == EVRHandType::Right)
-	//	return RightController;
+	if (Hand == EVRHandType::Left)
+		return LeftController;
+	if (Hand == EVRHandType::Right)
+		return RightController;
 	
 	return EmptyControllerInfo;
 }
+
+FHeldGrabbableInfo& ASWGVRCharacter::GetGrabbableInfo(const AActor* HeldActor)
+{
+	static FHeldGrabbableInfo EmptyHeldInfo;
+	FHeldGrabbableInfo* GrabbableInfo = LeftController.HeldInfo.Find(HeldActor);
+	return GrabbableInfo ? *GrabbableInfo : EmptyHeldInfo;
+}
+
+FVector ASWGVRCharacter::GetHeldOffset(EVRHandType Hand, int32 ItemIndex)
+{
+	FMotionControllerInfo& HandInfo = GetHandInfo(Hand);
+	if (ItemIndex >= 0 && ItemIndex < HandInfo.HeldGrabbables.Num())
+	{
+		FHeldGrabbableInfo& GrabbableInfo = HandInfo.HeldInfo[HandInfo.HeldGrabbables[ItemIndex]];
+		return GrabbableInfo.AttachmentRelativeLocation;
+	}
+	return FVector::ZeroVector;
+}
+
 
 EVRHandType ASWGVRCharacter::GetHandForPad() const {
 	return EVRHandType::None;
@@ -177,15 +191,6 @@ EVRHandType ASWGVRCharacter::GetHandForPad() const {
 
 USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const {
 	return NULL;
-}
-
-FHeldGrabbableInfo& ASWGVRCharacter::GetGrabbableInfo(const AActor* HeldActor) const
-{
-	static FHeldGrabbableInfo EmptyHeldInfo;
-	
-	// TODO
-	
-	return EmptyHeldInfo;
 }
 
 ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const {

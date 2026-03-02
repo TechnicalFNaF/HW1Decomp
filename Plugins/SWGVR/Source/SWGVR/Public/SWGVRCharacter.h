@@ -204,21 +204,23 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 	FName GetPadTrackingSource() const;
+
 	
 	UFUNCTION(BlueprintPure)
-	FVector GetHeldOffset(EVRHandType Hand, int32 ItemIndex) const;
+	FMotionControllerInfo& GetHandInfo(EVRHandType Hand);
 	
 	UFUNCTION(BlueprintPure)
-	FMotionControllerInfo& GetHandInfo(EVRHandType Hand) const;
+	FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor);
+	
+	UFUNCTION(BlueprintPure)
+	FVector GetHeldOffset(EVRHandType Hand, int32 ItemIndex);
+
 	
 	UFUNCTION(BlueprintPure)
 	EVRHandType GetHandForPad() const;
 	
 	UFUNCTION(BlueprintPure)
 	USceneComponent* GetHandAttachPoint(EVRHandType Hand) const;
-	
-	UFUNCTION(BlueprintPure)
-	FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor) const;
 	
 	UFUNCTION(BlueprintPure)
 	ESWGVRControllerType GetControllerDeviceType() const;
