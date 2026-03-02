@@ -16,11 +16,6 @@
 			"Name": "ViveMixedReality",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "ViveportSDK",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -42,6 +37,10 @@
 		},
 		{
 			"Name": "OnlineSubsystemOculus",
+			"Enabled": true
+		},
+		{
+			"Name": "ViveportSDK",
 			"Enabled": true
 		}
 	],

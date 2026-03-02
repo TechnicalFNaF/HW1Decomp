@@ -107,133 +107,154 @@ class SWGVR_API ASWGVRCharacter : public ACharacter
 public:
 	ASWGVRCharacter(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable)
-	void StopFrameCounters();
-	
-	UFUNCTION(BlueprintCallable)
-	void StartFrameCounters();
-	
-	UFUNCTION(BlueprintCallable)
-	void SetVRModeEnabled(bool enable);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraWorldRotation(const FRotator& Rotation);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraWorldLocationAndRotation(const FVector& Location, const FRotator& Rotation);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraWorldLocation(const FVector& Location);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraRelativeRotation(const FRotator& Rotation);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraRelativeLocationAndRotation(const FVector& Location, const FRotator& Rotation);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetCameraRelativeLocation(const FVector& Location);
-	
-	UFUNCTION(BlueprintCallable)
-	void ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity);
-	
-	UFUNCTION(BlueprintCallable)
-	void ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity);
-	
-protected:
-	UFUNCTION(BlueprintNativeEvent)
-	void ProcessInterpolatedGrab(const FTransform& AttachmentTransform, UPARAM(Ref) FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor, EVRHandType Hand);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnTrackedControllerChanged();
-	
-private:
-	UFUNCTION()
-	void OnRightEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
-	UFUNCTION()
-	void OnRightBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-protected:
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRelease(AActor* Grabbable, EVRHandType Hand);
-	
-private:
-	UFUNCTION()
-	void OnLeftEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
-	UFUNCTION()
-	void OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-protected:
-	UFUNCTION(BlueprintNativeEvent)
-	void OnHoverEnd(AActor* HoveredActor, EVRHandType Hand);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnHoverBegin(AActor* HoveredActor, EVRHandType Hand);
-	
-private:
-	UFUNCTION()
-	void OnHeldActorDestroyed(AActor* DestroyedActor);
-	
-protected:
-	UFUNCTION(BlueprintNativeEvent)
-	void OnGrabHoverEnd(AActor* Grabbable, EVRHandType Hand);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnGrabHoverBegin(AActor* Grabbable, EVRHandType Hand);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnGrab(AActor* Grabbable, EVRHandType Hand);
-	
-public:
-	UFUNCTION(BlueprintPure)
-	bool IsUsingPad() const;
-	
-	UFUNCTION(BlueprintPure)
-	bool IsInVRMode() const;
-	
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	UFUNCTION()
 	bool InitialIsInVR() const;
-	
-	UFUNCTION(BlueprintCallable)
-	void GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce);
-	
-	UFUNCTION(BlueprintPure)
-	FName GetPadTrackingSource() const;
 
-	
 	UFUNCTION(BlueprintPure)
 	FMotionControllerInfo& GetHandInfo(EVRHandType Hand);
-	
+
 	UFUNCTION(BlueprintPure)
 	FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor);
-	
+
 	UFUNCTION(BlueprintPure)
 	FVector GetHeldOffset(EVRHandType Hand, int32 ItemIndex);
 
-	
+	UFUNCTION(BlueprintCallable)
+	void AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity);
+
+	UFUNCTION(BlueprintCallable)
+	void GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce);
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity);
+
+	UFUNCTION(BlueprintPure)
+	bool IsUsingPad() const;
+
+	UFUNCTION(BlueprintPure)
+	ESWGVRControllerType GetControllerDeviceType() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsInVRMode() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetVRModeEnabled(bool enable);
+
+	UFUNCTION(BlueprintPure)
+	FName GetPadTrackingSource() const;
+
 	UFUNCTION(BlueprintPure)
 	EVRHandType GetHandForPad() const
 	{
 		return HandToUseAsPad;
 	}
-	
+
 	UFUNCTION(BlueprintPure)
 	USceneComponent* GetHandAttachPoint(EVRHandType Hand) const;
-	
-	UFUNCTION(BlueprintPure)
-	ESWGVRControllerType GetControllerDeviceType() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StartFrameCounters();
+
+	UFUNCTION(BlueprintCallable)
+	void StopFrameCounters();
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraRelativeLocation(const FVector& Location);
 	
 	UFUNCTION(BlueprintCallable)
-	void AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex);
+	void SetCameraRelativeRotation(const FRotator& Rotation);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraRelativeLocationAndRotation(const FVector& Location, const FRotator& Rotation);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraWorldLocation(const FVector& Location);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraWorldRotation(const FRotator& Rotation);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraWorldLocationAndRotation(const FVector& Location, const FRotator& Rotation);
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	void OnUsingGamepadChanged(bool gamepad);
+
+protected:
+
+	virtual void BeginPlay() override;
+
+	void CheckPSVRHandStatus();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGrab(AActor* Grabbable, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnRelease(AActor* Grabbable, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnTrackedControllerChanged();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGrabHoverBegin(AActor* Grabbable, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGrabHoverEnd(AActor* Grabbable, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnHoverBegin(AActor* HoveredActor, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnHoverEnd(AActor* HoveredActor, EVRHandType Hand);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ProcessInterpolatedGrab(const FTransform& AttachmentTransform, UPARAM(Ref) FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor, EVRHandType Hand);
 
 private:
-	void AttemptGrab(EVRHandType Hand, FMotionControllerInfo *OtherControllerInfo, AActor *hoverActor,
-		EVRHandType OtherHand, USceneComponent *AttachmentComp, FMotionControllerInfo *ControllerInfo);
+
+	UFUNCTION()
+	void OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnRightBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnLeftEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void OnRightEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void OnHeldActorDestroyed(AActor* DestroyedActor);
+
+	void RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor);
+	void SendOnHoverBeginEvents(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, EVRHandType Hand, FMotionControllerInfo& ControllerInfo);
+	void SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand, FMotionControllerInfo& ControllerInfo);
+	void OnGrabAction(EVRHandType Hand);
+
+	void AttemptGrab(EVRHandType Hand, FMotionControllerInfo* OtherControllerInfo, AActor* hoverActor,
+		EVRHandType OtherHand, USceneComponent* AttachmentComp, FMotionControllerInfo* ControllerInfo);
+	
+	void OnReleaseAction(EVRHandType Hand);
+	void BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
+	bool ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce, const FVector& Velocity, FMotionControllerInfo* ControllerInfo);
+	void OnInteractAction(EVRHandType Hand);
+	void SendOnVRInteract(UObject* Object /* Guess */, EVRHandType Hand);
+	void BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
+	void ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent, AActor* newHoverActor, UPrimitiveComponent* newHoverComponent, EVRHandType Hand);
+	void ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController, FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint);
+	void FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor, TArray<AActor*>& actorList);
+
 public:
 
 	UPROPERTY(BlueprintAssignable)

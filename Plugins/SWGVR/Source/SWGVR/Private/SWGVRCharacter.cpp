@@ -13,8 +13,8 @@
 #include "SWGVRUtil.h"
 #include "Engine/Engine.h"
 
-ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer) 
-	: Super(ObjectInitializer) 
+ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	LeftGrabActionName = "LeftGrab";
 	RightGrabActionName = "RightGrab";
@@ -110,18 +110,106 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	//PadInteractionPointer->SetupAttachment(PadMotionComponent); --- They do not do this? so they do not attach this arrow to anything?
 }
 
-void ASWGVRCharacter::StopFrameCounters() 
+void ASWGVRCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
+void ASWGVRCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ASWGVRCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
+void ASWGVRCharacter::OnUsingGamepadChanged(bool gamepad)
+{
+}
+
+void ASWGVRCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ASWGVRCharacter::CheckPSVRHandStatus()
+{
+}
+
+void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor)
+{
+}
+
+void ASWGVRCharacter::SendOnHoverBeginEvents(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                             EVRHandType Hand, FMotionControllerInfo& ControllerInfo)
+{
+}
+
+void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand, FMotionControllerInfo& ControllerInfo)
+{
+}
+
+void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
+{
+}
+
+void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
+{
+}
+
+void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
+{
+}
+
+bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce,
+	const FVector& Velocity, FMotionControllerInfo* ControllerInfo)
+{
+	return false;
+}
+
+void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
+{
+}
+
+void ASWGVRCharacter::SendOnVRInteract(UObject* Object, EVRHandType Hand)
+{
+}
+
+void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
+{
+}
+
+void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent,
+                                         AActor* newHoverActor, UPrimitiveComponent* newHoverComponent,
+                                         EVRHandType Hand)
+{
+}
+
+void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController,
+                                           FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint)
+{
+}
+
+void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
+                                       TArray<AActor*>& actorList)
+{
+}
+
+void ASWGVRCharacter::StopFrameCounters()
 {
 	if (bPerfCounterEnabled)
 	{
 		bPerfCounterEnabled = false;
-		
+
 		FString result = TEXT("Time,FPS\n");
 
 		for (int i = 0; i != PerformanceList.Num(); i++)
 		{
 			FPerformanceInfo PerfInfo = PerformanceList[i];
-			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS); // Why isn't this using timestamp as a datetime, that's probably more readable
+			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS);
+			// Why isn't this using timestamp as a datetime, that's probably more readable
 
 			result += result.Append(PerfString);
 		}
@@ -129,13 +217,15 @@ void ASWGVRCharacter::StopFrameCounters()
 
 		// They should really use GetNameSafe here not just GetName, this also only allows one of these per minute as it replaces the old
 		FString PerfOutput = FString::Printf(TEXT("%s/Performance/%s_%d%.2d%.2d_%.2d%.2d_fps.txt"),
-			*FPaths::ProjectLogDir(), *GetWorld()->GetName(), TimeNow.GetYear(), TimeNow.GetMonth(), TimeNow.GetDay(), TimeNow.GetHour(), TimeNow.GetMinute());
+		                                     *FPaths::ProjectLogDir(), *GetWorld()->GetName(), TimeNow.GetYear(),
+		                                     TimeNow.GetMonth(), TimeNow.GetDay(), TimeNow.GetHour(),
+		                                     TimeNow.GetMinute());
 
 		FFileHelper::SaveStringToFile(result, *PerfOutput);
 	}
 }
 
-void ASWGVRCharacter::StartFrameCounters() 
+void ASWGVRCharacter::StartFrameCounters()
 {
 	if (!bPerfCounterEnabled)
 	{
@@ -145,82 +235,114 @@ void ASWGVRCharacter::StartFrameCounters()
 	}
 }
 
-void ASWGVRCharacter::SetVRModeEnabled(bool enable) 
+void ASWGVRCharacter::SetVRModeEnabled(bool enable)
 {
 	VRModeEnabled = enable;
 }
 
-void ASWGVRCharacter::SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex) {
+void ASWGVRCharacter::SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, int32 ItemIndex)
+{
 }
 
-void ASWGVRCharacter::SetCameraWorldRotation(const FRotator& Rotation) {
+void ASWGVRCharacter::SetCameraWorldRotation(const FRotator& Rotation)
+{
 }
 
-void ASWGVRCharacter::SetCameraWorldLocationAndRotation(const FVector& Location, const FRotator& Rotation) {
+void ASWGVRCharacter::SetCameraWorldLocationAndRotation(const FVector& Location, const FRotator& Rotation)
+{
 }
 
-void ASWGVRCharacter::SetCameraWorldLocation(const FVector& Location) {
+void ASWGVRCharacter::SetCameraWorldLocation(const FVector& Location)
+{
 }
 
-void ASWGVRCharacter::SetCameraRelativeRotation(const FRotator& Rotation) {
+void ASWGVRCharacter::SetCameraRelativeRotation(const FRotator& Rotation)
+{
 }
 
-void ASWGVRCharacter::SetCameraRelativeLocationAndRotation(const FVector& Location, const FRotator& Rotation) {
+void ASWGVRCharacter::SetCameraRelativeLocationAndRotation(const FVector& Location, const FRotator& Rotation)
+{
 }
 
-void ASWGVRCharacter::SetCameraRelativeLocation(const FVector& Location) {
+void ASWGVRCharacter::SetCameraRelativeLocation(const FVector& Location)
+{
 }
 
-void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity) {
+void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity)
+{
 }
 
-void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity) {
+void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
+{
 }
 
-void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& AttachmentTransform, FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor, EVRHandType Hand) {
+void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& AttachmentTransform,
+                                                             FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor,
+                                                             EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnTrackedControllerChanged_Implementation() {
+void ASWGVRCharacter::OnTrackedControllerChanged_Implementation()
+{
 }
 
-void ASWGVRCharacter::OnRightEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
+void ASWGVRCharacter::OnRightEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
-void ASWGVRCharacter::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+void ASWGVRCharacter::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                          const FHitResult& SweepResult)
+{
 }
 
-void ASWGVRCharacter::OnRelease_Implementation(AActor* Grabbable, EVRHandType Hand) {
+void ASWGVRCharacter::OnRelease_Implementation(AActor* Grabbable, EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
+void ASWGVRCharacter::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
-void ASWGVRCharacter::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+void ASWGVRCharacter::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                         const FHitResult& SweepResult)
+{
 }
 
-void ASWGVRCharacter::OnHoverEnd_Implementation(AActor* HoveredActor, EVRHandType Hand) {
+void ASWGVRCharacter::OnHoverEnd_Implementation(AActor* HoveredActor, EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnHoverBegin_Implementation(AActor* HoveredActor, EVRHandType Hand) {
+void ASWGVRCharacter::OnHoverBegin_Implementation(AActor* HoveredActor, EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnHeldActorDestroyed(AActor* DestroyedActor) {
+void ASWGVRCharacter::OnHeldActorDestroyed(AActor* DestroyedActor)
+{
 }
 
-void ASWGVRCharacter::OnGrabHoverEnd_Implementation(AActor* Grabbable, EVRHandType Hand) {
+void ASWGVRCharacter::OnGrabHoverEnd_Implementation(AActor* Grabbable, EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnGrabHoverBegin_Implementation(AActor* Grabbable, EVRHandType Hand) {
+void ASWGVRCharacter::OnGrabHoverBegin_Implementation(AActor* Grabbable, EVRHandType Hand)
+{
 }
 
-void ASWGVRCharacter::OnGrab_Implementation(AActor* Grabbable, EVRHandType Hand) {
+void ASWGVRCharacter::OnGrab_Implementation(AActor* Grabbable, EVRHandType Hand)
+{
 }
 
-bool ASWGVRCharacter::IsUsingPad() const {
+bool ASWGVRCharacter::IsUsingPad() const
+{
 	return false;
 }
 
-bool ASWGVRCharacter::IsInVRMode() const {
+bool ASWGVRCharacter::IsInVRMode() const
+{
 	return false;
 }
 
@@ -231,14 +353,16 @@ bool ASWGVRCharacter::InitialIsInVR() const
 		// todo dont call GetHMDDevice twice
 		bool bIsHMDConnected = GEngine->XRSystem->GetHMDDevice()->IsHMDConnected();
 		GEngine->XRSystem->GetHMDDevice()->EnableHMD(bIsHMDConnected);
-		
+
 		auto stereoRenderingDevice = GEngine->XRSystem->GetStereoRenderingDevice();
 		if (stereoRenderingDevice)
+		{
 			stereoRenderingDevice->EnableStereo(bIsHMDConnected);
+		}
 
 		// unused
 		FName VRSystemName = GEngine->XRSystem->GetSystemName();
-		
+
 		USWGVRUtil::ChangePlayType(bIsHMDConnected ? EVRPlayType::UsingVR : EVRPlayType::NotUsingVR);
 		return true;
 	}
@@ -256,12 +380,12 @@ void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bF
 		if (Hand == EVRHandType::Left)
 		{
 			AttemptGrab(Hand, &LeftController, Grabbable, EVRHandType::Left,
-				LeftAttachPoint, &LeftController);
+			            LeftAttachPoint, &LeftController);
 		}
 		else if (Hand == EVRHandType::Right)
 		{
 			AttemptGrab(Hand, &RightController, Grabbable, EVRHandType::Right,
-				RightAttachPoint, &RightController);
+			            RightAttachPoint, &RightController);
 		}
 	}
 }
@@ -274,12 +398,16 @@ FName ASWGVRCharacter::GetPadTrackingSource() const
 FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
 {
 	static FMotionControllerInfo EmptyControllerInfo;
-	
+
 	if (Hand == EVRHandType::Left)
+	{
 		return LeftController;
+	}
 	if (Hand == EVRHandType::Right)
+	{
 		return RightController;
-	
+	}
+
 	return EmptyControllerInfo;
 }
 
@@ -307,9 +435,13 @@ USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const
 	if (Hand != EVRHandType::None)
 	{
 		if (Hand == EVRHandType::Left)
+		{
 			return LeftAttachPoint;
+		}
 		if (Hand == EVRHandType::Right)
+		{
 			return RightAttachPoint;
+		}
 	}
 	return nullptr;
 }
@@ -320,14 +452,14 @@ ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const
 	{
 		FName VRSystemName = GEngine->XRSystem->GetSystemName();
 		return VRSystemName == "OculusHMD"
-			? ESWGVRControllerType::Oculus
-			: ESWGVRControllerType::SteamVR;
+			       ? ESWGVRControllerType::Oculus
+			       : ESWGVRControllerType::SteamVR;
 	}
 	else
 	{
 		return ASWGVRPlayerControllerBase::GetStaticIsUsingGamepad()
-			 ? ESWGVRControllerType::XBox // lol
-			 : ESWGVRControllerType::MouseAndKeyboard;
+			       ? ESWGVRControllerType::XBox // lol
+			       : ESWGVRControllerType::MouseAndKeyboard;
 	}
 }
 
@@ -342,6 +474,8 @@ void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveVal
 }
 
 void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* OtherControllerInfo, AActor* hoverActor,
-	EVRHandType OtherHand, USceneComponent* AttachmentComp, FMotionControllerInfo* ControllerInfo) {
+                                  EVRHandType OtherHand, USceneComponent* AttachmentComp,
+                                  FMotionControllerInfo* ControllerInfo)
+{
 	// TODO
 }
