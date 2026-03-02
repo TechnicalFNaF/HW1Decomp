@@ -6,7 +6,7 @@
 UCLASS()
 class SWGVR_API ASWGVRPlayerControllerBase : public APlayerController 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
 
 	static FORCEINLINE bool GetStaticIsUsingGamepad()

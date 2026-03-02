@@ -6,26 +6,26 @@
 UENUM()
 enum class EVRPlayType : uint8 
 {
-    UsingVR,
-    NotUsingVR,
+	UsingVR,
+	NotUsingVR,
 };
 
 UCLASS(BlueprintType)
 class SWGVR_API USWGVRUtil : public UBlueprintFunctionLibrary 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
 
-    UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="VRPlayMode"))
-    static void SwitchOnPlayType(EVRPlayType& VRPlayMode);
-    
-    UFUNCTION(BlueprintPure)
-    static EVRPlayType GetPlayType();
-    
-    UFUNCTION(BlueprintCallable)
-    static void ChangePlayType(EVRPlayType VRPlayMode);
-    
-    static EVRPlayType CurrentPlayType;
+	UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="VRPlayMode"))
+	static void SwitchOnPlayType(EVRPlayType& VRPlayMode);
+	
+	UFUNCTION(BlueprintPure)
+	static EVRPlayType GetPlayType();
+	
+	UFUNCTION(BlueprintCallable)
+	static void ChangePlayType(EVRPlayType VRPlayMode);
+	
+	static EVRPlayType CurrentPlayType;
 };
 

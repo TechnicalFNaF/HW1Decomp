@@ -9,7 +9,7 @@ void USWGVRUtil::SwitchOnPlayType(EVRPlayType& VRPlayMode)
 
 EVRPlayType USWGVRUtil::GetPlayType() 
 {
-    return CurrentPlayType;
+	return CurrentPlayType;
 }
 
 void USWGVRUtil::ChangePlayType(EVRPlayType VRPlayMode) 

@@ -2,31 +2,31 @@
 
 struct FSWGVRUserInfo
 {
-    int UserID;
+	int UserID;
 };
 
 class FSWGVRModule : public IModuleInterface
 {
 public:
 
-    FSWGVRModule& Get()
-    {
-        return *m_instance;
-    };
+	FSWGVRModule& Get()
+	{
+		return *m_instance;
+	};
 
-    const FSWGVRUserInfo& GetUserInfo(int UserIndex)
-    {
-        return UserInfo[UserIndex];
-    };
+	const FSWGVRUserInfo& GetUserInfo(int UserIndex)
+	{
+		return UserInfo[UserIndex];
+	};
 
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
 
 private:
 
-    // Not compiled in exe
-    //void UserLoginEventHandler(bool, int, int);
+	// Not compiled in exe
+	//void UserLoginEventHandler(bool, int, int);
 
-    static FSWGVRModule* m_instance;
-    FSWGVRUserInfo UserInfo[0x4]; // Unused, no info on what it does
+	static FSWGVRModule* m_instance;
+	FSWGVRUserInfo UserInfo[0x4]; // Unused, no info on what it does
 };

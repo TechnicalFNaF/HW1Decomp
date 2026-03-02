@@ -6,23 +6,23 @@
 UCLASS(BlueprintType)
 class SWGPLATFORMUTIL_API USWGPlatformUtilFunctions : public UBlueprintFunctionLibrary 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
 
-    UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="Platform"))
-    static void SwitchOnPlatform(ESWGPlatform& Platform);
-    
-    UFUNCTION(BlueprintCallable, meta = (ExpandEnumAsExecs = "Editor"))
-    static void IsInEditorSwitch(ESWGEditor& Editor);
-    
-    UFUNCTION(BlueprintPure)
-    static bool IsInEditor();
-    
-    UFUNCTION(BlueprintPure)
-    static FString GetVersionString();
-    
-    UFUNCTION(BlueprintPure)
-    static ESWGPlatform GetBuildPlatform();
+	UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="Platform"))
+	static void SwitchOnPlatform(ESWGPlatform& Platform);
+	
+	UFUNCTION(BlueprintCallable, meta = (ExpandEnumAsExecs = "Editor"))
+	static void IsInEditorSwitch(ESWGEditor& Editor);
+	
+	UFUNCTION(BlueprintPure)
+	static bool IsInEditor();
+	
+	UFUNCTION(BlueprintPure)
+	static FString GetVersionString();
+	
+	UFUNCTION(BlueprintPure)
+	static ESWGPlatform GetBuildPlatform();
 };
 

@@ -6,58 +6,58 @@
 #include "MotionControllerComponent.h"
 
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-    this->CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-    this->VROriginComp = CreateDefaultSubobject<USceneComponent>(TEXT("VRCameraOrigin"));
-    this->VRCameraAdjuster = CreateDefaultSubobject<USceneComponent>(TEXT("VRCameraAdjuster"));
-    this->bPositionalHeadTracking = false;
-    this->LeftHandComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftHand"));
-    this->RightHandComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightHand"));
-    this->PadMotionComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("PadMotion"));
-    this->LeftHandTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("LeftHandTrigger"));
-    this->RightHandTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("RightHandTrigger"));
-    this->PadTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("PadTrigger"));
-    this->LeftAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LeftAttachPoint"));
-    this->RightAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RightAttachPoint"));
-    this->PadAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("PadAttachPoint"));
-    this->PadInteractionPointer = CreateDefaultSubobject<UArrowComponent>(TEXT("PadInteractionPointer"));
-    this->HandsThatGrab = EVRHandType::Both;
-    this->LeftGrabActionName = TEXT("LeftGrab");
-    this->RightGrabActionName = TEXT("RightGrab");
-    this->ThrowMagnitude = 1.00f;
-    this->bGrabClosest = true;
-    this->bHoldMultiple = false;
-    this->HandsThatInteract = EVRHandType::Both;
-    this->LeftInteractActionName = TEXT("LeftInteract");
-    this->RightInteractActionName = TEXT("RightInteract");
-    this->VRTrackingOrigin = EHMDTrackingOrigin::Floor;
-    this->bUseEyeOffsetForEyeTracking = true;
-    this->EyeOffset = 100.00f;
-    this->bUseHandForPad = false;
-    this->HandToUseAsPad = EVRHandType::Right;
-    this->PadLineTraceDistance = 100.00f;
-    this->LerpGrabSpeed = 1000.00f;
-    this->bPerfCounterEnabled = false;
-    //this->FPSMin = INFINITY;
-    //this->FPSMax = -INFINITY;
-    this->FPSAverageOverTime = 0.00f;
-    this->FPSImmediate = 0.00f;
-    this->PerfCounterSeconds = 0.00f;
-    this->PerfCounterImmediateSeconds = 0.00f;
-    this->TotalPerfSeconds = 0.00f;
-    this->FrameCounterForAverage = 0;
-    this->VRModeEnabled = true;
-    this->CameraComp->SetupAttachment(VRCameraAdjuster);
-    this->VROriginComp->SetupAttachment(RootComponent);
-    this->VRCameraAdjuster->SetupAttachment(VROriginComp);
-    this->LeftHandComponent->SetupAttachment(VRCameraAdjuster);
-    this->RightHandComponent->SetupAttachment(VRCameraAdjuster);
-    this->PadMotionComponent->SetupAttachment(VRCameraAdjuster);
-    this->LeftHandTrigger->SetupAttachment(LeftHandComponent);
-    this->RightHandTrigger->SetupAttachment(RightHandComponent);
-    this->PadTrigger->SetupAttachment(PadMotionComponent);
-    this->LeftAttachPoint->SetupAttachment(LeftHandComponent);
-    this->RightAttachPoint->SetupAttachment(RightHandComponent);
-    this->PadAttachPoint->SetupAttachment(PadMotionComponent);
+	this->CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	this->VROriginComp = CreateDefaultSubobject<USceneComponent>(TEXT("VRCameraOrigin"));
+	this->VRCameraAdjuster = CreateDefaultSubobject<USceneComponent>(TEXT("VRCameraAdjuster"));
+	this->bPositionalHeadTracking = false;
+	this->LeftHandComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftHand"));
+	this->RightHandComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("RightHand"));
+	this->PadMotionComponent = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("PadMotion"));
+	this->LeftHandTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("LeftHandTrigger"));
+	this->RightHandTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("RightHandTrigger"));
+	this->PadTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("PadTrigger"));
+	this->LeftAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LeftAttachPoint"));
+	this->RightAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RightAttachPoint"));
+	this->PadAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("PadAttachPoint"));
+	this->PadInteractionPointer = CreateDefaultSubobject<UArrowComponent>(TEXT("PadInteractionPointer"));
+	this->HandsThatGrab = EVRHandType::Both;
+	this->LeftGrabActionName = TEXT("LeftGrab");
+	this->RightGrabActionName = TEXT("RightGrab");
+	this->ThrowMagnitude = 1.00f;
+	this->bGrabClosest = true;
+	this->bHoldMultiple = false;
+	this->HandsThatInteract = EVRHandType::Both;
+	this->LeftInteractActionName = TEXT("LeftInteract");
+	this->RightInteractActionName = TEXT("RightInteract");
+	this->VRTrackingOrigin = EHMDTrackingOrigin::Floor;
+	this->bUseEyeOffsetForEyeTracking = true;
+	this->EyeOffset = 100.00f;
+	this->bUseHandForPad = false;
+	this->HandToUseAsPad = EVRHandType::Right;
+	this->PadLineTraceDistance = 100.00f;
+	this->LerpGrabSpeed = 1000.00f;
+	this->bPerfCounterEnabled = false;
+	//this->FPSMin = INFINITY;
+	//this->FPSMax = -INFINITY;
+	this->FPSAverageOverTime = 0.00f;
+	this->FPSImmediate = 0.00f;
+	this->PerfCounterSeconds = 0.00f;
+	this->PerfCounterImmediateSeconds = 0.00f;
+	this->TotalPerfSeconds = 0.00f;
+	this->FrameCounterForAverage = 0;
+	this->VRModeEnabled = true;
+	this->CameraComp->SetupAttachment(VRCameraAdjuster);
+	this->VROriginComp->SetupAttachment(RootComponent);
+	this->VRCameraAdjuster->SetupAttachment(VROriginComp);
+	this->LeftHandComponent->SetupAttachment(VRCameraAdjuster);
+	this->RightHandComponent->SetupAttachment(VRCameraAdjuster);
+	this->PadMotionComponent->SetupAttachment(VRCameraAdjuster);
+	this->LeftHandTrigger->SetupAttachment(LeftHandComponent);
+	this->RightHandTrigger->SetupAttachment(RightHandComponent);
+	this->PadTrigger->SetupAttachment(PadMotionComponent);
+	this->LeftAttachPoint->SetupAttachment(LeftHandComponent);
+	this->RightAttachPoint->SetupAttachment(RightHandComponent);
+	this->PadAttachPoint->SetupAttachment(PadMotionComponent);
 }
 
 void ASWGVRCharacter::StopFrameCounters() {
@@ -136,49 +136,80 @@ void ASWGVRCharacter::OnGrab_Implementation(AActor* Grabbable, EVRHandType Hand)
 }
 
 bool ASWGVRCharacter::IsUsingPad() const {
-    return false;
+	return false;
 }
 
 bool ASWGVRCharacter::IsInVRMode() const {
-    return false;
+	return false;
 }
 
 bool ASWGVRCharacter::InitialIsInVR() const {
-    return false;
+	return false;
 }
 
 void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce) {
 }
 
 FName ASWGVRCharacter::GetPadTrackingSource() const {
-    return NAME_None;
+	return NAME_None;
 }
 
 FVector ASWGVRCharacter::GetHeldOffset(EVRHandType Hand, int32 ItemIndex) const {
-    return FVector{};
+	return FVector{};
 }
 
-FMotionControllerInfo ASWGVRCharacter::GetHandInfo(EVRHandType Hand) const {
-    return FMotionControllerInfo{};
+FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand) const
+{
+	static FMotionControllerInfo EmptyControllerInfo;
+	
+	// TODO
+	//if (Hand == EVRHandType::Left)
+	//	return LeftController;
+	//if (Hand == EVRHandType::Right)
+	//	return RightController;
+	
+	return EmptyControllerInfo;
 }
 
 EVRHandType ASWGVRCharacter::GetHandForPad() const {
-    return EVRHandType::None;
+	return EVRHandType::None;
 }
 
 USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const {
-    return NULL;
+	return NULL;
 }
 
-FHeldGrabbableInfo ASWGVRCharacter::GetGrabbableInfo(const AActor* HeldActor) const {
-    return FHeldGrabbableInfo{};
+FHeldGrabbableInfo& ASWGVRCharacter::GetGrabbableInfo(const AActor* HeldActor) const
+{
+	static FHeldGrabbableInfo EmptyHeldInfo;
+	
+	// TODO
+	
+	return EmptyHeldInfo;
 }
 
 ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const {
-    return ESWGVRControllerType::SteamVR;
+	return ESWGVRControllerType::SteamVR;
 }
 
-void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex) {
+void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex)
+{
+	FMotionControllerInfo& HandInfo = GetHandInfo(Hand);
+	if (ItemIndex >= 0 && ItemIndex < HandInfo.HeldGrabbables.Num())
+	{
+		// TODO
+		/*
+		auto og = HandInfo.HeldInfo[ItemIndex];
+		TSet<TTuple<AActor *,FHeldGrabbableInfo>,TDefaultMapHashableKeyFuncs<AActor *,FHeldGrabbableInfo,0>,FDefaultSetAllocator>::FindId(
+		  &HandInfo.HeldInfo.Pairs,
+		  &result,
+		  *(const AActor **)&HandInfo.HeldGrabbables.AllocatorInstance.Data[8 * ItemIndex]);// Inlined TMap<AActor *,FHeldGrabbableInfo,FDefaultSetAllocator,TDefaultMapHashableKeyFuncs<AActor *,FHeldGrabbableInfo,0> >::operator[]
+		if ( result.Index == -1 )
+			v8 = 0;
+		else
+			v8 = (float *)&p_HeldInfo->Pairs.Elements.Data.AllocatorInstance.Data[136 * result.Index];
+		v8[25] = AdditiveValue->X + v8[25];		 //  Inlined FVector::operator+=
+		v8[26] = AdditiveValue->Y + v8[26];
+		v8[27] = AdditiveValue->Z + v8[27];*/
+	}
 }
-
-
