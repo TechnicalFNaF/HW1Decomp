@@ -197,19 +197,7 @@ void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveVal
 	FMotionControllerInfo& HandInfo = GetHandInfo(Hand);
 	if (ItemIndex >= 0 && ItemIndex < HandInfo.HeldGrabbables.Num())
 	{
-		// TODO
-		/*
-		auto og = HandInfo.HeldInfo[ItemIndex];
-		TSet<TTuple<AActor *,FHeldGrabbableInfo>,TDefaultMapHashableKeyFuncs<AActor *,FHeldGrabbableInfo,0>,FDefaultSetAllocator>::FindId(
-		  &HandInfo.HeldInfo.Pairs,
-		  &result,
-		  *(const AActor **)&HandInfo.HeldGrabbables.AllocatorInstance.Data[8 * ItemIndex]);// Inlined TMap<AActor *,FHeldGrabbableInfo,FDefaultSetAllocator,TDefaultMapHashableKeyFuncs<AActor *,FHeldGrabbableInfo,0> >::operator[]
-		if ( result.Index == -1 )
-			v8 = 0;
-		else
-			v8 = (float *)&p_HeldInfo->Pairs.Elements.Data.AllocatorInstance.Data[136 * result.Index];
-		v8[25] = AdditiveValue->X + v8[25];		 //  Inlined FVector::operator+=
-		v8[26] = AdditiveValue->Y + v8[26];
-		v8[27] = AdditiveValue->Z + v8[27];*/
+		FHeldGrabbableInfo& GrabbableInfo = HandInfo.HeldInfo[HandInfo.HeldGrabbables[ItemIndex]];
+		GrabbableInfo.AttachmentRelativeLocation += AdditiveValue;
 	}
 }
