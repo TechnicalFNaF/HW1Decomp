@@ -9,6 +9,8 @@ public class freddys : ModuleRules {
 			"CoreUObject",
 			"Engine",
 			"UMG",
+			"ViveportSDK",
+			"MoviePlayer",
 		});
 	}
 }
