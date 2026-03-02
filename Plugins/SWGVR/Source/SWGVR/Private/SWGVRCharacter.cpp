@@ -426,6 +426,20 @@ void ASWGVRCharacter::SetCameraRelativeLocation(const FVector& Location)
 
 void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity)
 {
+	if (LeftController.HeldGrabbables.Contains(Grabbable))
+	{
+		FVector NewVelocity = bOverrideVelocity
+			? Velocity
+			: ThrowMagnitude * RightController.Velocity;
+		ReleaseGrabbableInternal(Grabbable, EVRHandType::Left, bForce, NewVelocity, &LeftController);
+	}
+	if (RightController.HeldGrabbables.Contains(Grabbable))
+	{
+		FVector NewVelocity = bOverrideVelocity
+			? Velocity
+			: ThrowMagnitude * RightController.Velocity;
+		ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, NewVelocity, &RightController);
+	}
 }
 
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
