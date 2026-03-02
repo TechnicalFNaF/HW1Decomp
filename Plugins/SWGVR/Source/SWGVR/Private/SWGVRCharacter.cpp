@@ -280,65 +280,80 @@ void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& A
                                                              FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor,
                                                              EVRHandType Hand)
 {
+	// todo chungus
 }
 
 void ASWGVRCharacter::OnTrackedControllerChanged_Implementation()
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnRightEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	SendOnHoverEndEvents(OtherActor, EVRHandType::Right, RightController);
 }
 
 void ASWGVRCharacter::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                           const FHitResult& SweepResult)
 {
+	SendOnHoverBeginEvents(OverlappedComponent, OtherActor, EVRHandType::Right, RightController);
 }
 
 void ASWGVRCharacter::OnRelease_Implementation(AActor* Grabbable, EVRHandType Hand)
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	SendOnHoverEndEvents(OtherActor, EVRHandType::Left, LeftController);
 }
 
 void ASWGVRCharacter::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                          const FHitResult& SweepResult)
 {
+	SendOnHoverBeginEvents(OverlappedComponent, OtherActor, EVRHandType::Left, LeftController);
 }
 
 void ASWGVRCharacter::OnHoverEnd_Implementation(AActor* HoveredActor, EVRHandType Hand)
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnHoverBegin_Implementation(AActor* HoveredActor, EVRHandType Hand)
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnHeldActorDestroyed(AActor* DestroyedActor)
 {
+	RemoveDestroyedActor(LeftController, DestroyedActor);
+	RemoveDestroyedActor(RightController, DestroyedActor);
+	TrackedActors.Remove(DestroyedActor);
 }
 
 void ASWGVRCharacter::OnGrabHoverEnd_Implementation(AActor* Grabbable, EVRHandType Hand)
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnGrabHoverBegin_Implementation(AActor* Grabbable, EVRHandType Hand)
 {
+	// nullsub
 }
 
 void ASWGVRCharacter::OnGrab_Implementation(AActor* Grabbable, EVRHandType Hand)
 {
+	// nullsub
 }
 
 bool ASWGVRCharacter::IsUsingPad() const
 {
-	return false;
+	return bIsUsingPadForHand;
 }
 
 bool ASWGVRCharacter::IsInVRMode() const
