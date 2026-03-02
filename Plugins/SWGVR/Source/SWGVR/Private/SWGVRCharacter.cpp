@@ -394,34 +394,42 @@ void ASWGVRCharacter::SetHeldOffset(EVRHandType Hand, const FVector& NewOffset, 
 
 void ASWGVRCharacter::SetCameraWorldRotation(const FRotator& Rotation)
 {
+	VRCameraAdjuster->SetWorldRotation(Rotation);
 }
 
 void ASWGVRCharacter::SetCameraWorldLocationAndRotation(const FVector& Location, const FRotator& Rotation)
 {
+	VRCameraAdjuster->SetWorldLocationAndRotation(Location, Rotation);
+	NonVROffset = VRCameraAdjuster->RelativeLocation;
+	EyeOffset = NonVROffset.Y;
 }
 
 void ASWGVRCharacter::SetCameraWorldLocation(const FVector& Location)
 {
-	FVector Offset = {};
-	Offset.X = Location.X;
-	Offset.Y = Location.Y;
-	Offset.Z = Location.Z;
-
-	VRCameraAdjuster->SetWorldLocation(Offset);
-	EyeOffset = Location.Y;
+	VRCameraAdjuster->SetWorldLocation(Location);
+	NonVROffset = Location;
+	EyeOffset = NonVROffset.Y;
 	bUseNonVROffset = true;
 }
 
 void ASWGVRCharacter::SetCameraRelativeRotation(const FRotator& Rotation)
 {
+	VRCameraAdjuster->SetRelativeRotation(Rotation);
 }
 
 void ASWGVRCharacter::SetCameraRelativeLocationAndRotation(const FVector& Location, const FRotator& Rotation)
 {
+	VRCameraAdjuster->SetRelativeLocationAndRotation(Location, Rotation);
+	NonVROffset = Location;
+	EyeOffset = Location.Y;
+	bUseNonVROffset = true;
 }
 
 void ASWGVRCharacter::SetCameraRelativeLocation(const FVector& Location)
 {
+	VRCameraAdjuster->SetRelativeLocation(Location);
+	NonVROffset = Location;
+	EyeOffset = Location.Y;
 }
 
 void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity)
