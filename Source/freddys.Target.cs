@@ -1,11 +1,11 @@
 ﻿using UnrealBuildTool;
 
-public class freddysEditorTarget : TargetRules 
+public class freddysTarget : TargetRules 
 {
-	public freddysEditorTarget(TargetInfo Target) : base(Target) 
+	public freddysTarget(TargetInfo Target) : base(Target) 
 	{
-		Type = TargetType.Editor;
-		
+		Type = TargetType.Game;
+
 		ExtraModuleNames.AddRange(new string[] 
 		{
 			"freddys",
