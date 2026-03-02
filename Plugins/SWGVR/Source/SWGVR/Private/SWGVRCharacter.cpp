@@ -314,6 +314,31 @@ void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo
 void ASWGVRCharacter::SendOnHoverBeginEvents(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                              EVRHandType Hand, FMotionControllerInfo& ControllerInfo)
 {
+	if (IsInVRMode())
+	{
+		if (!ControllerInfo.HeldGrabbables.Contains(OtherActor))
+		{
+			if (OtherActor->Implements<USWGVRHoverReceiver>())
+			{
+				ControllerInfo.HoveredObjects.Add(OtherActor);
+				if (!TrackedActors.Contains(OtherActor))
+				{
+					OtherActor->OnDestroyed.AddDynamic(this, &ASWGVRCharacter::OnHeldActorDestroyed);
+					TrackedActors.Add(OtherActor);
+				}
+			}
+
+			if (OtherActor->Implements<USWGGrabbable>())
+			{
+				ControllerInfo.HeldGrabbables.Add(OtherActor);
+				if (!TrackedActors.Contains(OtherActor))
+				{
+					OtherActor->OnDestroyed.AddDynamic(this, &ASWGVRCharacter::OnHeldActorDestroyed);
+					TrackedActors.Add(OtherActor);
+				}
+			}
+		}
+	}
 }
 
 void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand, FMotionControllerInfo& ControllerInfo)
