@@ -33,14 +33,26 @@ private:
 	TSet<UFlowGraphConnector*> FlowConnectors;
 	static TSet<AFlowGraphNode*> FlowGraphSources;
 
-public:
 	void CalculateFlow();
 	
+public:
 	UFUNCTION(BlueprintCallable)
 	void CheckConnections();
+	
+	UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="FlowType"))
+	void FlowTypeSwitch(EFlowGraphFlowType& FlowType);
 
 	UFUNCTION(BlueprintPure)
 	bool HasFlow() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetFlowSource(bool EnableAsFlowSource);
+	
+	UFUNCTION(BlueprintPure)
+	bool IsFlowSource() const
+	{
+		return bIsFlowSource;
+	}
 	
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
@@ -51,11 +63,10 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnFlowChanged();
+
+	void ChangeFlowStatus(bool bConnectedToFlow);
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetFlowSource(bool EnableAsFlowSource);
-	
 	UFUNCTION(BlueprintCallable)
 	void UnregisterConnector(UFlowGraphConnector* Connector);
 	
@@ -63,13 +74,9 @@ public:
 	void RegisterConnector(UFlowGraphConnector* Connector);
 	
 	UFUNCTION(BlueprintPure)
-	bool IsFlowSource() const;
-	
-	UFUNCTION(BlueprintPure)
-	TArray<UFlowGraphConnector*> GetConnectors() const;
-	
-	UFUNCTION(BlueprintCallable)
-	void FlowTypeSwitch(EFlowGraphFlowType& FlowType);
-	
+	TArray<UFlowGraphConnector*> GetConnectors() const
+	{
+		return FlowConnectors.Array();
+	}
 };
 

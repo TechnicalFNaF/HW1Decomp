@@ -29,7 +29,40 @@ void AFlowGraphNode::BeginPlay()
 
 void AFlowGraphNode::CalculateFlow()
 {
-	// TODO
+	// inaccurate todo diff this
+	
+	TArray<AFlowGraphNode*> Array1{this};
+	TArray<AFlowGraphNode*> Array2;
+
+	bool bConnectedToFlow = false;
+	while (Array1.Num() > 0)
+	{
+		Array2.Add(Array1.Pop());
+		for (UFlowGraphConnector* Connector : FlowConnectors)
+		{
+			UFlowGraphConnector* ConnectedTo = Connector->GetConnectedConnector();
+			if (!ConnectedTo)
+				continue;
+
+			AFlowGraphNode* NodeOwner = ConnectedTo->GetNodeOwner();
+			if (!NodeOwner)
+				continue;
+			
+			if (NodeOwner->bIsFlowSource)
+				bConnectedToFlow = true;
+
+			if (!Array2.Contains(NodeOwner))
+				Array1.AddUnique(NodeOwner);
+		}
+	}
+	
+	while (Array2.Num() > 0)
+	{
+		AFlowGraphNode* Node = Array2[0]; 
+		Array2.Pop(); // def wrong but idk ill just diff it bro
+
+		Node->ChangeFlowStatus(bConnectedToFlow);
+	}
 }
 
 void AFlowGraphNode::CheckConnections()
@@ -39,6 +72,11 @@ void AFlowGraphNode::CheckConnections()
 	{
 		Connector->CheckConnection();
 	}
+}
+
+void AFlowGraphNode::FlowTypeSwitch(EFlowGraphFlowType& FlowType)
+{
+	FlowType = HasFlow() ? EFlowGraphFlowType::HasFlow : EFlowGraphFlowType::NoFlow;
 }
 
 bool AFlowGraphNode::HasFlow() const
@@ -64,6 +102,15 @@ void AFlowGraphNode::SetFlowSource(bool EnableAsFlowSource)
 	}
 }
 
+void AFlowGraphNode::ChangeFlowStatus(bool bConnectedToFlow)
+{
+	if (bConnectedToFlow != bIsConnectedToFlow && !bIsFlowSource)
+	{
+		bIsConnectedToFlow = bConnectedToFlow;
+		OnFlowChanged();
+	}
+}
+
 void AFlowGraphNode::UnregisterConnector(UFlowGraphConnector* Connector)
 {
 	// does nothing
@@ -72,18 +119,4 @@ void AFlowGraphNode::UnregisterConnector(UFlowGraphConnector* Connector)
 void AFlowGraphNode::RegisterConnector(UFlowGraphConnector* Connector)
 {
 	// does nothing
-}
-
-
-
-
-bool AFlowGraphNode::IsFlowSource() const {
-	return false;
-}
-
-TArray<UFlowGraphConnector*> AFlowGraphNode::GetConnectors() const {
-	return TArray<UFlowGraphConnector*>();
-}
-
-void AFlowGraphNode::FlowTypeSwitch(EFlowGraphFlowType& FlowType) {
 }
