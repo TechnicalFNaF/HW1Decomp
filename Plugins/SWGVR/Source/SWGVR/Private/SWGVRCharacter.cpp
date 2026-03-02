@@ -9,11 +9,13 @@
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "MotionControllerComponent.h"
+#include "SWGVRCameraLocator.h"
 #include "SWGVRPlayerControllerBase.h"
 #include "SWGVRUtil.h"
 #include "Engine/Engine.h"
 
 #include "GameFramework/WorldSettings.h"
+#include "Kismet/GameplayStatics.h"
 
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -189,19 +191,89 @@ void ASWGVRCharacter::Tick(float DeltaTime)
 void ASWGVRCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	BindGrabActions(PlayerInputComponent, EVRHandType::Left, LeftGrabActionName);
+	BindGrabActions(PlayerInputComponent, EVRHandType::Right, RightGrabActionName);
+	BindInteractionActions(PlayerInputComponent, EVRHandType::Left, LeftInteractActionName);
+	BindInteractionActions(PlayerInputComponent, EVRHandType::Right, RightInteractActionName);
 }
 
 void ASWGVRCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+	StopFrameCounters();
 }
 
 void ASWGVRCharacter::OnUsingGamepadChanged(bool gamepad)
 {
+	// Possibly inlined elsewhere
 }
 
 void ASWGVRCharacter::BeginPlay()
 {
+	if (GEngine && GEngine->XRSystem.IsValid())
+	{
+		IHeadMountedDisplay* CurrentHMD = GEngine->XRSystem->GetHMDDevice();
+		CurrentHMD->EnableHMD(CurrentHMD->IsHMDConnected());
+
+		TSharedPtr<IStereoRendering, ESPMode::ThreadSafe> StereoRendering = GEngine->XRSystem->GetStereoRenderingDevice();
+		if (StereoRendering.IsValid())
+			StereoRendering->EnableStereo(CurrentHMD->IsHMDConnected());
+
+		FName HMDSystemName = GEngine->XRSystem->GetSystemName();
+		if (HMDSystemName == "PSVR" || HMDSystemName == "OculusHMD")
+		{
+			VRTrackingOrigin = EHMDTrackingOrigin::Eye;
+		}
+
+		GEngine->XRSystem->SetTrackingOrigin(VRTrackingOrigin);
+		USWGVRUtil::ChangePlayType((!CurrentHMD->IsHMDConnected() ? EVRPlayType::NotUsingVR : EVRPlayType::UsingVR));
+	}
+	else
+	{
+		USWGVRUtil::ChangePlayType(EVRPlayType::NotUsingVR);
+	}
+
+	TArray<AActor*> CameraLocators;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASWGVRCameraLocator::StaticClass(), CameraLocators); // They can just used GetActorOfClass probably for just the first one
+	if (CameraLocators.Num() > 0)
+	{
+		AActor* CameraLocator = CameraLocators[0];
+
+		FVector LocationToUse = FVector::ZeroVector;
+		if (CameraLocator->GetRootComponent())
+		{
+			LocationToUse = CameraLocator->GetRootComponent()->GetComponentLocation();
+		}
+
+		FRotator RotationToUse = FRotator::ZeroRotator;
+		if (CameraLocator->GetRootComponent())
+		{
+			RotationToUse = CameraLocator->GetRootComponent()->GetComponentRotation();
+		}
+
+		// TODO: Double check
+		SetActorLocationAndRotation(LocationToUse, RotationToUse);
+	}
+
+	if (USWGVRUtil::GetPlayType() == EVRPlayType::NotUsingVR && bUseNonVROffset)
+	{
+		SetCameraWorldLocation(NonVROffset);
+	}
+	else if ((VRTrackingOrigin == EHMDTrackingOrigin::Eye || USWGVRUtil::GetPlayType() == EVRPlayType::NotUsingVR) && bUseEyeOffsetForEyeTracking)
+	{
+		FVector NewLocation = {}; // TODO: Double check
+		NewLocation.Z = (m_previousWorldToMeters * 0.0099999998) * EyeOffset;
+
+		VRCameraAdjuster->SetRelativeLocationAndRotation(NewLocation, VRCameraAdjuster->GetComponentRotation());
+	}
+
+	LeftHandTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASWGVRCharacter::OnLeftBeginOverlap);
+	LeftHandTrigger->OnComponentEndOverlap.AddDynamic(this, &ASWGVRCharacter::OnLeftEndOverlap);
+
+	RightHandTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASWGVRCharacter::OnRightBeginOverlap);
+	RightHandTrigger->OnComponentEndOverlap.AddDynamic(this, &ASWGVRCharacter::OnRightEndOverlap);
+
 	Super::BeginPlay();
 }
 
@@ -332,6 +404,14 @@ void ASWGVRCharacter::SetCameraWorldLocationAndRotation(const FVector& Location,
 
 void ASWGVRCharacter::SetCameraWorldLocation(const FVector& Location)
 {
+	FVector Offset = {};
+	Offset.X = Location.X;
+	Offset.Y = Location.Y;
+	Offset.Z = Location.Z;
+
+	VRCameraAdjuster->SetWorldLocation(Offset);
+	EyeOffset = Location.Y;
+	bUseNonVROffset = true;
 }
 
 void ASWGVRCharacter::SetCameraRelativeRotation(const FRotator& Rotation)
