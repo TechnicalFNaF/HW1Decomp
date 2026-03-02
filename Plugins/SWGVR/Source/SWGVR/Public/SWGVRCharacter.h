@@ -217,7 +217,10 @@ public:
 
 	
 	UFUNCTION(BlueprintPure)
-	EVRHandType GetHandForPad() const;
+	EVRHandType GetHandForPad() const
+	{
+		return HandToUseAsPad;
+	}
 	
 	UFUNCTION(BlueprintPure)
 	USceneComponent* GetHandAttachPoint(EVRHandType Hand) const;

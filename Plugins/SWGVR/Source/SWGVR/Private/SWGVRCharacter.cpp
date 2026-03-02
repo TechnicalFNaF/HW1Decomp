@@ -287,10 +287,6 @@ FVector ASWGVRCharacter::GetHeldOffset(EVRHandType Hand, int32 ItemIndex)
 }
 
 
-EVRHandType ASWGVRCharacter::GetHandForPad() const {
-	return EVRHandType::None;
-}
-
 USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const
 {
 	if (Hand != EVRHandType::None)
