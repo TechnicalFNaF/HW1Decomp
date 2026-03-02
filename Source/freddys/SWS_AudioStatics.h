@@ -58,8 +58,4 @@ UCLASS()
 class FREDDYS_API USWS_AudioStatics : public UBlueprintFunctionLibrary 
 {
 	GENERATED_BODY()
-
-public:
-	USWS_AudioStatics();
 };
-

@@ -19,10 +19,10 @@ void ASWS_AudioSource::PlayAudio(const UObject* WorldContextObject, USoundBase* 
 {
     ASWS_AudioManager* AudioManager = ASWS_AudioManager::GetAudioManager(this);
 
-    FAudioHandle AudioHandle = AudioManager->PlayAudioByAsset(WorldContextObject, Sound, Location, Rotation, VolumeMultiplier, PitchMultiplier,StartTime,
+    FAudioHandle NewAudioHandle = AudioManager->PlayAudioByAsset(WorldContextObject, Sound, Location, Rotation, VolumeMultiplier, PitchMultiplier,StartTime,
         AttenuationSettings, ConcurrencySettings, bAutoDestroy);
 
-	AudioHandle.AudioComponent->OnAudioFinished.AddDynamic(this, &ASWS_AudioSource::DestroyHandle);
+	NewAudioHandle.AudioComponent->OnAudioFinished.AddDynamic(this, &ASWS_AudioSource::DestroyHandle);
 }
 
 void ASWS_AudioSource::DestroyHandle() 
