@@ -401,8 +401,73 @@ void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponen
 bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce,
 	const FVector& Velocity, FMotionControllerInfo* ControllerInfo)
 {
-	// TODO
+	if (!IsValid(Grabbable) || !bForce && !ISWGGrabbable::Execute_AttemptRelease(Grabbable, this, Hand))
+	{
+		return false;
+	}
+
+	ControllerInfo->HeldGrabbables.Remove(Grabbable);
+	
+	FVector thrownVelocity = Velocity;
+	if (IsValid(Grabbable))
+	{
+		FHeldGrabbableInfo* GrabbableInfo = ControllerInfo->HeldInfo.Find(Grabbable);
+		if (GrabbableInfo)
+		{
+			if (GrabbableInfo->GrabSnapType == EGrabSnapType::SnapToHand)
+			{
+				Grabbable->DetachFromActor({ EDetachmentRule::KeepWorld, true });
+			}
+
+			UPrimitiveComponent* GrabbableRoot = Cast<UPrimitiveComponent>(Grabbable->GetRootComponent());
+			if (GrabbableRoot)
+			{
+				GrabbableRoot->SetCollisionEnabled(GrabbableInfo->Collision);
+				GrabbableRoot->SetSimulatePhysics(GrabbableInfo->bUsePhysics);
+				if (GrabbableRoot->IsSimulatingPhysics())
+				{
+					GrabbableRoot->AddImpulse(thrownVelocity, NAME_None, true);
+				}
+			}
+			
+			ControllerInfo->HeldInfo.Remove(Grabbable);
+			goto LABEL_32; // todo maybe not use goto lol
+		}
+	}
 	return false;
+
+LABEL_32:
+	ISWGGrabbable::Execute_OnVRReleased(Grabbable, this, Hand, thrownVelocity);
+	OnRelease(Grabbable, Hand);
+	OnActorReleased.Broadcast(this, Grabbable, Hand);
+
+	USphereComponent* HandTrigger = nullptr;
+	if (Hand == EVRHandType::Left)
+	{
+		HandTrigger = LeftHandTrigger;
+	}
+	else if (Hand == EVRHandType::Right)
+	{
+		HandTrigger = RightHandTrigger;
+	}
+
+	if (IsInVRMode() && IsValid(Grabbable) &&
+		HandTrigger && HandTrigger->IsOverlappingActor(Grabbable))
+	{
+		if (Grabbable->Implements<USWGVRHoverReceiver>())
+		{
+			if (!ControllerInfo->HoveredObjects.Contains(Grabbable))
+			{
+				ISWGVRHoverReceiver::Execute_OnVRHoverBegin(Grabbable, this, Hand);
+				ControllerInfo->HoveredObjects.AddUnique(Grabbable);
+				OnHoverBegin(Grabbable, Hand);
+			}
+		}
+		ControllerInfo->ClosestHoveredActor = Grabbable;
+		ControllerInfo->HoveredGrabbables.AddUnique(Grabbable);
+	}
+	
+	return true;
 }
 
 void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
