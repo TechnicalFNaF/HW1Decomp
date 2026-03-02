@@ -291,8 +291,16 @@ EVRHandType ASWGVRCharacter::GetHandForPad() const {
 	return EVRHandType::None;
 }
 
-USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const {
-	return NULL;
+USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const
+{
+	if (Hand != EVRHandType::None)
+	{
+		if (Hand == EVRHandType::Left)
+			return LeftAttachPoint;
+		if (Hand == EVRHandType::Right)
+			return RightAttachPoint;
+	}
+	return nullptr;
 }
 
 ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const
