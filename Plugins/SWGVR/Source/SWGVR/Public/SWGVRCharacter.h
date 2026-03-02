@@ -230,7 +230,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex);
-	
+
+private:
+	void AttemptGrab(EVRHandType Hand, FMotionControllerInfo *OtherControllerInfo, AActor *hoverActor,
+		EVRHandType OtherHand, USceneComponent *AttachmentComp, FMotionControllerInfo *ControllerInfo);
 public:
 
 	UPROPERTY(BlueprintAssignable)

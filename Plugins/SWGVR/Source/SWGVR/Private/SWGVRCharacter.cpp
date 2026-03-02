@@ -249,7 +249,21 @@ bool ASWGVRCharacter::InitialIsInVR() const
 	}
 }
 
-void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce) {
+void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce)
+{
+	if (Grabbable)
+	{
+		if (Hand == EVRHandType::Left)
+		{
+			AttemptGrab(Hand, &LeftController, Grabbable, EVRHandType::Left,
+				LeftAttachPoint, &LeftController);
+		}
+		else if (Hand == EVRHandType::Right)
+		{
+			AttemptGrab(Hand, &RightController, Grabbable, EVRHandType::Right,
+				RightAttachPoint, &RightController);
+		}
+	}
 }
 
 FName ASWGVRCharacter::GetPadTrackingSource() const
@@ -325,4 +339,9 @@ void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveVal
 		FHeldGrabbableInfo& GrabbableInfo = HandInfo.HeldInfo[HandInfo.HeldGrabbables[ItemIndex]];
 		GrabbableInfo.AttachmentRelativeLocation += AdditiveValue;
 	}
+}
+
+void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* OtherControllerInfo, AActor* hoverActor,
+	EVRHandType OtherHand, USceneComponent* AttachmentComp, FMotionControllerInfo* ControllerInfo) {
+	// TODO
 }
