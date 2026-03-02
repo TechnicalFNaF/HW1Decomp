@@ -4,9 +4,14 @@
 #include "SWGVRSettings.generated.h"
 
 UCLASS(Config=EditorUserSettings)
-class SWGVR_API USWGVRSettings : public UDeveloperSettings {
+class SWGVR_API USWGVRSettings : public UDeveloperSettings
+{
     GENERATED_BODY()
+
+    USWGVRSettings();
+
 public:
+
     UPROPERTY(Config, EditAnywhere)
     bool bEnableCameraLocator;
     
@@ -21,8 +26,4 @@ public:
     
     UPROPERTY(Config, EditAnywhere)
     bool bAllowNonVR;
-    
-    USWGVRSettings();
-
 };
-

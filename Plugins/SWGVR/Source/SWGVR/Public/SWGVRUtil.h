@@ -16,9 +16,8 @@ class SWGVR_API USWGVRUtil : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 
 public:
-    USWGVRUtil();
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="VRPlayMode"))
     static void SwitchOnPlayType(EVRPlayType& VRPlayMode);
     
     UFUNCTION(BlueprintPure)
@@ -27,5 +26,6 @@ public:
     UFUNCTION(BlueprintCallable)
     static void ChangePlayType(EVRPlayType VRPlayMode);
     
+    static EVRPlayType CurrentPlayType;
 };
 

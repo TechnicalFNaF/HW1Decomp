@@ -1,16 +1,18 @@
 #include "SWGVRUtil.h"
 
-USWGVRUtil::USWGVRUtil() {
+EVRPlayType USWGVRUtil::CurrentPlayType = EVRPlayType::NotUsingVR;
+
+void USWGVRUtil::SwitchOnPlayType(EVRPlayType& VRPlayMode) 
+{
+	VRPlayMode = CurrentPlayType;
 }
 
-void USWGVRUtil::SwitchOnPlayType(EVRPlayType& VRPlayMode) {
+EVRPlayType USWGVRUtil::GetPlayType() 
+{
+    return CurrentPlayType;
 }
 
-EVRPlayType USWGVRUtil::GetPlayType() {
-    return EVRPlayType::UsingVR;
+void USWGVRUtil::ChangePlayType(EVRPlayType VRPlayMode) 
+{
+	CurrentPlayType = VRPlayMode;
 }
-
-void USWGVRUtil::ChangePlayType(EVRPlayType VRPlayMode) {
-}
-
-
