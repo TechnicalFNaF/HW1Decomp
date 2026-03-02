@@ -5,31 +5,31 @@
 UENUM()
 enum class EGrabSnapType : uint8 
 {
-    LocationToHand,
-    SnapToHand,
-    None,
+	LocationToHand,
+	SnapToHand,
+	None,
 };
 
 UENUM()
 enum class ESWGVRControllerType : uint8 
 {
-    SteamVR,
-    Oculus,
-    PS4Move,
-    DUALSHOCK4,
-    DUALSHOCK4_VR,
-    MouseAndKeyboard,
-    Switch,
-    XBox,
+	SteamVR,
+	Oculus,
+	PS4Move,
+	DUALSHOCK4,
+	DUALSHOCK4_VR,
+	MouseAndKeyboard,
+	Switch,
+	XBox,
 };
 
 UENUM()
 enum class EVRHandType : uint8 
 {
-    None,
-    Left,
-    Right,
-    Both,
+	None,
+	Left,
+	Right,
+	Both,
 };
 
 UDELEGATE() DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnControllerTrackingChanged);

@@ -9,15 +9,15 @@ class ASWGVRCharacter;
 UINTERFACE(Blueprintable, MinimalAPI)
 class USWGVRInteractive : public UInterface 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 };
 
 class ISWGVRInteractive : public IInterface 
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    UFUNCTION(BlueprintNativeEvent)
-    void OnVRInteract(ASWGVRCharacter* VRCharacter, EVRHandType Hand);
-    
+	UFUNCTION(BlueprintNativeEvent)
+	void OnVRInteract(ASWGVRCharacter* VRCharacter, EVRHandType Hand);
+	
 };
 

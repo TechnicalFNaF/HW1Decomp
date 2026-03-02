@@ -6,24 +6,24 @@
 UCLASS(Config=EditorUserSettings)
 class SWGVR_API USWGVRSettings : public UDeveloperSettings
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    USWGVRSettings();
+	USWGVRSettings();
 
 public:
 
-    UPROPERTY(Config, EditAnywhere)
-    bool bEnableCameraLocator;
-    
-    UPROPERTY(Config, EditAnywhere)
-    bool bForcePickupTesting;
-    
-    UPROPERTY(Config, EditAnywhere)
-    bool bForcePickupDebugDisplay;
-    
-    UPROPERTY(Config, EditAnywhere)
-    bool bForceDS4Enabled;
-    
-    UPROPERTY(Config, EditAnywhere)
-    bool bAllowNonVR;
+	UPROPERTY(Config, EditAnywhere)
+	bool bEnableCameraLocator;
+	
+	UPROPERTY(Config, EditAnywhere)
+	bool bForcePickupTesting;
+	
+	UPROPERTY(Config, EditAnywhere)
+	bool bForcePickupDebugDisplay;
+	
+	UPROPERTY(Config, EditAnywhere)
+	bool bForceDS4Enabled;
+	
+	UPROPERTY(Config, EditAnywhere)
+	bool bAllowNonVR;
 };
