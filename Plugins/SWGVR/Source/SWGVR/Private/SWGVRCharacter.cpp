@@ -252,8 +252,9 @@ bool ASWGVRCharacter::InitialIsInVR() const
 void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce) {
 }
 
-FName ASWGVRCharacter::GetPadTrackingSource() const {
-	return NAME_None;
+FName ASWGVRCharacter::GetPadTrackingSource() const
+{
+	return "Pad";
 }
 
 FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
