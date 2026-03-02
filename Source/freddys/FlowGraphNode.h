@@ -78,5 +78,8 @@ public:
 	{
 		return FlowConnectors.Array();
 	}
+
+	void internal_OnConnectorConnected(UFlowGraphConnector* MyConnector, UFlowGraphConnector* TheirConnector);
+	void internal_OnConnectorDisconnected(UFlowGraphConnector* MyConnector);
 };
 

@@ -120,3 +120,16 @@ void AFlowGraphNode::RegisterConnector(UFlowGraphConnector* Connector)
 {
 	// does nothing
 }
+
+void AFlowGraphNode::internal_OnConnectorConnected(
+	UFlowGraphConnector* MyConnector, UFlowGraphConnector* TheirConnector)
+{
+	CalculateFlow();
+	OnConnectorConnected(MyConnector, TheirConnector);
+}
+
+void AFlowGraphNode::internal_OnConnectorDisconnected(UFlowGraphConnector* MyConnector)
+{
+	CalculateFlow();
+	OnConnectorDisconnected(MyConnector);
+}
