@@ -15,7 +15,7 @@ class FREDDYS_API UFlowGraphConnector : public USceneComponent
 	friend class AFlowGraphNode;
 	
 public:
-	UFlowGraphConnector() : Super()
+	UFlowGraphConnector()
 	{
 		PrimaryComponentTick.bCanEverTick = false;
 		bWantsInitializeComponent = true;
