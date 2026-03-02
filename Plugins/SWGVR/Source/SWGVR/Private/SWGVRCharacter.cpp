@@ -375,7 +375,26 @@ void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
 
 void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
 {
-	// TODO
+	if (static_cast<bool>(Hand & HandsThatGrab) && ActionName.IsValid())
+	{
+		FInputActionBinding GrabPressedBinding = FInputActionBinding(ActionName, IE_Pressed);
+		FInputActionHandlerSignature& PressedDelegate = GrabPressedBinding.ActionDelegate.GetDelegateForManualSet();
+
+		PressedDelegate.BindLambda([this, Hand]()
+		{
+				OnGrabAction(Hand);
+		});
+		PlayerInputComponent->AddActionBinding(GrabPressedBinding);
+		
+		FInputActionBinding GrabReleasedBinding = FInputActionBinding(ActionName, IE_Released);
+		FInputActionHandlerSignature& ReleasedDelegate = GrabReleasedBinding.ActionDelegate.GetDelegateForManualSet();
+
+		ReleasedDelegate.BindLambda([this, Hand]()
+		{
+				OnGrabAction(Hand);
+		});
+		PlayerInputComponent->AddActionBinding(GrabReleasedBinding);
+	}
 }
 
 bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce,
