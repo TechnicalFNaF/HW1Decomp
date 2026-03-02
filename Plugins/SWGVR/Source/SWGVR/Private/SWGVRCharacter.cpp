@@ -10,6 +10,7 @@
 #include "Components/SphereComponent.h"
 #include "MotionControllerComponent.h"
 #include "SWGVRCameraLocator.h"
+#include "SWGVRHoverReceiver.h"
 #include "SWGVRPlayerControllerBase.h"
 #include "SWGVRUtil.h"
 #include "Engine/Engine.h"
@@ -349,14 +350,54 @@ void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputCompone
 }
 
 void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent,
-                                         AActor* newHoverActor, UPrimitiveComponent* newHoverComponent,
-                                         EVRHandType Hand)
+										 AActor* newHoverActor, UPrimitiveComponent* newHoverComponent,
+										 EVRHandType Hand)
 {
+	if (CurrentHoveredComponent != newHoverComponent)
+	{
+		if (IsValid(CurrentHoveredActor) &&
+			CurrentHoveredActor->Implements<USWGVRHoverReceiver>() &&
+			CurrentHoveredActor->Implements<USWGVRHoverReceiver>()) // not sure why they check this twice
+		{
+			ISWGVRHoverReceiver::Execute_OnVRHoverComponentEnd(
+				CurrentHoveredActor, this, CurrentHoveredComponent, Hand);
+		}
+		if (IsValid(newHoverActor) && newHoverActor->Implements<USWGVRHoverReceiver>())
+		{
+			// dont know why they're checking this is != again
+			if (newHoverComponent != CurrentHoveredComponent && CurrentHoveredComponent)
+				ISWGVRHoverReceiver::Execute_OnVRHoverComponentBegin(
+				  newHoverActor, this, newHoverComponent, Hand);
+		}
+		CurrentHoveredComponent = newHoverComponent;
+	}
+
+	if (CurrentHoveredActor != newHoverActor)
+	{
+		if (IsValid(CurrentHoveredActor) && CurrentHoveredActor->Implements<USWGVRHoverReceiver>())
+		{
+			ISWGVRHoverReceiver::Execute_OnVRHoverEnd(CurrentHoveredActor, this, Hand);
+			OnHoverEnd(CurrentHoveredActor, Hand);
+			
+			TArray<AActor*>& HoveredGrabbables = Hand == EVRHandType::Left ? LeftController.HoveredGrabbables : RightController.HoveredGrabbables;
+			HoveredGrabbables.Remove(CurrentHoveredActor);
+		}
+		CurrentHoveredActor = newHoverActor;
+
+		if (IsValid(newHoverActor) && newHoverActor->Implements<USWGVRHoverReceiver>())
+		{
+			ISWGVRHoverReceiver::Execute_OnVRHoverBegin(newHoverActor, this, Hand);
+			OnHoverBegin(newHoverActor, Hand);
+			TArray<AActor*>& HoveredGrabbables = Hand == EVRHandType::Left ? LeftController.HoveredGrabbables : RightController.HoveredGrabbables;
+			HoveredGrabbables.Add(newHoverActor);
+		}
+	}
 }
 
 void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController,
                                            FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint)
 {
+	// TODO
 }
 
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
