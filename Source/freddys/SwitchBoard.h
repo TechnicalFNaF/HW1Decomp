@@ -4,10 +4,11 @@
 #include "SwitchBoard.generated.h"
 
 UCLASS()
-class FREDDYS_API ASwitchBoard : public AActor {
+class FREDDYS_API ASwitchBoard : public AActor 
+{
 	GENERATED_BODY()
+
 public:
+
 	ASwitchBoard(const FObjectInitializer& ObjectInitializer);
-
 };
-

@@ -37,8 +37,8 @@ class FREDDYS_API ULevelDB : public UObject
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FGameLevels> GameLevels;
-	
-	ULevelDB();
+
+	static ULevelDB* instance;
 
 	UFUNCTION(BlueprintCallable)
 	void LoadLevelByName(const FString& LevelName);
@@ -57,6 +57,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	static ULevelDB* CreateLevelDB(UObject* Owner);
-	
 };
-

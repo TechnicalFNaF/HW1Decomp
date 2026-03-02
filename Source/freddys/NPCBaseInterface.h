@@ -33,7 +33,7 @@ USTRUCT(BlueprintType)
 struct FAIOffsetData : public FTableRowBase 
 {
 	GENERATED_BODY()
-public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AIScareDirection AIDir;
 
@@ -45,7 +45,7 @@ USTRUCT(BlueprintType)
 struct FAIDirectionOffsetData : public FTableRowBase 
 {
 	GENERATED_BODY()
-public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<AAICharacterBase> AIType;
 
@@ -57,7 +57,7 @@ USTRUCT(BlueprintType)
 struct FAIDatabase : public FTableRowBase 
 {
 	GENERATED_BODY()
-public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FAIDirectionOffsetData> AIScareData;
 };
