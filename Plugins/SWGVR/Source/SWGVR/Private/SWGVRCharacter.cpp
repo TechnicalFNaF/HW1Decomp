@@ -1,4 +1,7 @@
 #include "SWGVRCharacter.h"
+
+#include "IHeadMountedDisplay.h"
+#include "IXRTrackingSystem.h"
 #include "FileHelper.h"
 
 #include "Components/ArrowComponent.h"
@@ -6,6 +9,9 @@
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
 #include "MotionControllerComponent.h"
+#include "SWGVRPlayerControllerBase.h"
+#include "SWGVRUtil.h"
+#include "Engine/Engine.h"
 
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer) 
 	: Super(ObjectInitializer) 
@@ -218,8 +224,29 @@ bool ASWGVRCharacter::IsInVRMode() const {
 	return false;
 }
 
-bool ASWGVRCharacter::InitialIsInVR() const {
-	return false;
+bool ASWGVRCharacter::InitialIsInVR() const
+{
+	if (GEngine && GEngine->XRSystem)
+	{
+		// todo dont call GetHMDDevice twice
+		bool bIsHMDConnected = GEngine->XRSystem->GetHMDDevice()->IsHMDConnected();
+		GEngine->XRSystem->GetHMDDevice()->EnableHMD(bIsHMDConnected);
+		
+		auto stereoRenderingDevice = GEngine->XRSystem->GetStereoRenderingDevice();
+		if (stereoRenderingDevice)
+			stereoRenderingDevice->EnableStereo(bIsHMDConnected);
+
+		// unused
+		FName VRSystemName = GEngine->XRSystem->GetSystemName();
+		
+		USWGVRUtil::ChangePlayType(bIsHMDConnected ? EVRPlayType::UsingVR : EVRPlayType::NotUsingVR);
+		return true;
+	}
+	else
+	{
+		USWGVRUtil::ChangePlayType(EVRPlayType::NotUsingVR);
+		return false;
+	}
 }
 
 void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce) {
@@ -268,8 +295,21 @@ USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const {
 	return NULL;
 }
 
-ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const {
-	return ESWGVRControllerType::SteamVR;
+ESWGVRControllerType ASWGVRCharacter::GetControllerDeviceType() const
+{
+	if (InitialIsInVR())
+	{
+		FName VRSystemName = GEngine->XRSystem->GetSystemName();
+		return VRSystemName == "OculusHMD"
+			? ESWGVRControllerType::Oculus
+			: ESWGVRControllerType::SteamVR;
+	}
+	else
+	{
+		return ASWGVRPlayerControllerBase::GetStaticIsUsingGamepad()
+			 ? ESWGVRControllerType::XBox // lol
+			 : ESWGVRControllerType::MouseAndKeyboard;
+	}
 }
 
 void ASWGVRCharacter::AddHeldOffset(EVRHandType Hand, const FVector& AdditiveValue, int32 ItemIndex)
