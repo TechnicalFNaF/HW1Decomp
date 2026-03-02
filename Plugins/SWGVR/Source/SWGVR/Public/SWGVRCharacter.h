@@ -107,7 +107,7 @@ class SWGVR_API ASWGVRCharacter : public ACharacter
 public:
 	ASWGVRCharacter(const FObjectInitializer& ObjectInitializer);
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

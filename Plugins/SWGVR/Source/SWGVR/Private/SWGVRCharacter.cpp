@@ -13,6 +13,8 @@
 #include "SWGVRUtil.h"
 #include "Engine/Engine.h"
 
+#include "GameFramework/WorldSettings.h"
+
 ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -110,9 +112,78 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	//PadInteractionPointer->SetupAttachment(PadMotionComponent); --- They do not do this? so they do not attach this arrow to anything?
 }
 
-void ASWGVRCharacter::Tick(float DeltaSeconds)
+void ASWGVRCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaTime);
+	CheckPSVRHandStatus();
+
+	if (IsInVRMode())
+	{
+		float WorldToMeters = GetWorld()->GetWorldSettings()->WorldToMeters;
+		if (WorldToMeters != m_previousWorldToMeters)
+		{
+			m_previousWorldToMeters = WorldToMeters;
+			FVector NewLocation = VRCameraAdjuster->GetComponentLocation();
+			NewLocation.Z = (WorldToMeters * 0.0099999998) * EyeOffset;
+
+			VRCameraAdjuster->SetRelativeLocationAndRotation(NewLocation, VRCameraAdjuster->GetComponentRotation());
+		}
+	}
+
+	if (USWGVRUtil::GetPlayType() == EVRPlayType::NotUsingVR)
+	{
+		if (LeftHandComponent->GetAttachParent() != CameraComp)
+		{
+			LeftHandComponent->AttachToComponent(CameraComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			LeftHandComponent->SetRelativeLocationAndRotation(FVector::ZeroVector, FQuat::Identity);
+		}
+
+		if (RightHandComponent->GetAttachParent() != CameraComp)
+		{
+			RightHandComponent->AttachToComponent(CameraComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			RightHandComponent->SetRelativeLocationAndRotation(FVector::ZeroVector, FQuat::Identity);
+		}
+	}
+	else
+	{
+		ProcMotionController(EVRHandType::Left, LeftHandComponent, LeftController, LeftAttachPoint);
+	}
+
+	ProcMotionController(EVRHandType::Right, RightHandComponent, RightController, RightAttachPoint);
+
+	if (bPerfCounterEnabled)
+	{
+		int ImmediateSeconds = DeltaTime + PerfCounterImmediateSeconds;
+		int NewAverageFrameCounter = FrameCounterForAverage + 1;
+
+		FrameCounterForAverage = NewAverageFrameCounter;
+		PerfCounterImmediateSeconds = ImmediateSeconds;
+		if (ImmediateSeconds >= 1.0)
+		{
+			PerfCounterImmediateSeconds = 0.0;
+			FPSImmediate = 1.0 / DeltaTime;
+		}
+		float Seconds = DeltaTime + PerfCounterSeconds;
+		float TimeStamp = DeltaTime + TotalPerfSeconds;
+
+		PerfCounterSeconds = Seconds;
+		TotalPerfSeconds = TimeStamp;
+
+		if (Seconds >= 5.0)
+		{
+			FrameCounterForAverage = 0;
+			PerfCounterSeconds = 0.0;
+
+			float FPS = NewAverageFrameCounter / Seconds;
+			FPSAverageOverTime = FPS;
+
+			FPerformanceInfo PerfInfo;
+			PerfInfo.TimeStamp = TimeStamp;
+			PerfInfo.FPS = FPS;
+
+			PerformanceList.Add(PerfInfo);
+		}
+	}
 }
 
 void ASWGVRCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -136,6 +207,13 @@ void ASWGVRCharacter::BeginPlay()
 
 void ASWGVRCharacter::CheckPSVRHandStatus()
 {
+	if (GEngine && GEngine->XRSystem.IsValid())
+	{
+		FName SystemName = GEngine->XRSystem->GetSystemName();
+
+		if (SystemName == "PSVR")
+			VRTrackingOrigin = EHMDTrackingOrigin::Eye;
+	}
 }
 
 void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor)
