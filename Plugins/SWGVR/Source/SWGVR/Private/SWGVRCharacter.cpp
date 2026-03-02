@@ -343,7 +343,7 @@ bool ASWGVRCharacter::IsUsingPad() const
 
 bool ASWGVRCharacter::IsInVRMode() const
 {
-	return false;
+	return USWGVRUtil::CurrentPlayType == EVRPlayType::UsingVR;
 }
 
 bool ASWGVRCharacter::InitialIsInVR() const
