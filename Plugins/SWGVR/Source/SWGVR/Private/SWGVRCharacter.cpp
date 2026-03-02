@@ -352,6 +352,27 @@ void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOve
 
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
 {
+	// inaccurate, game uses "&" idk why
+	if (Hand == EVRHandType::Right)
+	{
+		// todo maybe not copy here
+		TArray<AActor*> grabbableList = RightController.HeldGrabbables;
+		for (AActor* Grabbable : grabbableList)
+		{
+			ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+		}
+	}
+	
+	// inaccurate, game uses "&" idk why
+	if (Hand == EVRHandType::Left)
+	{
+		// todo maybe not copy here
+		TArray<AActor*> grabbableList = LeftController.HeldGrabbables;
+		for (AActor* Grabbable : grabbableList)
+		{
+			ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+		}
+	}
 }
 
 void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& AttachmentTransform,
