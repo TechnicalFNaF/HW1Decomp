@@ -13,7 +13,7 @@ class FREDDYS_API ASWS_AudioSource : public AActor
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	USoundCue* SoundCueFile;
+	class USoundCue* SoundCueFile;
 
 	int AudioGroupID;
 	int AudioSourceGlobalID;

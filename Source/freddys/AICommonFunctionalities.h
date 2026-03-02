@@ -11,7 +11,6 @@ class FREDDYS_API UAICommonFunctionalities : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UAICommonFunctionalities();
 
 	UFUNCTION(BlueprintCallable)
 	static bool isVerticalAxis(AIScareDirection Direction);

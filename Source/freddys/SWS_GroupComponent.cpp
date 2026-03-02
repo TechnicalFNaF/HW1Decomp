@@ -1,5 +1,6 @@
 #include "SWS_GroupComponent.h"
 #include "SWS_AudioSource.h"
+#include "Sound/SoundCue.h"
 
 void USWS_GroupComponent::BeginPlay()
 {
@@ -21,7 +22,7 @@ void USWS_GroupComponent::TickComponent(float DeltaTime, enum ELevelTick TickTyp
 void USWS_GroupComponent::Initialize(int id)
 {
 	GroupID = id;
-	if (!ListOfAudioSources.Num() <= 0)
+	if (!(ListOfAudioSources.Num() <= 0))
 	{
 		for (ASWS_AudioSource* AudioSource : ListOfAudioSources)
 		{
@@ -54,7 +55,7 @@ void USWS_GroupComponent::ModifyGroupVolumeMultiplier(float volumeMultiplier)
 	{
 		if (AudioSource->AudioHandle)
 		{
-			SoundCueFile->VolumeMultiplier = volumeMultiplier;
+			AudioSource->SoundCueFile->VolumeMultiplier = volumeMultiplier;
 		}
 	}
 
@@ -68,7 +69,7 @@ void USWS_GroupComponent::ModifyGroupPitchMultiplier(float newPitchMultiplier)
 	{
 		if (AudioSource->AudioHandle)
 		{
-			SoundCueFile->PitchMultiplier = newPitchMultiplier;
+			AudioSource->SoundCueFile->PitchMultiplier = newPitchMultiplier;
 		}
 	}
 

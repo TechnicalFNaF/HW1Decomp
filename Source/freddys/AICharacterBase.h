@@ -4,10 +4,12 @@
 #include "AICharacterBase.generated.h"
 
 UCLASS()
-class FREDDYS_API AAICharacterBase : public ACharacter {
+class FREDDYS_API AAICharacterBase : public ACharacter 
+{
 	GENERATED_BODY()
+
 public:
 	AAICharacterBase(const FObjectInitializer& ObjectInitializer);
 
+	virtual void BeginPlay() override;
 };
-

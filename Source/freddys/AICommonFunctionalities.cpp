@@ -1,18 +1,16 @@
 #include "AICommonFunctionalities.h"
 
-UAICommonFunctionalities::UAICommonFunctionalities() {
+bool UAICommonFunctionalities::isVerticalAxis(AIScareDirection dir)
+{
+	return ((int)dir & ((int)AIScareDirection::Up | (int)AIScareDirection::Down)) != false;
 }
 
-bool UAICommonFunctionalities::isVerticalAxis(AIScareDirection Direction) {
-	return false;
+bool UAICommonFunctionalities::isValidAxisDirection(AIBaseAxisDirection axis, AIScareDirection dir)
+{
+	return ((int)axis & (int)dir) != 0;
 }
 
-bool UAICommonFunctionalities::isValidAxisDirection(AIBaseAxisDirection Axis, AIScareDirection Direction) {
-	return false;
+bool UAICommonFunctionalities::isHorizontalAxis(AIScareDirection dir)
+{
+	return ((int)dir & ((int)AIScareDirection::Left | (int)AIScareDirection::Right)) != false;
 }
-
-bool UAICommonFunctionalities::isHorizontalAxis(AIScareDirection Direction) {
-	return false;
-}
-
-

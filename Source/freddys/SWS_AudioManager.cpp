@@ -127,6 +127,7 @@ FAudioHandle& ASWS_AudioManager::PlayAudioByAudioData(FAudioData** FoundEntry, c
 	NewEntry->AudioComponent = UGameplayStatics::SpawnSoundAtLocation(WorldContextObject, (*FoundEntry)->SoundCue, Location, Rotation, VolumeMultiplier, PitchMultiplier, StartTime, AttenuationSettings, ConcurrencySettings, bAutoDestroy);
 	
 	currentlyPlayingAudio.Add(NewEntry);
+	return *NewEntry;
 }
 
 FAudioHandle ASWS_AudioManager::PlayAudioByAsset(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy)
@@ -193,7 +194,7 @@ ASWS_AudioManager* ASWS_AudioManager::GetAudioManager(UObject* WorldContextObjec
 {
 	if (!instance)
 	{
-		UWorld* World = UEngine::GetWorldFromContextObject(GEngine, EGetWorldErrorMode::Assert);
+		UWorld* World = GEngine->GetWorldFromContextObject(GEngine, EGetWorldErrorMode::Assert);
 		instance = World->SpawnActor<ASWS_AudioManager>();
 
 		instance->OnAudioManagerSpawned.Broadcast(instance);
