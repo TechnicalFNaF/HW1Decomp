@@ -358,7 +358,17 @@ void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& A
                                                              FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor,
                                                              EVRHandType Hand)
 {
-	// todo chungus
+	FVector FinalLoc = AttachmentTransform.TransformPosition(ActorGrabbablePair.AttachmentRelativeLocation);
+	FVector InterpLoc = FMath::VInterpConstantTo(HeldActor->GetActorLocation(),
+		FinalLoc, GetWorld()->DeltaTimeSeconds, LerpGrabSpeed);
+
+	FQuat Rot= AttachmentTransform.TransformRotation(ActorGrabbablePair.AttachmentRelativeRotation.Quaternion());
+	SetActorLocationAndRotation(InterpLoc, Rot);
+
+	if (FVector::PointsAreNear(InterpLoc, FinalLoc, 1.0f))
+	{
+		ActorGrabbablePair.IsLerpingToHand = false;
+	}
 }
 
 void ASWGVRCharacter::OnTrackedControllerChanged_Implementation()
