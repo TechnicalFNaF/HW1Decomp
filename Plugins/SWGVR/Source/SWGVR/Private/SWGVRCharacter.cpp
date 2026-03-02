@@ -123,11 +123,11 @@ void ASWGVRCharacter::StopFrameCounters()
 			FPerformanceInfo PerfInfo = PerformanceList[i];
 			FString PerfString = FString::Printf(TEXT("%f,%f\n"), PerfInfo.TimeStamp, PerfInfo.FPS); // Why isn't this using timestamp as a datetime, that's probably more readable
 
-			result.Append(PerfString);
+			result += result.Append(PerfString);
 		}
 		FDateTime TimeNow = FDateTime::Now();
 
-		// They should really use GetNameSafe here not just GetName
+		// They should really use GetNameSafe here not just GetName, this also only allows one of these per minute as it replaces the old
 		FString PerfOutput = FString::Printf(TEXT("%s/Performance/%s_%d%.2d%.2d_%.2d%.2d_fps.txt"),
 			*FPaths::ProjectLogDir(), *GetWorld()->GetName(), TimeNow.GetYear(), TimeNow.GetMonth(), TimeNow.GetDay(), TimeNow.GetHour(), TimeNow.GetMinute());
 
