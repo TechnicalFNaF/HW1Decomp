@@ -336,7 +336,7 @@ public:
 	FVector GetHeldOffset(EVRHandType Hand, int32 ItemIndex) const;
 	
 	UFUNCTION(BlueprintPure)
-	FMotionControllerInfo GetHandInfo(EVRHandType Hand) const;
+	FMotionControllerInfo& GetHandInfo(EVRHandType Hand) const;
 	
 	UFUNCTION(BlueprintPure)
 	EVRHandType GetHandForPad() const;
@@ -345,7 +345,7 @@ public:
 	USceneComponent* GetHandAttachPoint(EVRHandType Hand) const;
 	
 	UFUNCTION(BlueprintPure)
-	FHeldGrabbableInfo GetGrabbableInfo(const AActor* HeldActor) const;
+	FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor) const;
 	
 	UFUNCTION(BlueprintPure)
 	ESWGVRControllerType GetControllerDeviceType() const;
