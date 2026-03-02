@@ -3,22 +3,34 @@
 #include "Components/ActorComponent.h"
 #include "SWS_GroupComponent.generated.h"
 
-class ASWS_AudioSource;
-
 UCLASS(Blueprintable, ClassGroup=Custom, meta=(BlueprintSpawnableComponent))
-class FREDDYS_API USWS_GroupComponent : public UActorComponent {
+class FREDDYS_API USWS_GroupComponent : public UActorComponent 
+{
 	GENERATED_BODY()
+
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<ASWS_AudioSource*> ListOfAudioSources;
-	
+
 	USWS_GroupComponent(const FObjectInitializer& ObjectInitializer);
 
+protected:
+	
+	virtual void BeginPlay() override;
+
+public:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<class ASWS_AudioSource*> ListOfAudioSources;
+
+	int GroupID;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void Initialize(int id);
+
 	UFUNCTION(BlueprintCallable)
-	void UnRegisterAudioSource(ASWS_AudioSource* cue);
+	void UnRegisterAudioSource(class ASWS_AudioSource* cue);
 	
 	UFUNCTION(BlueprintCallable)
-	void RegisterAudioSource(ASWS_AudioSource* cue);
+	void RegisterAudioSource(class ASWS_AudioSource* cue);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnVolumeModified(float Volume);
@@ -37,6 +49,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	int32 GetTotalAmplitude();
-	
 };
-

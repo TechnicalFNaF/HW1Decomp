@@ -4,17 +4,39 @@
 #include "GameFramework/Actor.h"
 #include "SWS_AudioManager.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAudioManagerSpawned, ASWS_AudioManager*)
+
 UCLASS()
 class FREDDYS_API ASWS_AudioManager : public AActor 
 {
 	GENERATED_BODY()
-public:
+public:	
+
+	ASWS_AudioManager(const FObjectInitializer& ObjectInitializer);
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	UDataTable* AudioAssetData;
+
+	static ASWS_AudioManager* instance;
+	static int GroupCount;
+
+	TArray<FAudioHandle*> audioHandlePool;
+	TArray<FAudioData*> SoundList;
+	TArray<FAudioHandle*> currentlyPlayingAudio;
+
+	static FAudioHandle NullHandle;
+	FOnAudioManagerSpawned OnAudioManagerSpawned;
 	
+private:
+
+	void LoadAudioData();
+
+protected:
+
+	virtual void BeginPlay() override;
+
 public:
-	ASWS_AudioManager(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
 	void StopAudioByID(int32 ID);
@@ -34,6 +56,8 @@ public:
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
 	FAudioHandle PlayAudioByID(int32 ID, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 	
+	FAudioHandle& PlayAudioByAudioData(FAudioData** FoundEntry, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
+
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
 	FAudioHandle PlayAudioByAsset(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 	
