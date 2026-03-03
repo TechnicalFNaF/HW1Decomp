@@ -19,6 +19,7 @@ void USWS_GroupComponent::TickComponent(float DeltaTime, enum ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+// Matching
 void USWS_GroupComponent::Initialize(int id)
 {
 	GroupID = id;
@@ -36,6 +37,7 @@ void USWS_GroupComponent::UnRegisterAudioSource(ASWS_AudioSource* cue)
 	ListOfAudioSources.Remove(cue);
 }
 
+// Matching
 void USWS_GroupComponent::RegisterAudioSource(ASWS_AudioSource* cue) 
 {
 	ListOfAudioSources.Add(cue);
@@ -49,6 +51,7 @@ void USWS_GroupComponent::OnPitchModified_Implementation(float Pitch)
 {
 }
 
+// Matching
 void USWS_GroupComponent::ModifyGroupVolumeMultiplier(float volumeMultiplier)
 {
 	for (ASWS_AudioSource* AudioSource : ListOfAudioSources)
@@ -63,6 +66,7 @@ void USWS_GroupComponent::ModifyGroupVolumeMultiplier(float volumeMultiplier)
 		OnVolumeModified(volumeMultiplier);
 }
 
+// Matching
 void USWS_GroupComponent::ModifyGroupPitchMultiplier(float newPitchMultiplier)
 {
 	for (ASWS_AudioSource* AudioSource : ListOfAudioSources)
