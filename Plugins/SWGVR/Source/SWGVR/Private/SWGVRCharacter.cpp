@@ -1,5 +1,6 @@
 #include "SWGVRCharacter.h"
 
+#include "DrawDebugHelpers.h"
 #include "IHeadMountedDisplay.h"
 #include "IXRTrackingSystem.h"
 #include "FileHelper.h"
@@ -665,8 +666,8 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 	CollisionQuery.IgnoreMask = 0;
 
 	// Double check
-	FVector EndPos = PadLineTraceDistance * MotionController->GetComponentLocation();
-	EndPos *= CompLocation;
+	FVector EndPos = PadLineTraceDistance * MotionController->GetComponentTransform().TransformVectorNoScale(FVector(1.f, 0.f, 0.f));
+	EndPos += CompLocation;
 
 	bool bHoverActor = false;
 	bool bGrabbbable = false;
