@@ -18,6 +18,7 @@
 
 #include "GameFramework/WorldSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "PhysicsEngine/PhysicsSpringComponent.h"
 
 #undef INFINITY
 #define INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
@@ -577,8 +578,135 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 		}
 	}
 	
-	// TODO 140303B06
-	
+	bool v22 = ControllerInfo.PreviousPositions.Num() <= 9;
+	FVector CompLocation = MotionController->GetComponentLocation();
+
+	ControllerInfo.InstantaneousVelocity = CompLocation - ControllerInfo.OldWorldPosition;
+	while (ControllerInfo.PreviousPositions.Num() > 9)
+	{
+		ControllerInfo.PreviousPositions.RemoveAt(0);
+	}
+
+	ControllerInfo.PreviousPositions.Add(CompLocation);
+
+	// TODO: Figure
+	//v27 = ControllerInfo->PreviousPositions.ArrayNum;
+	//ControllerInfo->PreviousPositions.ArrayNum = v27 + 1;
+	//if ((int)v27 + 1 > ControllerInfo->PreviousPositions.ArrayMax)
+	//	TArray<TEvaluationTreeEntryContainer<FSectionEvaluationData>::FEntry, TSizedDefaultAllocator<32>>::ResizeGrow(
+	//		(TArray<FRotator, TSizedDefaultAllocator<32> > *) & ControllerInfo->PreviousPositions,
+	//		v27);
+	//Data = ControllerInfo->PreviousPositions.AllocatorInstance.Data;
+	//v29 = 3 * v27;
+	//v30 = 0;
+	//Distance = FLOAT__Inf;
+	//v32 = 0;
+	//LOBYTE(v121) = 0;
+	//*(FVector*)&Data[4 * v29] = Start;
+	//v33 = (float*)ControllerInfo->PreviousPositions.AllocatorInstance.Data;
+	//v34 = ControllerInfo->PreviousPositions.ArrayNum;
+	//v122.m128_u64[0] = 0;
+	//v35 = (__m128)LODWORD(v33[3 * v34 - 3]);
+	//v36 = (__m128)LODWORD(v33[3 * v34 - 2]);
+	//LeftHandTrigger = 0;
+	//v38 = v33[3 * v34 - 1] - v33[2];
+	//v35.m128_f32[0] = v35.m128_f32[0] - *v33;
+	//v36.m128_f32[0] = v36.m128_f32[0] - v33[1];
+	//v118 = 0;
+	//result.Z = v38;
+	//*(float*)&v34 = v38;
+	//v39 = *(_QWORD*)&Start.X;
+	//*(_QWORD*)&ControllerInfo->Velocity.X = _mm_unpacklo_ps(v35, v36).m128_u64[0];
+	//LODWORD(ControllerInfo->Velocity.Z) = v34;
+	//*(float*)&v34 = Start.Z;
+	//*(_QWORD*)&ControllerInfo->OldWorldPosition.X = v39;
+	//LODWORD(ControllerInfo->OldWorldPosition.Z) = v34;
+
+	USphereComponent* TriggerToUse = nullptr;
+	if (Hand == EVRHandType::Left)
+	{
+		TriggerToUse = LeftHandTrigger;
+	}
+
+	if (Hand == EVRHandType::Right)
+	{
+		TriggerToUse = RightHandTrigger;
+	}
+
+	if (IsInVRMode() && TriggerToUse && ControllerInfo.HoveredObjects.Num() > 0)
+	{
+		for (int i = 0; i != ControllerInfo.HoveredObjects.Num(); i++)
+		{
+			AActor* HoveredActor = ControllerInfo.HoveredObjects[i];
+			if (IsValid(HoveredActor))
+			{
+				if (!TriggerToUse->IsOverlappingActor(HoveredActor))
+				{
+					SendOnHoverEndEvents(HoveredActor, Hand, ControllerInfo);
+				}
+			}
+		}
+	}
+
+	// TODO 140303DB4
+
+	bool v64 = false;
+	if (!bIsUsingPadForHand && USWGVRUtil::CurrentPlayType != EVRPlayType::NotUsingVR)
+	{
+		v64 = false;
+	}
+
+	FCollisionQueryParams CollisionQuery{};
+	CollisionQuery.AddIgnoredActors(ControllerInfo.HeldGrabbables);
+	CollisionQuery.TraceTag = "ForceGrabTrace";
+	CollisionQuery.bFindInitialOverlaps = true;
+	CollisionQuery.MobilityType = EQueryMobilityType::Any;
+	CollisionQuery.bIgnoreTouches = true;
+	CollisionQuery.IgnoreMask = 0;
+
+	// Double check
+	FVector EndPos = PadLineTraceDistance * MotionController->GetComponentLocation();
+	EndPos *= CompLocation;
+
+	bool bHoverActor = false;
+	bool bGrabbbable = false;
+
+	FHitResult OutHit;
+	if (GetWorld()->LineTraceSingleByChannel(OutHit, CompLocation, EndPos, ECC_Visibility, CollisionQuery))
+	{
+		if (OutHit.Actor.IsValid())
+		{
+			if (OutHit.Actor->Implements<USWGVRHoverReceiver>())
+			{
+				bHoverActor = true;
+			}
+
+			if (OutHit.Actor->Implements<USWGGrabbable>())
+			{
+				bGrabbbable = true;
+				ControllerInfo.ClosestGrabbableDistance = OutHit.Distance;
+			}
+			else
+			{
+				ControllerInfo.ClosestGrabbableDistance = INFINITY;
+				bGrabbbable = false;
+			}
+			ControllerInfo.ClosestGrabbableActor = OutHit.Actor.Get();
+
+			if (!IsInVRMode())
+			{
+				ChangeHoveredActor(ControllerInfo.ClosestHoveredActor, ControllerInfo.ClosestHoveredComponent, OutHit.Actor.Get(), OutHit.Component.Get(), Hand);
+			}
+		}
+	}
+	else if (!IsInVRMode())
+	{
+		ControllerInfo.ClosestGrabbableActor = nullptr;
+		ControllerInfo.ClosestGrabbableDistance = INFINITY;
+		ChangeHoveredActor(ControllerInfo.ClosestHoveredActor, ControllerInfo.ClosestHoveredComponent, nullptr, nullptr, Hand);
+	}
+
+	// TODO: 140304075
 }
 
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
