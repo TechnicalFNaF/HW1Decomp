@@ -14,12 +14,12 @@
 #include "SWGVRCameraLocator.h"
 #include "SWGVRHoverReceiver.h"
 #include "SWGVRPlayerControllerBase.h"
+#include "SWGVRSettings.h"
 #include "SWGVRUtil.h"
 #include "Engine/Engine.h"
 
 #include "GameFramework/WorldSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "PhysicsEngine/PhysicsSpringComponent.h"
 
 #undef INFINITY
 #define INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
@@ -32,6 +32,7 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 
 	ThrowMagnitude = 1.f;
 	bGrabClosest = true;
+	HandsThatGrab = EVRHandType::Both;
 	HandsThatInteract = EVRHandType::Both;
 
 	LeftInteractActionName = "LeftInteract";
@@ -368,7 +369,38 @@ void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand,
 
 void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 {
-	// Does nothing
+	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+
+	EVRHandType OtherHand = (Hand == EVRHandType::Left ? EVRHandType::Right : EVRHandType::Left);
+	FMotionControllerInfo OtherControllerInfo = GetHandInfo(OtherHand);
+
+	USceneComponent* AttachPoint = (Hand == EVRHandType::Left ? LeftAttachPoint : RightAttachPoint);
+
+	if (!IsInVRMode() && ControllerInfo.HeldGrabbables.Num() > 0)
+	{
+		ReleaseAll(Hand, true, false, FVector::ZeroVector);
+	}
+	else if (bHoldMultiple || ControllerInfo.HeldGrabbables.Num() <= 0)
+	{
+		if (bGrabClosest)
+		{
+			if (ControllerInfo.ClosestGrabbableActor)
+			{
+				AttemptGrab(Hand, &OtherControllerInfo, ControllerInfo.ClosestGrabbableActor, OtherHand, AttachPoint, &ControllerInfo);
+			}
+		}
+		else
+		{
+			for (int i = 0; i != ControllerInfo.HoveredGrabbables.Num(); i++)
+			{
+				AActor* HoveredActor = ControllerInfo.HoveredGrabbables[i];
+				if (HoveredActor)
+				{
+					AttemptGrab(Hand, &OtherControllerInfo, HoveredActor, OtherHand, AttachPoint, &ControllerInfo);
+				}
+			}
+		}
+	}
 }
 
 void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
@@ -378,7 +410,7 @@ void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
 
 void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
 {
-	if (static_cast<bool>(Hand & HandsThatGrab) && ActionName.IsValid())
+	if (static_cast<bool>(HandsThatGrab & Hand) && ActionName.IsValid())
 	{
 		FInputActionBinding GrabPressedBinding = FInputActionBinding(ActionName, IE_Pressed);
 		FInputActionHandlerSignature& PressedDelegate = GrabPressedBinding.ActionDelegate.GetDelegateForManualSet();
@@ -394,7 +426,7 @@ void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponen
 
 		ReleasedDelegate.BindLambda([this, Hand]()
 		{
-				OnGrabAction(Hand);
+				OnReleaseAction(Hand);
 		});
 		PlayerInputComponent->AddActionBinding(GrabReleasedBinding);
 	}
@@ -590,39 +622,6 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 
 	ControllerInfo.PreviousPositions.Add(CompLocation);
 
-	// TODO: Figure
-	//v27 = ControllerInfo->PreviousPositions.ArrayNum;
-	//ControllerInfo->PreviousPositions.ArrayNum = v27 + 1;
-	//if ((int)v27 + 1 > ControllerInfo->PreviousPositions.ArrayMax)
-	//	TArray<TEvaluationTreeEntryContainer<FSectionEvaluationData>::FEntry, TSizedDefaultAllocator<32>>::ResizeGrow(
-	//		(TArray<FRotator, TSizedDefaultAllocator<32> > *) & ControllerInfo->PreviousPositions,
-	//		v27);
-	//Data = ControllerInfo->PreviousPositions.AllocatorInstance.Data;
-	//v29 = 3 * v27;
-	//v30 = 0;
-	//Distance = FLOAT__Inf;
-	//v32 = 0;
-	//LOBYTE(v121) = 0;
-	//*(FVector*)&Data[4 * v29] = Start;
-	//v33 = (float*)ControllerInfo->PreviousPositions.AllocatorInstance.Data;
-	//v34 = ControllerInfo->PreviousPositions.ArrayNum;
-	//v122.m128_u64[0] = 0;
-	//v35 = (__m128)LODWORD(v33[3 * v34 - 3]);
-	//v36 = (__m128)LODWORD(v33[3 * v34 - 2]);
-	//LeftHandTrigger = 0;
-	//v38 = v33[3 * v34 - 1] - v33[2];
-	//v35.m128_f32[0] = v35.m128_f32[0] - *v33;
-	//v36.m128_f32[0] = v36.m128_f32[0] - v33[1];
-	//v118 = 0;
-	//result.Z = v38;
-	//*(float*)&v34 = v38;
-	//v39 = *(_QWORD*)&Start.X;
-	//*(_QWORD*)&ControllerInfo->Velocity.X = _mm_unpacklo_ps(v35, v36).m128_u64[0];
-	//LODWORD(ControllerInfo->Velocity.Z) = v34;
-	//*(float*)&v34 = Start.Z;
-	//*(_QWORD*)&ControllerInfo->OldWorldPosition.X = v39;
-	//LODWORD(ControllerInfo->OldWorldPosition.Z) = v34;
-
 	USphereComponent* TriggerToUse = nullptr;
 	if (Hand == EVRHandType::Left)
 	{
@@ -665,7 +664,6 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 	CollisionQuery.bIgnoreTouches = true;
 	CollisionQuery.IgnoreMask = 0;
 
-	// Double check
 	FVector EndPos = PadLineTraceDistance * MotionController->GetComponentTransform().TransformVectorNoScale(FVector(1.f, 0.f, 0.f));
 	EndPos += CompLocation;
 
@@ -708,6 +706,31 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 	}
 
 	// TODO: 140304075
+	if (IsInVRMode())
+	{
+		// DO VR MODE STUFF - 14030407A
+	}
+
+	for (auto HeldInfo : GetHandInfo(Hand).HeldInfo)
+	{
+		if (IsValid(HeldInfo.Key))
+		{
+			const USWGVRSettings* SWGVRSettings = GetDefault<USWGVRSettings>();
+			if (true /* BYTE4(v98->PrimaryActorTick.Target) */)
+			{
+				ProcessInterpolatedGrab(AttachPoint->GetComponentTransform(), HeldInfo.Value, HeldInfo.Key, Hand);
+			}
+			else
+			{
+				FTransform AttachmentTransform = AttachPoint->GetComponentTransform();
+
+				FVector Loc = AttachmentTransform.TransformPosition(HeldInfo.Value.AttachmentRelativeLocation);
+				FQuat Rot = AttachmentTransform.TransformRotation(HeldInfo.Value.AttachmentRelativeRotation.Quaternion());
+
+				HeldInfo.Key->SetActorLocationAndRotation(Loc, Rot);
+			}
+		}
+	}
 }
 
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
