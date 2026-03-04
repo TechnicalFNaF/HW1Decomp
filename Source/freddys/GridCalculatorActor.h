@@ -84,16 +84,16 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	int32 GridWidth;
+	int32 GridWidth = 10;
 
 	UPROPERTY(EditAnywhere)
-	int32 GridHeight;
+	int32 GridHeight = 10;
 
 	UPROPERTY(EditAnywhere)
-	float GridCellSize;
+	float GridCellSize = 100.f;
 
 	UPROPERTY(EditAnywhere)
-	bool bShowDebug;
+	bool bShowDebug = false;
 
 	UPROPERTY(Instanced, VisibleAnywhere)
 	TArray<class UTextRenderComponent*> TextRenderers;

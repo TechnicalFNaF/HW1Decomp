@@ -57,7 +57,7 @@ int32 ULevelDB::GetLevelIDByName(FString Name)
 			return GameLevel.LevelID;
 		}
 	}
-	return UINT_MAX;
+	return -1;
 }
 
 // Matching
@@ -70,7 +70,7 @@ int32 ULevelDB::GetLevelID(TSoftObjectPtr<UWorld> Level)
 			return GameLevel.LevelID;
 		}
 	}
-	return UINT_MAX;
+	return -1;
 }
 
 // Matching

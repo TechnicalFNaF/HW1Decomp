@@ -2,15 +2,12 @@
 #include "Components/SceneComponent.h"
 #include "Engine/World.h"
 
-AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+// Matching
+AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	GridWidth = 10;
-	GridHeight = 10;
-	GridCellSize = 100.f;
-	bShowDebug = false;
 	PrimaryActorTick.bCanEverTick = true;
-
-	Root = CreateDefaultSubobject<USceneComponent>("Root");
+	RootComponent = Root = CreateDefaultSubobject<USceneComponent>("Root");
 }
 
 void AGridCalculatorActor::BeginPlay()
@@ -62,13 +59,13 @@ void AGridCalculatorActor::BeginPlay()
 	Super::BeginPlay();
 }
 
+// Matching
 void AGridCalculatorActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	// Unused
 }
 
+// Matching
 void AGridCalculatorActor::ResetDistances() 
 {
 	for (int& Distance : Distances)
@@ -77,88 +74,82 @@ void AGridCalculatorActor::ResetDistances()
 	}
 }
 
+// Matching
 int32 AGridCalculatorActor::GetDistanceToCellAtWorldPosition(const FVector& WorldPosition) const 
 {
 	int CellIDFromWorldPosition = GetCellIDFromWorldPosition(WorldPosition);
-	return GetDistanceToCell(CellIDFromWorldPosition); // Inlined in exe
+	return GetDistanceToCell(CellIDFromWorldPosition);
 }
 
+// Matching
 int32 AGridCalculatorActor::GetDistanceToCell(int32 CellID) const
 {
 	if (Distances.IsValidIndex(CellID))
 		return Distances[CellID];
 
-	return UINT_MAX;
-
-	// Inlined IsValidIndex
-
-	//if (CellID < 0 || CellID >= Distances.Num())
-	//	return UINT_MAX;
-	//else
-	//	return Distances[CellID];
+	return -1;
 }
 
+// Matching
 FVector AGridCalculatorActor::GetCellWorldPositionByCellPos(int32 CellX, int32 CellY) const 
 {
 	FVector GridPos = FVector{ CellX * GridCellSize, CellY * GridCellSize, 0.f };
-	return GetActorTransform().TransformPositionNoScale(GridPos);
+	return GetTransform().TransformPositionNoScale(GridPos);
 }
 
+// Matching
 FVector AGridCalculatorActor::GetCellWorldPosition(int32 CellID) const 
 {
 	int CellX, CellY;
 	GetCellPosition(CellID, CellX, CellY);
-
 	return GetCellWorldPositionByCellPos(CellX, CellY);
 }
 
+// TODO Not matching
 TArray<int32> AGridCalculatorActor::GetCellsBetweenDistances(int32 MinDistance, int32 MaxDistance) const 
 {
 	TArray<int32> CellsBetween = {};
-	if (GridHeight * GridWidth > 0)
+	for (int i = 0; i < GridHeight * GridWidth; i++)
 	{
-		for (int Cell = 0; Cell < GridHeight * GridWidth; Cell++)
+		int32 Cell = Distances[i];
+		if (Cell >= MinDistance && Cell <= MaxDistance)
 		{
-			if (Cell >= MinDistance && Cell <= MaxDistance)
-			{
-				CellsBetween.Add(Cell);
-			}
+			CellsBetween.Add(Cell);
 		}
 	}
-
 	return CellsBetween;
 }
 
+// Matching
 TArray<int32> AGridCalculatorActor::GetCellsAtDistance(int32 Distance) const 
 {
 	TArray<int32> CellsAt = {};
-	if (GridHeight * GridWidth > 0)
+	for (int Cell = 0; Cell < GridHeight * GridWidth; Cell++)
 	{
-		for (int Cell = 0; Cell < GridHeight * GridWidth; Cell++)
+		if (Distances[Cell] == Distance)
 		{
-			if (Distances[Cell] == Distance)
-			{
-				CellsAt.Add(Cell);
-			}
+			CellsAt.Add(Cell);
 		}
 	}
-
 	return CellsAt;
 }
 
+// Matching
 void AGridCalculatorActor::GetCellPosition(int32 CellID, int32& CellX, int32& CellY) const 
 {
 	CellX = CellID % GridWidth;
 	CellY = CellID / GridWidth;
 }
 
+// Matching
 void AGridCalculatorActor::GetCellPosFromWorldPosition(const FVector& WorldPosition, int32& CellX, int32& CellY) const 
 {
-	FVector InversedWorldPos = GetActorTransform().InverseTransformPositionNoScale(WorldPosition);
+	FVector InversedWorldPos = GetTransform().InverseTransformPositionNoScale(WorldPosition);
 	CellX = (InversedWorldPos.X + (GridCellSize * 0.5f)) / GridCellSize;
 	CellY = (InversedWorldPos.Y + (GridCellSize * 0.5f)) / GridCellSize;
 }
 
+// TODO Not matching
 int32 AGridCalculatorActor::GetCellIDFromWorldPosition(const FVector& WorldPosition) const 
 {
 	int CellX, CellY;
@@ -168,68 +159,55 @@ int32 AGridCalculatorActor::GetCellIDFromWorldPosition(const FVector& WorldPosit
 	if (Distances.IsValidIndex(CellId))
 		return CellId;
 
-	return UINT_MAX;
+	return -1;
 }
 
+// Matching
 int32 AGridCalculatorActor::GetCellIDFromGridPosition(int32 CellX, int32 CellY) const 
 {
 	if (CellX < 0)
-		return UINT_MAX;
+		return -1;
 
 	if (CellY < 0)
-		return UINT_MAX;
+		return -1;
 
 	if (CellX >= GridWidth || CellY >= GridHeight)
-		return UINT_MAX;
+		return -1;
 
 	return CellX + CellY * GridWidth;
 }
 
+// TODO Not matching, functionally identical
 TArray<int32> AGridCalculatorActor::FindPathFromWorldPositions(const FVector& WorldPositionStart, const FVector& WorldPositionEnd) const 
 {
-	TArray<int32> Path{};
-	GetCellIDFromGridPosition(WorldPositionEnd.X, WorldPositionEnd.Y);
-
-	// What has happened here FindPathFromWorldPositions
-
-	//v4 = 1.0 / this->GridCellSize;
-	//v5 = (int)(float)(v4 * WorldPositionEnd->X);
-	//v6 = (int)(float)(v4 * WorldPositionEnd->Y);
-	//if (v5 < 0 || v6 < 0 || v5 >= this->GridWidth || v6 >= this->GridHeight)
-	//{
-	//	result->AllocatorInstance.Data = 0;
-	//	result->ArrayNum = 0;
-	//	result->ArrayMax = 0;
-	//	return result;
-	//}
-	//else
-	//{
-	//	result->AllocatorInstance.Data = 0;
-	//	result->ArrayNum = 0;
-	//	result->ArrayMax = 0;
-	//	return result;
-	//}
-
-	return Path;
+	if (GetCellIDFromGridPosition(WorldPositionEnd.X, WorldPositionEnd.Y) < 0)
+	{
+		int og = GetCellIDFromGridPosition(WorldPositionEnd.X, WorldPositionEnd.Y);
+		return {};
+	}
+	return {};
 }
 
+// TODO Not matching, functionally identical
 TArray<int32> AGridCalculatorActor::FindPathFromCellIDs(int32 StartCellID, int32 EndCellID) const 
 {
-	// Probably wrong, ruby check later 1406A0450
-	if (Distances.IsValidIndex(StartCellID))
-		return Distances;
-
-	return TArray<int32>();
+	TArray<int32> Out;
+	if (Out.IsValidIndex(StartCellID))
+	{
+		Distances;
+	}
+	return Out;
 }
 
+// TODO Not matching
 void AGridCalculatorActor::CalculateDistancesFromWorldPosition(const FVector& WorldPosition) 
 {
 	int CellX, CellY;
 	GetCellPosFromWorldPosition(WorldPosition, CellX, CellY);
-
 	CalculateDistancesFromGridPosition(CellX, CellY);
 }
 
+// TODO Not matching
 void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32 GridY) 
 {
 	ResetDistances();
