@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "ConstructorHelpers.h"
 #include "SWS_AudioStatics.h"
 #include "GameFramework/Actor.h"
 #include "SWS_AudioManager.generated.h"
@@ -30,7 +31,21 @@ private:
 	
 private:
 
-	void LoadAudioData();
+	// TODO Not matching
+	FORCEINLINE void LoadAudioData()
+	{
+		FString location = "/Game/ProductionAssets/Audio";
+		FString sceneName = GetWorld()->GetName();
+		location += sceneName + "_AudioAssets";
+
+		static ConstructorHelpers::FObjectFinder<UDataTable> myTable(*location);
+
+		if (myTable.Object)
+			AudioAssetData = myTable.Object;
+
+		UDataTable* AudioAsset = AudioAssetData;
+		AudioAsset->GetAllRows<FAudioData>("", SoundList);
+	}
 
 protected:
 
@@ -51,15 +66,15 @@ public:
 	void RefreshAudioHandlePool(FAudioHandle& Handle);
 	
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
-	FAudioHandle PlayAudioByName(const FString& Name, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
+	FAudioHandle& PlayAudioByName(FString Name, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 	
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
-	FAudioHandle PlayAudioByID(int32 ID, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
+	FAudioHandle& PlayAudioByID(int32 ID, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 	
 	FAudioHandle& PlayAudioByAudioData(FAudioData** FoundEntry, const UObject* WorldContextObject, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject"))
-	FAudioHandle PlayAudioByAsset(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
+	FAudioHandle& PlayAudioByAsset(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy);
 	
 	UFUNCTION(BlueprintCallable)
 	int32 GetSoundID(USoundCue* cue);

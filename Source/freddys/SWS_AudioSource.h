@@ -8,14 +8,14 @@ class FREDDYS_API ASWS_AudioSource : public AActor
 {
 	GENERATED_BODY()
 
-	ASWS_AudioSource(const FObjectInitializer& ObjectInitializer);
+	ASWS_AudioSource();
 
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class USoundCue* SoundCueFile;
 
-	int AudioGroupID;
+	int AudioGroupID = -1;
 	int AudioSourceGlobalID;
 	struct FAudioHandle* AudioHandle;
 

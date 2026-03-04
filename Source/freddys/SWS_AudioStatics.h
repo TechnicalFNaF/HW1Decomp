@@ -25,6 +25,8 @@ struct FAudioData : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	FAudioData() : NoiseValue(0) {}
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	uint8 NoiseValue;
 
@@ -32,7 +34,7 @@ struct FAudioData : public FTableRowBase
 	uint8 AudioID;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Name;
+	FString name;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USoundCue* SoundCue;
@@ -51,7 +53,7 @@ struct FAudioHandle
 	FAudioData AudioData;
 
 	UPROPERTY(Instanced, VisibleAnywhere)
-	UAudioComponent* AudioComponent;
+	UAudioComponent* AudioComponent = nullptr;
 };
 
 UCLASS()
