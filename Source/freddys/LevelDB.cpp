@@ -4,19 +4,19 @@
 
 ULevelDB* ULevelDB::instance = nullptr;
 
-void ULevelDB::LoadLevelByName(const FString& LevelName) 
+// Matching
+void ULevelDB::LoadLevelByName(FString LevelName) 
 {
 	for (FGameLevels GameLevel : GameLevels)
 	{
 		if (GameLevel.Level.GetAssetName() == LevelName)
 		{
-			FString LevelString = GameLevel.Level.GetAssetName();
-
-			UGameplayStatics::OpenLevel(GetWorld(), *LevelString, true);
+			UGameplayStatics::OpenLevel(GetWorld(), *GameLevel.Level.GetAssetName(), true);
 		}
 	}
 }
 
+// Matching
 void ULevelDB::LoadLevelByID(int32 LevelID) 
 {
 	// They are calling a copy ctr, eventually change
@@ -24,28 +24,31 @@ void ULevelDB::LoadLevelByID(int32 LevelID)
 	{
 		if (GameLevel.LevelID == LevelID)
 		{
-			FString LevelString = GameLevel.Level.GetAssetName();
-
-			UGameplayStatics::OpenLevel(GetWorld(), *LevelString, true);
+			UGameplayStatics::OpenLevel(GetWorld(), *GameLevel.Level.GetAssetName(), true);
 		}
 	}
 }
 
+// Matching
 void ULevelDB::LoadLevel(TSoftObjectPtr<UWorld> Level) 
 {
-	// bro... this sucks
+	bool bLevelInDB = false;
 	for (FGameLevels GameLevel : GameLevels)
 	{
 		if (GameLevel.Level == Level)
 		{
-			FString LevelString = GameLevel.Level.GetAssetName();
-
-			UGameplayStatics::OpenLevel(GetWorld(), *LevelString, true);
+			bLevelInDB = true;
 		}
+	}
+
+	if (bLevelInDB)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), *Level.GetAssetName(), true);
 	}
 }
 
-int32 ULevelDB::GetLevelIDByName(const FString& Name) 
+// Matching
+int32 ULevelDB::GetLevelIDByName(FString Name) 
 {
 	for (FGameLevels GameLevel : GameLevels)
 	{
@@ -54,10 +57,10 @@ int32 ULevelDB::GetLevelIDByName(const FString& Name)
 			return GameLevel.LevelID;
 		}
 	}
-
 	return UINT_MAX;
 }
 
+// Matching
 int32 ULevelDB::GetLevelID(TSoftObjectPtr<UWorld> Level) 
 {
 	for (FGameLevels GameLevel : GameLevels)
@@ -67,16 +70,15 @@ int32 ULevelDB::GetLevelID(TSoftObjectPtr<UWorld> Level)
 			return GameLevel.LevelID;
 		}
 	}
-
 	return UINT_MAX;
 }
 
+// Matching
 ULevelDB* ULevelDB::CreateLevelDB(UObject* Owner) 
 {
-	if (!instance)
+	if (!instance)	
 	{
 		instance = NewObject<ULevelDB>(Owner);
 	}
-
 	return instance;
 }

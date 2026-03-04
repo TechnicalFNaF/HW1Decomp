@@ -41,16 +41,16 @@ public:
 	static ULevelDB* instance;
 
 	UFUNCTION(BlueprintCallable)
-	void LoadLevelByName(const FString& LevelName);
+	void LoadLevelByName(FString LevelName);
 	
 	UFUNCTION(BlueprintCallable)
 	void LoadLevelByID(int32 LevelID);
 	
 	UFUNCTION(BlueprintCallable)
-	void LoadLevel(TSoftObjectPtr<UWorld> Level);
+	virtual void LoadLevel(TSoftObjectPtr<UWorld> Level);
 	
 	UFUNCTION(BlueprintCallable)
-	int32 GetLevelIDByName(const FString& Name);
+	int32 GetLevelIDByName(FString Name);
 	
 	UFUNCTION(BlueprintCallable)
 	int32 GetLevelID(TSoftObjectPtr<UWorld> Level);
