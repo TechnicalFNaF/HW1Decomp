@@ -4,8 +4,10 @@
 #include "SWS_AudioGroups.generated.h"
 
 UCLASS()
-class FREDDYS_API ASWS_AudioGroups : public AActor {
+class FREDDYS_API ASWS_AudioGroups : public AActor
+{
 	GENERATED_BODY()
+	
 public:
 	ASWS_AudioGroups(const FObjectInitializer& ObjectInitializer);
 
@@ -16,11 +18,6 @@ public:
 	int GroupID;
 
 protected:
-
 	virtual void BeginPlay() override;
-
-public: 
-
-	virtual void Tick(float DeltaSeconds);
 };
 
