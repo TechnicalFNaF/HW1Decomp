@@ -13,6 +13,7 @@
 #include "SWGGrabbable.h"
 #include "SWGVRCameraLocator.h"
 #include "SWGVRHoverReceiver.h"
+#include "SWGVRInteractive.h"
 #include "SWGVRPlayerControllerBase.h"
 #include "SWGVRSettings.h"
 #include "SWGVRUtil.h"
@@ -367,6 +368,7 @@ void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand,
 	}
 }
 
+// TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_967afc17173eb4af74b07a8953f78ecc___::Execute
 void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 {
 	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
@@ -403,9 +405,23 @@ void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 	}
 }
 
+// TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3ae24b327b54816782408ba530af2541___::Execute
 void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
 {
-	// Does nothing
+	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+
+	if (IsInVRMode())
+	{
+		FVector ThrowVelocity = ThrowMagnitude * ControllerInfo.Velocity;
+		for (int i = 0; i != ControllerInfo.HeldGrabbables.Num(); i++)
+		{
+			AActor* HeldGrabbable = ControllerInfo.HeldGrabbables[i];
+			if (HeldGrabbable)
+			{
+				ReleaseGrabbableInternal(HeldGrabbable, Hand, false, ThrowVelocity, &ControllerInfo);
+			}
+		}
+	}
 }
 
 void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
@@ -504,14 +520,28 @@ LABEL_32:
 	return true;
 }
 
+// TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3a9174d4fada2ec770f5cf32c01cad19___::Execute
 void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
 {
-	// Does nothing
+	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+	
+	for (int i = 0; i != ControllerInfo.HoveredObjects.Num(); i++)
+	{
+		SendOnVRInteract(ControllerInfo.HoveredObjects[i], Hand);
+	}
+
+	for (int i = 0; i != ControllerInfo.HoveredGrabbables.Num(); i++)
+	{
+		SendOnVRInteract(ControllerInfo.HoveredGrabbables[i], Hand);
+	}
 }
 
 void ASWGVRCharacter::SendOnVRInteract(UObject* Object, EVRHandType Hand)
 {
-	// Does nothing
+	if (IsValid(Object) && Object->Implements<USWGVRInteractive>())
+	{
+		ISWGVRInteractive::Execute_OnVRInteract(Object, this, Hand);
+	}
 }
 
 void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
