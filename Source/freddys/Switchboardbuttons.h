@@ -13,7 +13,7 @@ class FREDDYS_API ASwitchboardbuttons : public AActor
 
 public:
 
-	ASwitchboardbuttons(const FObjectInitializer& ObjectInitializer);
+	ASwitchboardbuttons();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnSwitchBoardButtonPessed(const FString& buttonidentification);
