@@ -9,13 +9,9 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"ViveportSDK"
 			]
-		},
-		{
-			"Name": "ViveMixedReality",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -24,8 +20,17 @@
 			"Enabled": true
 		},
 		{
+			"Name": "eXiSoundVis",
+			"Enabled": false
+		},
+		{
 			"Name": "SWGVR",
 			"Enabled": true
+		},
+		{
+			"Name": "Substance",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/2f6439c2f9584f49809d9b13b16c2ba4"
 		},
 		{
 			"Name": "Niagara",
@@ -38,6 +43,33 @@
 		{
 			"Name": "OnlineSubsystemOculus",
 			"Enabled": true
+		},
+		{
+			"Name": "ViveMixedReality",
+			"Enabled": true
+		},
+		{
+			"Name": "StereoPanorama",
+			"Enabled": false
+		},
+		{
+			"Name": "SteamVR",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux",
+				"Mac"
+			]
+		},
+		{
+			"Name": "OculusVR",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Android"
+			]
 		},
 		{
 			"Name": "ViveportSDK",

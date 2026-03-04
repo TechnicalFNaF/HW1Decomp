@@ -8,9 +8,7 @@ public class freddysEditorTarget : TargetRules
 		
 		ExtraModuleNames.AddRange(new string[] 
 		{
-			"freddys",
-			"ViveMixedReality",
-			"ViveportSDK",
+			"freddys"
 		});
 	}
 }
