@@ -1,13 +1,36 @@
 #include "ViveMixedRealityBPLibrary.h"
 
+#include "GameFramework/GameUserSettings.h"
+#include "Kismet/GameplayStatics.h"
+#include "Materials/MaterialInstanceDynamic.h"
+
 UViveMixedRealityBPLibrary::UViveMixedRealityBPLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	Log(TEXT("*** ViveMixedRealityBP: Super"));
+	Log("*** ViveMixedRealityBP: Super");
 }
 
 void UViveMixedRealityBPLibrary::AddMixedRealityComponent(AMixedRealityComponent*& pMixedRealityComponent, AActor* pVRPawnTarget, FLinearColor pChromaColor, APlayerCameraManager* pCharacterCamera)
 {
+	Log("*** ViveMixedRealityBP: Init");
+
+	UWorld* TargetWorld = pVRPawnTarget->GetWorld();
+
+	APlayerCameraManager* CharacterCamera = pCharacterCamera;
+	if (!CharacterCamera)
+		CharacterCamera = UGameplayStatics::GetPlayerCameraManager(TargetWorld, 0);
+
+	AMixedRealityComponent* SpawnedComp = TargetWorld->SpawnActor<AMixedRealityComponent>();
+	SpawnedComp->Target = pVRPawnTarget;
+	SpawnedComp->Character = pCharacterCamera;
+	SpawnedComp->World = pVRPawnTarget->GetWorld();
+	SpawnedComp->screenresolution = UGameUserSettings::GetGameUserSettings()->GetDesktopResolution();
+
+	SpawnedComp->PostProcessNear->SetVectorParameterValue("ChromaColor", pChromaColor);
+	SpawnedComp->FinishSpawning(FTransform::Identity);
+
+	SpawnedComp->AttachToActor(pVRPawnTarget, FAttachmentTransformRules::KeepRelativeTransform);
+	pMixedRealityComponent = SpawnedComp;
 }
 
 void UViveMixedRealityBPLibrary::EnableMixedReality(AMixedRealityComponent* pMixedRealityComponent, int32 pCameraTrackerID) 
@@ -16,7 +39,7 @@ void UViveMixedRealityBPLibrary::EnableMixedReality(AMixedRealityComponent* pMix
 
 void UViveMixedRealityBPLibrary::DisableMixedReality(AMixedRealityComponent* pMixedRealityComponent) 
 {
-	Log(TEXT("*** ViveMixedRealityBP: DisableMixedReality"));
+	Log("*** ViveMixedRealityBP: DisableMixedReality");
 
 	if (pMixedRealityComponent)
 		pMixedRealityComponent->StopMixedReality();

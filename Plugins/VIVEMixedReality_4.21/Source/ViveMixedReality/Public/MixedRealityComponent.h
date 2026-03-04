@@ -18,6 +18,9 @@ UCLASS()
 class AMixedRealityComponent : public AActor
 {
 	GENERATED_BODY()
+
+	friend class UViveMixedRealityBPLibrary;
+
 	AMixedRealityComponent(const FObjectInitializer & ObjectInitializer);
 	~AMixedRealityComponent();
 
