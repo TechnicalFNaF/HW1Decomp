@@ -80,7 +80,7 @@ public:
 	int32 GetSoundID(USoundCue* cue);
 	
 	UFUNCTION(BlueprintCallable)
-	USoundCue* GetSoundCueByName(const FString& Name);
+	USoundCue* GetSoundCueByName(FString Name);
 	
 	UFUNCTION(BlueprintCallable)
 	USoundCue* GetSoundByID(int32 ID);

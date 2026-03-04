@@ -144,10 +144,10 @@ FAudioHandle& ASWS_AudioManager::PlayAudioByAudioData(FAudioData** FoundEntry, c
 	return NullHandle;
 }
 
-// TODO Check if matching
+// Matching
 FAudioHandle& ASWS_AudioManager::PlayAudioByAsset(const UObject* WorldContextObject, USoundBase* Sound, FVector Location, FRotator Rotation, float VolumeMultiplier, float PitchMultiplier, float StartTime, USoundAttenuation* AttenuationSettings, USoundConcurrency* ConcurrencySettings, bool bAutoDestroy)
 {
-	if (SoundList.Num())
+	if (SoundList.Num() && Sound)
 	{
 		FAudioData** AudioData = SoundList.FindByPredicate([&](FAudioData* Data)
 		{
@@ -156,27 +156,31 @@ FAudioHandle& ASWS_AudioManager::PlayAudioByAsset(const UObject* WorldContextObj
 
 		return PlayAudioByAudioData(AudioData, WorldContextObject, Location, Rotation, VolumeMultiplier, PitchMultiplier, StartTime, AttenuationSettings, ConcurrencySettings, bAutoDestroy);
 	}
-
 	return NullHandle;
 }
 
-// TODO Check if matching
+// Matching
 int32 ASWS_AudioManager::GetSoundID(USoundCue* cue) 
 {
-	if (currentlyPlayingAudio.Num())
+	if (!SoundList.Num())
+		return 0;
+	if (!cue)
+		return 0;
+	
+	FAudioData** AudioData = SoundList.FindByPredicate([&](FAudioData* Data)
 	{
-		FAudioData* AudioData = *SoundList.FindByPredicate([&](FAudioData* Data)
-		{
-			return Data->SoundCue == cue;
-		});
+		return Data->SoundCue == cue;
+	});
 
-		return AudioData->AudioID;
+	if (AudioData)
+	{
+		return (*AudioData)->AudioID;
 	}
 	return 0;
 }
 
-// TODO Check if matching
-USoundCue* ASWS_AudioManager::GetSoundCueByName(const FString& Name) 
+// Matching
+USoundCue* ASWS_AudioManager::GetSoundCueByName(FString Name)
 {
 	for (int i = 0; i != SoundList.Num(); i++)
 	{
