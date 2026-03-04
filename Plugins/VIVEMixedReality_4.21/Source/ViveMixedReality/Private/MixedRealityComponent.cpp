@@ -17,6 +17,10 @@ void AMixedRealityComponent::StartMixedReality(int32 trackerID)
 {
 }
 
+void AMixedRealityComponent::StopMixedReality()
+{
+}
+
 bool AMixedRealityComponent::LoadConfig()
 {
 	return false;
@@ -30,6 +34,9 @@ bool AMixedRealityComponent::SetupCapture()
 void AMixedRealityComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	Log(TEXT("*** MixedRealityComponent: BeginPlay"));
+	SetActorTickEnabled(false);
+	//SetupCapture();
 }
 
 void AMixedRealityComponent::Tick(float DeltaTime)
@@ -39,7 +46,7 @@ void AMixedRealityComponent::Tick(float DeltaTime)
 
 bool AMixedRealityComponent::ShouldTickIfViewportsOnly() const
 {
-	return Super::ShouldTickIfViewportsOnly();
+	return true;
 }
 
 bool AMixedRealityComponent::FileLoadString(FString FileNameA, FString& SaveTextA)
@@ -49,4 +56,5 @@ bool AMixedRealityComponent::FileLoadString(FString FileNameA, FString& SaveText
 
 void AMixedRealityComponent::Log(FString pString)
 {
+	UE_LOG(LogTemp, Display, TEXT("%s"), *pString);
 }
