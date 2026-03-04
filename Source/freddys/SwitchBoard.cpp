@@ -1,7 +1,7 @@
 #include "SwitchBoard.h"
 
-ASwitchBoard::ASwitchBoard(const FObjectInitializer& ObjectInitializer) 
-	: Super(ObjectInitializer) 
+// Matching
+ASwitchBoard::ASwitchBoard()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }

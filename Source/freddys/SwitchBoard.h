@@ -10,5 +10,5 @@ class FREDDYS_API ASwitchBoard : public AActor
 
 public:
 
-	ASwitchBoard(const FObjectInitializer& ObjectInitializer);
+	ASwitchBoard();
 };
