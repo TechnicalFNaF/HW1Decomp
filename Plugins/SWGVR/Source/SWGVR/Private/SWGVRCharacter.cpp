@@ -641,123 +641,185 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 		}
 	}
 	
-	bool v22 = ControllerInfo.PreviousPositions.Num() <= 9;
-	FVector CompLocation = MotionController->GetComponentLocation();
+	//bool v22 = ControllerInfo.PreviousPositions.Num() <= 9;
+	FVector Start = MotionController->GetComponentLocation();
 
-	ControllerInfo.InstantaneousVelocity = CompLocation - ControllerInfo.OldWorldPosition;
+	ControllerInfo.InstantaneousVelocity = Start - ControllerInfo.OldWorldPosition;
 	while (ControllerInfo.PreviousPositions.Num() > 9)
 	{
 		ControllerInfo.PreviousPositions.RemoveAt(0);
 	}
 
-	ControllerInfo.PreviousPositions.Add(CompLocation);
+	ControllerInfo.PreviousPositions.Add(Start);
+	
+	FVector LastLoc = ControllerInfo.PreviousPositions.Last();
+	ControllerInfo.Velocity = ControllerInfo.PreviousPositions[0] - LastLoc;
+	ControllerInfo.OldWorldPosition = LastLoc;
 
 	USphereComponent* TriggerToUse = nullptr;
 	if (Hand == EVRHandType::Left)
 	{
 		TriggerToUse = LeftHandTrigger;
 	}
-
 	if (Hand == EVRHandType::Right)
 	{
 		TriggerToUse = RightHandTrigger;
 	}
 
-	if (IsInVRMode() && TriggerToUse && ControllerInfo.HoveredObjects.Num() > 0)
+	if (IsInVRMode() && TriggerToUse)
 	{
-		for (int i = 0; i != ControllerInfo.HoveredObjects.Num(); i++)
+		for (int i = 0; i < ControllerInfo.HoveredObjects.Num(); i++)
 		{
 			AActor* HoveredActor = ControllerInfo.HoveredObjects[i];
-			if (IsValid(HoveredActor))
+			if (!IsValid(HoveredActor))
 			{
-				if (!TriggerToUse->IsOverlappingActor(HoveredActor))
+				ControllerInfo.HoveredObjects.RemoveAt(i);
+				i--;
+			}
+			if (!TriggerToUse->IsOverlappingActor(HoveredActor))
+			{
+				SendOnHoverEndEvents(HoveredActor, Hand, ControllerInfo);
+				i--;
+			}
+		}
+	}
+	
+	bool bHoverActor = false;
+	bool bGrabbable = false;
+	float OutDistance = INFINITY;
+	AActor* OutActor = nullptr;
+	UPrimitiveComponent* OutComp = nullptr;
+
+	if (bIsUsingPadForHand || USWGVRUtil::CurrentPlayType == EVRPlayType::NotUsingVR)
+	{
+		FCollisionQueryParams CollisionQuery;
+		CollisionQuery.TraceTag = "ForceGrabTrace";
+		CollisionQuery.bIgnoreTouches = true;
+		CollisionQuery.AddIgnoredActors(ControllerInfo.HeldGrabbables);
+
+		FVector End = Start + PadLineTraceDistance * MotionController->GetForwardVector();
+
+		FHitResult OutHit;
+		if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionQuery))
+		{
+			if (OutHit.Actor.IsValid())
+			{
+				if (OutHit.Actor->Implements<USWGVRHoverReceiver>())
 				{
-					SendOnHoverEndEvents(HoveredActor, Hand, ControllerInfo);
+					bHoverActor = true;
+				}
+				
+				OutDistance = OutHit.Distance;
+				OutActor = OutHit.Actor.Get();
+				OutComp = OutHit.Component.Get();
+				
+				AActor* HoveredActor;
+				if (OutHit.Actor->Implements<USWGGrabbable>())
+				{
+					HoveredActor = OutHit.Actor.Get();
+					bGrabbable = true;
+					ControllerInfo.ClosestGrabbableDistance = OutHit.Distance;
+				}
+				else
+				{
+					ControllerInfo.ClosestGrabbableDistance = INFINITY;
+					HoveredActor = nullptr;
+					bGrabbable = false;
+				}
+				ControllerInfo.ClosestGrabbableActor = HoveredActor;
+				
+				if (!IsInVRMode())
+				{
+					ChangeHoveredActor(ControllerInfo.ClosestHoveredActor,
+						ControllerInfo.ClosestHoveredComponent,
+						OutActor, OutComp, Hand);
 				}
 			}
 		}
-	}
-
-	// TODO 140303DB4
-
-	bool v64 = false;
-	if (!bIsUsingPadForHand && USWGVRUtil::CurrentPlayType != EVRPlayType::NotUsingVR)
-	{
-		v64 = false;
-	}
-
-	FCollisionQueryParams CollisionQuery{};
-	CollisionQuery.AddIgnoredActors(ControllerInfo.HeldGrabbables);
-	CollisionQuery.TraceTag = "ForceGrabTrace";
-	CollisionQuery.bFindInitialOverlaps = true;
-	CollisionQuery.MobilityType = EQueryMobilityType::Any;
-	CollisionQuery.bIgnoreTouches = true;
-	CollisionQuery.IgnoreMask = 0;
-
-	FVector EndPos = PadLineTraceDistance * MotionController->GetComponentTransform().TransformVectorNoScale(FVector(1.f, 0.f, 0.f));
-	EndPos += CompLocation;
-
-	bool bHoverActor = false;
-	bool bGrabbbable = false;
-
-	FHitResult OutHit;
-	if (GetWorld()->LineTraceSingleByChannel(OutHit, CompLocation, EndPos, ECC_Visibility, CollisionQuery))
-	{
-		if (OutHit.Actor.IsValid())
+		else if (!IsInVRMode())
 		{
-			if (OutHit.Actor->Implements<USWGVRHoverReceiver>())
-			{
-				bHoverActor = true;
-			}
-
-			if (OutHit.Actor->Implements<USWGGrabbable>())
-			{
-				bGrabbbable = true;
-				ControllerInfo.ClosestGrabbableDistance = OutHit.Distance;
-			}
-			else
-			{
-				ControllerInfo.ClosestGrabbableDistance = INFINITY;
-				bGrabbbable = false;
-			}
-			ControllerInfo.ClosestGrabbableActor = OutHit.Actor.Get();
-
-			if (!IsInVRMode())
-			{
-				ChangeHoveredActor(ControllerInfo.ClosestHoveredActor, ControllerInfo.ClosestHoveredComponent, OutHit.Actor.Get(), OutHit.Component.Get(), Hand);
-			}
+			ControllerInfo.ClosestGrabbableActor = nullptr;
+			ControllerInfo.ClosestGrabbableDistance = INFINITY;
+			ChangeHoveredActor(ControllerInfo.ClosestHoveredActor,
+				ControllerInfo.ClosestHoveredComponent,
+				nullptr, nullptr, Hand);
 		}
 	}
-	else if (!IsInVRMode())
-	{
-		ControllerInfo.ClosestGrabbableActor = nullptr;
-		ControllerInfo.ClosestGrabbableDistance = INFINITY;
-		ChangeHoveredActor(ControllerInfo.ClosestHoveredActor, ControllerInfo.ClosestHoveredComponent, nullptr, nullptr, Hand);
-	}
 
-	// TODO: 140304075
 	if (IsInVRMode())
 	{
-		// DO VR MODE STUFF - 14030407A
+		float ClosestDistance = ControllerInfo.ClosestGrabbableDistance;
+		AActor* ClosestActor = ControllerInfo.ClosestGrabbableActor;
+		FindClosestActor(Start, ClosestDistance, ClosestActor, ControllerInfo.HoveredGrabbables);
+
+		if (!IsValid(ClosestActor) || bGrabbable && ClosestDistance >= ControllerInfo.ClosestGrabbableDistance)
+		{
+			if (!bGrabbable)
+			{
+				ControllerInfo.ClosestGrabbableDistance = INFINITY;
+				ControllerInfo.ClosestGrabbableActor = nullptr;
+			}
+		}
+		else
+		{
+			if (ClosestActor != ControllerInfo.ClosestGrabbableActor)
+			{
+				if (IsValid(ControllerInfo.ClosestGrabbableActor))
+				{
+					OnGrabHoverEnd(ControllerInfo.ClosestGrabbableActor, Hand);
+				}
+				if (ClosestActor)
+				{
+					OnGrabHoverBegin(ClosestActor, Hand);
+				}
+			}
+			ControllerInfo.ClosestGrabbableDistance = ClosestDistance;
+			ControllerInfo.ClosestGrabbableActor = ClosestActor;
+		}
+		
+		ClosestDistance = INFINITY;
+		ClosestActor = nullptr;
+		if (bHoverActor)
+		{
+			ClosestDistance = ControllerInfo.ClosestDistance;
+			ClosestActor = ControllerInfo.ClosestGrabbableActor;
+		}
+		FindClosestActor(Start, ClosestDistance, ClosestActor, ControllerInfo.HoveredObjects);
+
+		float Dist = ClosestDistance;
+		if (OutDistance >= ClosestDistance)
+			OutActor = ClosestActor;
+		else
+			Dist = OutDistance;
+		
+		if (ControllerInfo.HeldGrabbables.Contains(ClosestActor))
+		{
+			ChangeHoveredActor(ControllerInfo.ClosestHoveredActor,
+				ControllerInfo.ClosestHoveredComponent,
+				OutActor, OutComp, Hand);
+		}
+		ControllerInfo.ClosestDistance = Dist;
 	}
 
 	for (auto HeldInfo : GetHandInfo(Hand).HeldInfo)
 	{
-		if (IsValid(HeldInfo.Key))
+		if (HeldInfo.Value.GrabSnapType == EGrabSnapType::LocationToHand)
 		{
-			const USWGVRSettings* SWGVRSettings = GetDefault<USWGVRSettings>();
-			if (true /* BYTE4(v98->PrimaryActorTick.Target) */)
+			if (IsValid(HeldInfo.Key))
 			{
-				ProcessInterpolatedGrab(AttachPoint->GetComponentTransform(), HeldInfo.Value, HeldInfo.Key, Hand);
-			}
-			else
-			{
-				FTransform AttachmentTransform = AttachPoint->GetComponentTransform();
-
-				FVector Loc = AttachmentTransform.TransformPosition(HeldInfo.Value.AttachmentRelativeLocation);
-				FQuat Rot = AttachmentTransform.TransformRotation(HeldInfo.Value.AttachmentRelativeRotation.Quaternion());
-
-				HeldInfo.Key->SetActorLocationAndRotation(Loc, Rot);
+				const USWGVRSettings* SWGVRSettings = GetDefault<USWGVRSettings>(); // unused
+				
+				if (HeldInfo.Value.IsLerpingToHand)
+				{
+					ProcessInterpolatedGrab(AttachPoint->GetComponentTransform(), HeldInfo.Value, HeldInfo.Key, Hand);
+				}
+				else
+				{
+					FTransform AttachmentTransform = AttachPoint->GetComponentTransform();
+					FVector Loc = AttachmentTransform.TransformPosition(HeldInfo.Value.AttachmentRelativeLocation);
+					FQuat Rot = AttachmentTransform.TransformRotation(HeldInfo.Value.AttachmentRelativeRotation.Quaternion());
+					HeldInfo.Key->SetActorLocationAndRotation(Loc, Rot);
+				}
 			}
 		}
 	}
