@@ -937,24 +937,17 @@ void ASWGVRCharacter::SetCameraRelativeLocation(const FVector& Location)
 	EyeOffset = Location.Y;
 }
 
+// Matching
 void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOverrideVelocity, FVector Velocity)
 {
 	if (LeftController.HeldGrabbables.Contains(Grabbable))
 	{
-		Velocity = bOverrideVelocity ? Velocity : ThrowMagnitude * LeftController.Velocity;
-
-		ReleaseGrabbableInternal(Grabbable, EVRHandType::Left, bForce, Velocity, &LeftController);
-		return;
+		ReleaseGrabbableInternal(Grabbable, EVRHandType::Left, bForce, bOverrideVelocity ? Velocity : ThrowMagnitude * LeftController.Velocity, &LeftController);
 	}
-	if (RightController.HeldGrabbables.Contains(Grabbable))
+	else if (RightController.HeldGrabbables.Contains(Grabbable))
 	{
-		Velocity = bOverrideVelocity ? Velocity : ThrowMagnitude * RightController.Velocity;
-
 		ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, bOverrideVelocity ? Velocity : ThrowMagnitude * RightController.Velocity, &RightController);
-		return;
 	}
-
-	//ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, Velocity, &LeftController);
 }
 
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
