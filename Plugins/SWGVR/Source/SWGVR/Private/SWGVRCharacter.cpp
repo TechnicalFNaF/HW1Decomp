@@ -371,7 +371,7 @@ void ASWGVRCharacter::SendOnHoverEndEvents(AActor* OtherActor, EVRHandType Hand,
 // TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_967afc17173eb4af74b07a8953f78ecc___::Execute
 void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 {
-	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+	FMotionControllerInfo& ControllerInfo = GetHandInfo(Hand);
 
 	EVRHandType OtherHand = (Hand == EVRHandType::Left ? EVRHandType::Right : EVRHandType::Left);
 	FMotionControllerInfo OtherControllerInfo = GetHandInfo(OtherHand);
@@ -408,7 +408,7 @@ void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 // TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3ae24b327b54816782408ba530af2541___::Execute
 void ASWGVRCharacter::OnReleaseAction(EVRHandType Hand)
 {
-	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+	FMotionControllerInfo& ControllerInfo = GetHandInfo(Hand);
 
 	if (IsInVRMode())
 	{
@@ -988,7 +988,7 @@ void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& A
 		FinalLoc, GetWorld()->DeltaTimeSeconds, LerpGrabSpeed);
 
 	FQuat Rot= AttachmentTransform.TransformRotation(ActorGrabbablePair.AttachmentRelativeRotation.Quaternion());
-	SetActorLocationAndRotation(InterpLoc, Rot);
+	HeldActor->SetActorLocationAndRotation(InterpLoc, Rot);
 
 	if (FVector::PointsAreNear(InterpLoc, FinalLoc, 1.0f))
 	{
@@ -1267,7 +1267,7 @@ void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* Other
 					}
 					else
 					{
-						if (bIsUsingPadForHand || IsInVRMode())
+						if (bIsUsingPadForHand || !IsInVRMode())
 						{
 							GrabbableInfo.AttachmentRelativeLocation = AttachmentOffsetLocation;
 							GrabbableInfo.IsLerpingToHand = true;
