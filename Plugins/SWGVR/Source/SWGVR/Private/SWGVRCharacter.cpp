@@ -1219,7 +1219,6 @@ void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* Other
 	{
 		if (hoverActor->Implements<USWGGrabbable>())
 		{
-			//	EVRHandType Hand, bool& canGrab, EGrabSnapType& SnapType, bool& snapLocation, bool& snapRotation, FVector& AttachmentOffsetLocation, FRotator& AttachmentOffsetRotation
 			ISWGGrabbable::Execute_AttemptGrab(hoverActor, this, Hand, canGrab, SnapType,
 				snapLocation, snapRotation, AttachmentOffsetLocation, AttachmentOffsetRotation);
 		}
@@ -1256,13 +1255,13 @@ void ASWGVRCharacter::AttemptGrab(EVRHandType Hand, FMotionControllerInfo* Other
 						
 							if (snapLocation)
 							{
-								GrabbableInfo.AttachmentRelativeLocation = AttachmentOffsetLocation;
 								hoverActor->AddActorLocalOffset(AttachmentOffsetLocation);
+								GrabbableInfo.AttachmentRelativeLocation = AttachmentOffsetLocation;
 							}
 							if (snapRotation)
 							{
-								GrabbableInfo.AttachmentRelativeRotation = AttachmentOffsetRotation;
 								hoverActor->AddActorLocalRotation(AttachmentOffsetRotation);
+								GrabbableInfo.AttachmentRelativeRotation = AttachmentOffsetRotation;
 							}
 						}
 					}
