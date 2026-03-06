@@ -1,5 +1,6 @@
 #include "GridCalculatorActor.h"
 #include "Components/SceneComponent.h"
+#include "Engine/Engine.h"
 #include "Engine/World.h"
 
 // Matching
@@ -225,13 +226,75 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 			TArray<VisitNode> NodesToVisit{};
 			Distances[GridX + GridY * GridWidth] = 0;
 
-			NodesToVisit.Push({ GridY, GridX });
+			NodesToVisit.Push({ GridX, GridY });
 
-			for (int NodeIdx = 0; NodeIdx > 0; NodeIdx++)
+			if (NodesToVisit.Num() > 0)
 			{
-				// TODO: Finish this function
+				while (NodesToVisit.Num() > 0)
+				{
+					VisitNode node = NodesToVisit[0];
 
-				NodesToVisit.RemoveAt(NodeIdx);
+					int NextDistance = (node.x + node.x * GridWidth) + 1;
+					auto Passability = PassabilityMap[node.x + node.x * GridWidth];
+
+					if (node.x < GridHeight - 1)
+					{
+						int Distance = (node.x + (node.x + 1) * GridWidth);
+
+						if ((Passability & 0xFF00) != false)
+						{
+							if (NextDistance < Distances[Distance])
+							{
+								Distances[Distance] = NextDistance;
+								NodesToVisit.Add({ node.x, node.y - 1 });
+							}
+						}
+					}
+
+					if (node.x < GridWidth - 1)
+					{
+						int Distance = ((node.x + 1 ) + node.x * GridWidth);
+
+						if ((Passability & 0xFF00) != false)
+						{
+							if (NextDistance < Distances[Distance])
+							{
+								Distances[Distance] = NextDistance;
+								NodesToVisit.Add({ node.x, node.y - 1 });
+							}
+						}
+					}
+
+					if (node.y > 0)
+					{
+						int Distance = (node.x + node.y * GridWidth);
+
+						if ((Passability & 0xFF000000) != false)
+						{
+							if (NextDistance < Distances[Distance])
+							{
+								Distances[Distance] = NextDistance;
+								NodesToVisit.Add({ node.x, node.y - 1 });
+							}
+						}
+					}
+
+					if (node.x > 0)
+					{
+						int Distance = node.x - 1 + node.y * GridWidth;
+
+						if ((Passability & 0xFF000000) != false)
+						{
+							if (NextDistance < Distances[Distance])
+							{
+								Distances[Distance] = NextDistance;
+								NodesToVisit.Add({ node.x - 1, node.y });
+							}
+						}
+					}
+
+					NodesToVisit.RemoveAt(0);
+				}
 			}
 		}
 	}
