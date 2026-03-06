@@ -298,10 +298,9 @@ void ASWGVRCharacter::CheckPSVRHandStatus()
 
 void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor)
 {
-	if (bool Contained = ControllerInfo.HeldGrabbables.Contains(DestroyedActor))
+	if (ControllerInfo.HeldGrabbables.Contains(DestroyedActor))
 	{
-		ControllerInfo.HeldGrabbables.Remove(DestroyedActor);
-		ReleaseGrabbable(DestroyedActor, Contained, false, FVector::ZeroVector);
+		ReleaseGrabbable(DestroyedActor, true, false, FVector::ZeroVector);
 	}
 
 	ControllerInfo.HeldGrabbables.Remove(DestroyedActor);
@@ -942,18 +941,20 @@ void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOve
 {
 	if (LeftController.HeldGrabbables.Contains(Grabbable))
 	{
-		FVector NewVelocity = bOverrideVelocity
-			? Velocity
-			: ThrowMagnitude * RightController.Velocity;
-		ReleaseGrabbableInternal(Grabbable, EVRHandType::Left, bForce, NewVelocity, &LeftController);
+		Velocity = bOverrideVelocity ? Velocity : ThrowMagnitude * LeftController.Velocity;
+
+		ReleaseGrabbableInternal(Grabbable, EVRHandType::Left, bForce, Velocity, &LeftController);
+		return;
 	}
 	if (RightController.HeldGrabbables.Contains(Grabbable))
 	{
-		FVector NewVelocity = bOverrideVelocity
-			? Velocity
-			: ThrowMagnitude * RightController.Velocity;
-		ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, NewVelocity, &RightController);
+		Velocity = bOverrideVelocity ? Velocity : ThrowMagnitude * RightController.Velocity;
+
+		ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, bOverrideVelocity ? Velocity : ThrowMagnitude * RightController.Velocity, &RightController);
+		return;
 	}
+
+	//ReleaseGrabbableInternal(Grabbable, EVRHandType::Right, bForce, Velocity, &LeftController);
 }
 
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
