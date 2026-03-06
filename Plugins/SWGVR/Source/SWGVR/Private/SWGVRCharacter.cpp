@@ -374,7 +374,7 @@ void ASWGVRCharacter::OnGrabAction(EVRHandType Hand)
 	FMotionControllerInfo& ControllerInfo = GetHandInfo(Hand);
 
 	EVRHandType OtherHand = (Hand == EVRHandType::Left ? EVRHandType::Right : EVRHandType::Left);
-	FMotionControllerInfo OtherControllerInfo = GetHandInfo(OtherHand);
+	FMotionControllerInfo& OtherControllerInfo = GetHandInfo(OtherHand);
 
 	USceneComponent* AttachPoint = (Hand == EVRHandType::Left ? LeftAttachPoint : RightAttachPoint);
 
@@ -523,7 +523,7 @@ LABEL_32:
 // TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3a9174d4fada2ec770f5cf32c01cad19___::Execute
 void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
 {
-	FMotionControllerInfo ControllerInfo = GetHandInfo(Hand);
+	FMotionControllerInfo& ControllerInfo = GetHandInfo(Hand);
 	
 	for (int i = 0; i != ControllerInfo.HoveredObjects.Num(); i++)
 	{
