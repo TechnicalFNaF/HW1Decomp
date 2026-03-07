@@ -151,17 +151,14 @@ void AGridCalculatorActor::GetCellPosFromWorldPosition(const FVector& WorldPosit
 	CellY = (InversedWorldPos.Y + (GridCellSize * 0.5f)) / GridCellSize;
 }
 
-// TODO Not matching
+// Matching
 int32 AGridCalculatorActor::GetCellIDFromWorldPosition(const FVector& WorldPosition) const
 {
 	int CellX, CellY;
 	GetCellPosFromWorldPosition(WorldPosition, CellX, CellY);
 
-	int CellId = (CellX + CellY) * GridWidth;
-	if (Distances.IsValidIndex(CellId))
-		return CellId;
-
-	return -1;
+	int CellId = CellX + (GridWidth * CellY);
+	return Distances.IsValidIndex(CellId) ? CellId : -1;
 }
 
 // Matching
