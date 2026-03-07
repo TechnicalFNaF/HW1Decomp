@@ -11,6 +11,7 @@ AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectIniti
 	RootComponent = Root = CreateDefaultSubobject<USceneComponent>("Root");
 }
 
+// TODO Check if matching
 void AGridCalculatorActor::BeginPlay()
 {
 	int GridSize = GridHeight * GridWidth;
