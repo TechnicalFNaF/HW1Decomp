@@ -223,78 +223,81 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 				int y;
 			};
 
-			TArray<VisitNode> NodesToVisit{};
+			TArray<VisitNode> NodesToVisit;
 			Distances[GridX + GridY * GridWidth] = 0;
 
 			NodesToVisit.Push({ GridX, GridY });
 
-			if (NodesToVisit.Num() > 0)
+			while (NodesToVisit.Num() > 0)
 			{
-				while (NodesToVisit.Num() > 0)
+				VisitNode node = NodesToVisit[0];
+
+				int NextDistance = (node.x + node.y * GridWidth) + 1;
+				int Passability = PassabilityMap[node.x + node.y * GridWidth];
+				int OldPassability = Passability;
+
+				// these four ifs should be lambda calls
+				
+				if (node.x < GridHeight - 1)
 				{
-					VisitNode node = NodesToVisit[0];
+					int Distance = (node.x + (node.y + 1) * GridWidth);
 
-					int NextDistance = (node.x + node.x * GridWidth) + 1;
-					auto Passability = PassabilityMap[node.x + node.x * GridWidth];
-
-					if (node.x < GridHeight - 1)
+					if ((Passability & 0xFF00) != false)
 					{
-						int Distance = (node.x + (node.x + 1) * GridWidth);
-
-						if ((Passability & 0xFF00) != false)
+						if (NextDistance < Distances[Distance])
 						{
-							if (NextDistance < Distances[Distance])
-							{
-								Distances[Distance] = NextDistance;
-								NodesToVisit.Add({ node.x, node.y - 1 });
-							}
+							Distances[Distance] = NextDistance;
+							NodesToVisit.Add({ node.x, node.y - 1 });
+							Passability = OldPassability;
 						}
 					}
-
-					if (node.x < GridWidth - 1)
-					{
-						int Distance = ((node.x + 1 ) + node.x * GridWidth);
-
-						if ((Passability & 0xFF00) != false)
-						{
-							if (NextDistance < Distances[Distance])
-							{
-								Distances[Distance] = NextDistance;
-								NodesToVisit.Add({ node.x, node.y - 1 });
-							}
-						}
-					}
-
-					if (node.y > 0)
-					{
-						int Distance = (node.x + node.y * GridWidth);
-
-						if ((Passability & 0xFF000000) != false)
-						{
-							if (NextDistance < Distances[Distance])
-							{
-								Distances[Distance] = NextDistance;
-								NodesToVisit.Add({ node.x, node.y - 1 });
-							}
-						}
-					}
-
-					if (node.x > 0)
-					{
-						int Distance = node.x - 1 + node.y * GridWidth;
-
-						if ((Passability & 0xFF000000) != false)
-						{
-							if (NextDistance < Distances[Distance])
-							{
-								Distances[Distance] = NextDistance;
-								NodesToVisit.Add({ node.x - 1, node.y });
-							}
-						}
-					}
-
-					NodesToVisit.RemoveAt(0);
 				}
+
+				if (node.x < GridWidth - 1)
+				{
+					int Distance = ((node.x + 1) + node.y * GridWidth);
+
+					if ((Passability & 0xFF) != false)
+					{
+						if (NextDistance < Distances[Distance])
+						{
+							Distances[Distance] = NextDistance;
+							NodesToVisit.Add({ node.x, node.y - 1 });
+							Passability = OldPassability;
+						}
+					}
+				}
+
+				if (node.y > 0)
+				{
+					int Distance = (node.x + (node.y - 1) * GridWidth);
+
+					if ((Passability & 0xFF000000) != false)
+					{
+						if (NextDistance < Distances[Distance])
+						{
+							Distances[Distance] = NextDistance;
+							NodesToVisit.Add({ node.x, node.y - 1 });
+							Passability = OldPassability;
+						}
+					}
+				}
+
+				if (node.x > 0)
+				{
+					int Distance = ((node.x - 1) + node.y * GridWidth);
+
+					if ((Passability & 0xFF0000) != false)
+					{
+						if (NextDistance < Distances[Distance])
+						{
+							Distances[Distance] = NextDistance;
+							NodesToVisit.Add({ node.x - 1, node.y });
+						}
+					}
+				}
+
+				NodesToVisit.RemoveAt(0);
 			}
 		}
 	}
