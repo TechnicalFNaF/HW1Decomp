@@ -152,12 +152,12 @@ void AGridCalculatorActor::GetCellPosFromWorldPosition(const FVector& WorldPosit
 }
 
 // TODO Not matching
-int32 AGridCalculatorActor::GetCellIDFromWorldPosition(const FVector& WorldPosition) const 
+int32 AGridCalculatorActor::GetCellIDFromWorldPosition(const FVector& WorldPosition) const
 {
 	int CellX, CellY;
 	GetCellPosFromWorldPosition(WorldPosition, CellX, CellY);
 
-	int CellId = CellX + (GridWidth * CellY);
+	int CellId = (CellX + CellY) * GridWidth;
 	if (Distances.IsValidIndex(CellId))
 		return CellId;
 

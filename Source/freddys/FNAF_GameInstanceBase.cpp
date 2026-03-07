@@ -171,6 +171,27 @@ bool UFNAF_GameInstanceBase::HasDLC(EFNAFDLCType DLC) const
 	if (DLC == EFNAFDLCType::BaseGame)
 		return true;
 
+#if 0
+	#include "Steamworks/Steamv142/sdk/public/steam/steam_api.h" // This include path is wrong
+
+	FString DLCName;
+	int32 DLCID = 0;
+
+	if (DLC == EFNAFDLCType::Halloween)
+	{
+		DLCName = "HalloweenDLC";
+		DLCID = 1126200;
+	}
+
+	if (SteamApps()->BIsDlcInstalled(DLCID))
+	{
+		FString BasePakName = "freddys-WindowsNoEditor.pak";
+		FString ContentPath = FPaths::ProjectContentDir();
+
+		return FPaths::FileExists(ContentPath + "/Paks/" + DLCName + BasePakName);
+	}
+#endif
+
 	if (InstalledDLCList.Contains(DLC))
 		return ViveportDLCValid;
 
