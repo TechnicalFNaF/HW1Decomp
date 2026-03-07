@@ -200,7 +200,7 @@ TArray<int32> AGridCalculatorActor::FindPathFromCellIDs(int32 StartCellID, int32
 	return Out;
 }
 
-// TODO Not matching
+// Matching
 void AGridCalculatorActor::CalculateDistancesFromWorldPosition(const FVector& WorldPosition) 
 {
 	int CellX, CellY;
