@@ -10,7 +10,8 @@ void FSWGVRModule::StartupModule()
 	m_instance = this;
 }
 
+// Matching
 void FSWGVRModule::ShutdownModule()
 {
-	// Empty, does not exist in exe
+
 }

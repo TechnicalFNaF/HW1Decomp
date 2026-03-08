@@ -2,6 +2,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
+// Matching
 ASWGVRCameraLocator::ASWGVRCameraLocator()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,6 +21,7 @@ ASWGVRCameraLocator::ASWGVRCameraLocator()
 	RightArrow->SetArrowColor(FLinearColor::Blue);
 }
 
+// Matching
 void ASWGVRCameraLocator::BeginPlay()
 {
 	// lol
