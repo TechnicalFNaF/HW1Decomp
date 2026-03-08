@@ -9,7 +9,8 @@ class FREDDYS_API AAICharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AAICharacterBase(const FObjectInitializer& ObjectInitializer);
+	AAICharacterBase();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 };
