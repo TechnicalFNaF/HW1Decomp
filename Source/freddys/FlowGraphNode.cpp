@@ -111,14 +111,16 @@ void AFlowGraphNode::ChangeFlowStatus(bool bConnectedToFlow)
 	}
 }
 
+// Matching
 void AFlowGraphNode::UnregisterConnector(UFlowGraphConnector* Connector)
 {
-	// does nothing
+	
 }
 
+// Matching
 void AFlowGraphNode::RegisterConnector(UFlowGraphConnector* Connector)
 {
-	// does nothing
+	
 }
 
 void AFlowGraphNode::internal_OnConnectorConnected(

@@ -15,11 +15,7 @@ class FREDDYS_API UFlowGraphConnector : public USceneComponent
 	friend class AFlowGraphNode;
 	
 public:
-	UFlowGraphConnector()
-	{
-		PrimaryComponentTick.bCanEverTick = false;
-		bWantsInitializeComponent = true;
-	}
+	UFlowGraphConnector();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnFlowGraphConnected OnFlowGraphConnected;
@@ -61,17 +57,16 @@ public:
 	void Disconnect();
 	
 	UFUNCTION(BlueprintPure)
-	AFlowGraphNode* GetNodeOwner() const
-	{
-		return Cast<AFlowGraphNode>(GetOwner());
-	}
-	
+	AFlowGraphNode* GetNodeOwner() const;
+
+	// Matching
 	UFUNCTION(BlueprintPure)
 	AFlowGraphNode* GetConnectedNode() const
 	{
 		return ConnectedTo ? ConnectedTo->GetNodeOwner() : nullptr;
 	}
-	
+
+	// Matching
 	UFUNCTION(BlueprintPure)
 	UFlowGraphConnector* GetConnectedConnector() const
 	{

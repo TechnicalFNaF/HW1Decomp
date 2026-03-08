@@ -1,7 +1,18 @@
 #include "FlowGraphConnector.h"
 
+#undef INFINITY
+#define INFINITY ((float)(_HUGE_ENUF * _HUGE_ENUF))
+
 TSet<UFlowGraphConnector*> UFlowGraphConnector::FlowGraphConnectors;
 
+// Matching
+UFlowGraphConnector::UFlowGraphConnector()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+	bWantsInitializeComponent = true;
+}
+
+// Matching
 void UFlowGraphConnector::BeginDestroy()
 {
 	FlowGraphConnectors.Remove(this);
@@ -9,24 +20,28 @@ void UFlowGraphConnector::BeginDestroy()
 	Super::BeginDestroy();
 }
 
+// Matching
 void UFlowGraphConnector::BeginPlay()
 {
 	FlowGraphConnectors.Add(this);
 	Super::BeginPlay();
 }
 
+// Matching
 void UFlowGraphConnector::OnAttachmentChanged()
 {
 	RegisterToNodeOwner();
 	Super::OnAttachmentChanged();
 }
 
+// Matching
 void UFlowGraphConnector::DetachFromComponent(const FDetachmentTransformRules& DetachmentRules)
 {
 	UnregisterFromNodeOwner();
 	Super::DetachFromComponent(DetachmentRules);
 }
 
+// Matching
 void UFlowGraphConnector::OnRegister()
 {
 	RegisterToNodeOwner();
@@ -34,12 +49,13 @@ void UFlowGraphConnector::OnRegister()
 	OnConnectorRegistered();
 }
 
+// Matching
 void UFlowGraphConnector::OnComponentCreated()
 {
-	// does nothing extra
 	Super::OnComponentCreated();
 }
 
+// Matching
 void UFlowGraphConnector::OnComponentDestroyed(bool bDestroyingHierarchy)
 {
 	FlowGraphConnectors.Remove(this);
@@ -47,24 +63,26 @@ void UFlowGraphConnector::OnComponentDestroyed(bool bDestroyingHierarchy)
 	Super::OnComponentDestroyed(bDestroyingHierarchy);
 }
 
+// Matching
 bool UFlowGraphConnector::HasFlow() const
 {
 	AFlowGraphNode* NodeOwner = GetNodeOwner();
 	return NodeOwner && NodeOwner->HasFlow();
 }
 
+// Matching
 void UFlowGraphConnector::CheckConnection()
 {
 	FVector ThisLocation = GetComponentLocation();
 
 	UFlowGraphConnector* BestConnector = nullptr;
-	float BestConnectorDistance = FLT_MAX;
+	float BestConnectorDistance = INFINITY;
 	
-	for (UFlowGraphConnector* Connector : FlowGraphConnectors)
+	for (UFlowGraphConnector* const Connector : FlowGraphConnectors)
 	{
 		if (Connector != this)
 		{
-			float Distance = FVector::DistSquared(GetComponentLocation(), ThisLocation);
+			float Distance = FVector::DistSquared(ThisLocation, Connector->GetComponentLocation());
 			if (Distance < BestConnectorDistance)
 			{
 				BestConnector = Connector;
@@ -73,16 +91,17 @@ void UFlowGraphConnector::CheckConnection()
 		}
 	}
 	
-	if (BestConnectorDistance > FlowConnectorDistance)
-	{
-		Disconnect();
-	}
-	else if (ConnectedTo != BestConnector && BestConnector != this)
+	if (BestConnectorDistance <= FlowConnectorDistance)
 	{
 		Connect(BestConnector);
 	}
+	else
+	{
+		Disconnect();
+	}
 }
 
+// Matching
 void UFlowGraphConnector::Disconnect()
 {
 	if (ConnectedTo)
@@ -93,8 +112,7 @@ void UFlowGraphConnector::Disconnect()
 		ConnectedTo->OnDisconnected();
 		ConnectedTo->OnFlowGraphDisconnected.Broadcast();
 	
-		// todo dont call getnodeowner twice
-		GetNodeOwner()->internal_OnConnectorDisconnected(ConnectedTo);
+		ConnectedTo->GetNodeOwner()->internal_OnConnectorDisconnected(ConnectedTo);
 		ConnectedTo = nullptr;
 
 		AFlowGraphNode* NodeOwner = GetNodeOwner();
@@ -105,6 +123,13 @@ void UFlowGraphConnector::Disconnect()
 	}
 }
 
+// Matching
+AFlowGraphNode* UFlowGraphConnector::GetNodeOwner() const
+{
+	return Cast<AFlowGraphNode>(GetOwner());
+}
+
+// Matching
 void UFlowGraphConnector::Connect(UFlowGraphConnector* OtherConnector)
 {
 	if (ConnectedTo != OtherConnector && OtherConnector != this)
@@ -119,6 +144,7 @@ void UFlowGraphConnector::Connect(UFlowGraphConnector* OtherConnector)
 	}
 }
 
+// Matching
 void UFlowGraphConnector::OnConnectionEstablished(UFlowGraphConnector* OtherConnector)
 {
 	if (ConnectedTo != OtherConnector)
@@ -135,6 +161,7 @@ void UFlowGraphConnector::OnConnectionEstablished(UFlowGraphConnector* OtherConn
 	}
 }
 
+// Matching
 void UFlowGraphConnector::UnregisterFromNodeOwner()
 {
 	AFlowGraphNode* NodeOwner = GetNodeOwner();
@@ -142,6 +169,7 @@ void UFlowGraphConnector::UnregisterFromNodeOwner()
 		NodeOwner->UnregisterConnector(this);
 }
 
+// Matching
 void UFlowGraphConnector::RegisterToNodeOwner()
 {
 	AFlowGraphNode* NodeOwner = GetNodeOwner();
