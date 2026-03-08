@@ -231,67 +231,30 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 			int nextVal = (node.x + node.y * GridWidth) + 1;
 			const int CellPassability = PassabilityMap[node.x + node.y * GridWidth];
 
-			// these four ifs should be lambda calls
-
 			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int32 X, int32 Y, uint32 Mask)
 			{
-				int Distance = (node.x + (node.y + 1) * GridWidth);
+				int Distance = ((node.x + X) + (node.y + Y)) * GridWidth;
 				if ((CellPassability & Mask) != false)
 				{
 					if (Distances[Distance] > nextVal)
 					{
 						Distances[Distance] = nextVal;
-						NodesToVisit.Add({ node.x, node.y - 1 });
+						NodesToVisit.Add({ node.x + X, node.y + Y });
 					}
 				}
 			};
 				
-			if (node.y < GridHeight - 1)
-				cfb(0, 0, 0xFF00);
+			if (node.y + 1 < GridHeight)
+				cfb(0, 0, 0x0000FF00);
 
-			// TODO FINISH
-
-			if (node.x < GridWidth - 1)
-			{
-				int Distance = ((node.x + 1) + node.y * GridWidth);
-
-				if ((CellPassability & 0xFF) != false)
-				{
-					if (Distances[Distance] > nextVal)
-					{
-						Distances[Distance] = nextVal;
-						NodesToVisit.Add({ node.x, node.y - 1 });
-					}
-				}
-			}
+			if (node.x + 1 < GridHeight)
+				cfb(1, 0, 0x000000FF);
 
 			if (node.y > 0)
-			{
-				int Distance = (node.x + (node.y - 1) * GridWidth);
-
-				if ((CellPassability & 0xFF000000) != false)
-				{
-					if (Distances[Distance] > nextVal)
-					{
-						Distances[Distance] = nextVal;
-						NodesToVisit.Add({ node.x, node.y - 1 });
-					}
-				}
-			}
+				cfb(0, -1, 0xFF000000);
 
 			if (node.x > 0)
-			{
-				int Distance = ((node.x - 1) + node.y * GridWidth);
-
-				if ((CellPassability & 0xFF0000) != false)
-				{
-					if (Distances[Distance] > nextVal)
-					{
-						Distances[Distance] = nextVal;
-						NodesToVisit.Add({ node.x - 1, node.y });
-					}
-				}
-			}
+				cfb(-1, 0, 0x00FF0000);
 
 			NodesToVisit.RemoveAt(0);
 		}
