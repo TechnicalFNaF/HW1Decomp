@@ -16,11 +16,16 @@ enum class EFNAFDLCType : uint8
 class USaveGame;
 class UUserWidget;
 
+
+
 UCLASS(NonTransient)
 class FREDDYS_API UFNAF_GameInstanceBase : public UGameInstance
 {
 	GENERATED_BODY()
 	
+	EFNAFGameType GetFNAFGameType() const;
+	bool IsDemoMode() const;
+
 public:
 	// TODO wrap these with TEXT()
 	FString VIVEPORT_ID = "8bdd0597-0591-4b01-8051-0bd9382bc552";
@@ -113,25 +118,36 @@ private:
 	TArray<EFNAFDLCType> InstalledDLCList;
 
 public:
-
 	bool Exec(class UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Ar) override;
-	
+
+	// Matching
 	UFUNCTION(BlueprintPure)
-	int32 GetForcedVariantNumber() const;
+	int32 GetForcedVariantNumber() const
+	{
+		return -1;
+	}
 	
 	UFUNCTION(BlueprintPure)
 	static FString GetGPUBrandName();
-	
+
+	// Matching
 	UFUNCTION(BlueprintPure)
-	EFNAFGameType GetGameType() const;
+	EFNAFGameType GetGameType() const
+	{
+		return GetFNAFGameType();
+	}
 	
 	UFUNCTION(BlueprintPure)
 	static FString GetPrimaryGPUBrand();
 
 	static bool ViveportDLCValid;
 	
+	// Matching
 	UFUNCTION(BlueprintPure)
-	bool GetViveportDLCValid() const;
+	bool GetViveportDLCValid() const
+	{
+		return ViveportDLCValid;
+	}
 	
 	static UFNAF_GameInstanceBase* Instance;
 
@@ -145,13 +161,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadLevelAsync(const FName& LevelName);
 	
+	// Matching
 	UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="GameType"))
-	void SwitchFNAFGameType(EFNAFGameType& GameType);
+	void SwitchFNAFGameType(EFNAFGameType& GameType)
+	{
+		GameType = GetFNAFGameType();
+	}
 	
 	UFUNCTION(BlueprintCallable)
 	void StartAsyncSaveGame(USaveGame* SaveGame, const FString& SlotName, int32 UserIndex);
-	
-	UFUNCTION(BlueprintPure)
-	bool IsInDemoMode() const;
-};
 
+	// Matching
+	UFUNCTION(BlueprintPure)
+	bool IsInDemoMode() const
+	{
+		return IsDemoMode();
+	}
+};
