@@ -3,9 +3,9 @@
 
 bool ASWGVRPlayerControllerBase::bIsUsingGamepad = false;
 
+// Not Matching
 bool ASWGVRPlayerControllerBase::InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
 {
-	// I think this is accurate
 	if (!bGamepad)
 	{
 		if (Delta <= 1.0f)
@@ -21,6 +21,7 @@ bool ASWGVRPlayerControllerBase::InputAxis(FKey Key, float Delta, float DeltaTim
 	return Super::InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
 }
 
+// Matching 
 bool ASWGVRPlayerControllerBase::InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad)
 {
 	UpdateUsingGamepadState(bGamepad);
@@ -33,6 +34,7 @@ void ASWGVRPlayerControllerBase::OnUsingGamepadChanged_Implementation()
 	// Not implemented in game
 }
 
+// Matching
 void ASWGVRPlayerControllerBase::UpdateUsingGamepadState(bool bUsingGamepad)
 {
 	if (bUsingGamepad != GetStaticIsUsingGamepad())
