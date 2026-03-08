@@ -12,7 +12,7 @@ bool UAICommonFunctionalities::isValidAxisDirection(AIBaseAxisDirection axis, AI
 	return ((uint8)axis & (uint8)dir) != 0;
 }
 
-// Not matching
+// TODO Not matching, functionally identical
 bool UAICommonFunctionalities::isHorizontalAxis(AIScareDirection dir)
 {
 	return ((uint8)dir & (uint8)AIBaseAxisDirection::Horizontal) != 0;
