@@ -9,18 +9,20 @@
 UENUM()
 enum class AIBaseAxisDirection : uint8 
 {
-	Horizontal = 128,
-	Vertical = 64,
+	Horizontal = 0x80,
+	Vertical = 0x40,
 };
+ENUM_CLASS_FLAGS(AIBaseAxisDirection);
 
 UENUM()
 enum class AIScareDirection : uint8
 {
-	Right = 129,
-	Left,
-	Up = 65,
-	Down,
+	Right = 0x81,
+	Left = 0x82,
+	Up = 0x41,
+	Down = 0x42,
 };
+ENUM_CLASS_FLAGS(AIScareDirection);
 
 UENUM()
 enum class AILifeCycle : uint8 
