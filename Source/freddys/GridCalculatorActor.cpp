@@ -21,16 +21,16 @@ void AGridCalculatorActor::BeginPlay()
 
 	ResetDistances();
 
-	const FVector ForwardVec = GetActorForwardVector();
-	const FVector RightVec = GetActorRightVector();
-	const FVector WorldLoc = GetActorLocation();
+	const FVector XAxis = GetActorForwardVector();
+	const FVector YAxis = GetActorRightVector();
+	const FVector WorldLocation = GetActorLocation();
 
 	// Probably wrong, TODO diff
 	
-	auto CalcPosition = [this, ForwardVec, RightVec, WorldLoc](int32 X, int32 Y)
+	auto CalcPosition = [XAxis, YAxis, WorldLocation, this](int32 X, int32 Y)
 	{
 		const float Cell = GridCellSize;
-		return WorldLoc + ForwardVec * (X * Cell) + RightVec * (Y * Cell);
+		return WorldLocation + XAxis * (X * Cell) + YAxis * (Y * Cell);
 	};
 
 	auto CheckCell = [this, CalcPosition](int32 X, int32 Y)
@@ -107,7 +107,7 @@ FVector AGridCalculatorActor::GetCellWorldPosition(int32 CellID) const
 	return GetCellWorldPositionByCellPos(CellX, CellY);
 }
 
-// TODO Not matching
+// TODO Not matching, functionally identical
 TArray<int32> AGridCalculatorActor::GetCellsBetweenDistances(int32 MinDistance, int32 MaxDistance) const 
 {
 	TArray<int32> CellsBetween = {};
@@ -211,92 +211,89 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 {
 	ResetDistances();
 
-	if (GridX >= 0 && GridY >= 0)
+	if (GridX >= 0 && GridY >= 0 && GridX < GridWidth && GridY < GridHeight)
 	{
-		if (GridX < GridWidth && GridY < GridHeight)
+		struct VisitNode
 		{
-			struct VisitNode
+			int x;
+			int y;
+		};
+
+		TArray<VisitNode> NodesToVisit;
+		Distances[GridX + GridY * GridWidth] = 0;
+
+		NodesToVisit.Push({ GridX, GridY });
+
+		while (NodesToVisit.Num() > 0)
+		{
+			VisitNode node = NodesToVisit[0];
+
+			int nextVal = (node.x + node.y * GridWidth) + 1;
+			const int CellPassability = PassabilityMap[node.x + node.y * GridWidth];
+
+			// these four ifs should be lambda calls
+
+			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int Mask)
 			{
-				int x;
-				int y;
+				int Distance = (node.x + (node.y + 1) * GridWidth);
+				if ((CellPassability & Mask) != false)
+				{
+					if (Distances[Distance] > nextVal)
+					{
+						Distances[Distance] = nextVal;
+						NodesToVisit.Add({ node.x, node.y - 1 });
+					}
+				}
 			};
-
-			TArray<VisitNode> NodesToVisit;
-			Distances[GridX + GridY * GridWidth] = 0;
-
-			NodesToVisit.Push({ GridX, GridY });
-
-			while (NodesToVisit.Num() > 0)
-			{
-				VisitNode node = NodesToVisit[0];
-
-				int NextDistance = (node.x + node.y * GridWidth) + 1;
-				int Passability = PassabilityMap[node.x + node.y * GridWidth];
-				int OldPassability = Passability;
-
-				// these four ifs should be lambda calls
 				
-				if (node.x < GridHeight - 1)
-				{
-					int Distance = (node.x + (node.y + 1) * GridWidth);
+			if (node.y < GridHeight - 1)
+				cfb(0xFF00);
 
-					if ((Passability & 0xFF00) != false)
+			// TODO FINISH
+
+			if (node.x < GridWidth - 1)
+			{
+				int Distance = ((node.x + 1) + node.y * GridWidth);
+
+				if ((CellPassability & 0xFF) != false)
+				{
+					if (Distances[Distance] > nextVal)
 					{
-						if (NextDistance < Distances[Distance])
-						{
-							Distances[Distance] = NextDistance;
-							NodesToVisit.Add({ node.x, node.y - 1 });
-							Passability = OldPassability;
-						}
+						Distances[Distance] = nextVal;
+						NodesToVisit.Add({ node.x, node.y - 1 });
 					}
 				}
-
-				if (node.x < GridWidth - 1)
-				{
-					int Distance = ((node.x + 1) + node.y * GridWidth);
-
-					if ((Passability & 0xFF) != false)
-					{
-						if (NextDistance < Distances[Distance])
-						{
-							Distances[Distance] = NextDistance;
-							NodesToVisit.Add({ node.x, node.y - 1 });
-							Passability = OldPassability;
-						}
-					}
-				}
-
-				if (node.y > 0)
-				{
-					int Distance = (node.x + (node.y - 1) * GridWidth);
-
-					if ((Passability & 0xFF000000) != false)
-					{
-						if (NextDistance < Distances[Distance])
-						{
-							Distances[Distance] = NextDistance;
-							NodesToVisit.Add({ node.x, node.y - 1 });
-							Passability = OldPassability;
-						}
-					}
-				}
-
-				if (node.x > 0)
-				{
-					int Distance = ((node.x - 1) + node.y * GridWidth);
-
-					if ((Passability & 0xFF0000) != false)
-					{
-						if (NextDistance < Distances[Distance])
-						{
-							Distances[Distance] = NextDistance;
-							NodesToVisit.Add({ node.x - 1, node.y });
-						}
-					}
-				}
-
-				NodesToVisit.RemoveAt(0);
 			}
+
+			if (node.y > 0)
+			{
+				int Distance = (node.x + (node.y - 1) * GridWidth);
+
+				if ((CellPassability & 0xFF000000) != false)
+				{
+					if (Distances[Distance] > nextVal)
+					{
+						Distances[Distance] = nextVal;
+						NodesToVisit.Add({ node.x, node.y - 1 });
+					}
+				}
+			}
+
+			if (node.x > 0)
+			{
+				int Distance = ((node.x - 1) + node.y * GridWidth);
+
+				if ((CellPassability & 0xFF0000) != false)
+				{
+					if (Distances[Distance] > nextVal)
+					{
+						Distances[Distance] = nextVal;
+						NodesToVisit.Add({ node.x - 1, node.y });
+					}
+				}
+			}
+
+			NodesToVisit.RemoveAt(0);
 		}
 	}
 }

@@ -39,12 +39,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetCellDebugDisplay(int32 CellID, int32 CellX, int32 CellY, int32 CellDistance);
 
+	// Matching
 	UFUNCTION(BlueprintPure)
 	void GetGridSize(int32& Width, int32& Height) const
 	{
 		Width = GridWidth;
 		Height = GridHeight;
-	};
+	}
 
 	UFUNCTION(BlueprintPure)
 	int32 GetDistanceToCellAtWorldPosition(const FVector& WorldPosition) const;

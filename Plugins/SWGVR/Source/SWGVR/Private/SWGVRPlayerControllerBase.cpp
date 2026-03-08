@@ -3,21 +3,14 @@
 
 bool ASWGVRPlayerControllerBase::bIsUsingGamepad = false;
 
-// Not Matching
+// TODO Not matching
 bool ASWGVRPlayerControllerBase::InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
 {
-	if (!bGamepad)
+	if (Delta > (bGamepad ? 0.5f : 1.0f))
 	{
-		if (Delta <= 1.0f)
-		{
-			return Super::InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
-		}
 		UpdateUsingGamepadState(bGamepad);
 	}
-
-	if (Delta > 0.5)
-		UpdateUsingGamepadState(bGamepad);
-
+	
 	return Super::InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
 }
 
@@ -29,9 +22,10 @@ bool ASWGVRPlayerControllerBase::InputKey(FKey Key, EInputEvent EventType, float
 	return Super::InputKey(Key, EventType, AmountDepressed, bGamepad);
 }
 
+// Matching
 void ASWGVRPlayerControllerBase::OnUsingGamepadChanged_Implementation()
 {
-	// Not implemented in game
+
 }
 
 // Matching
