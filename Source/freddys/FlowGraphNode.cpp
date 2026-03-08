@@ -4,11 +4,13 @@
 
 TSet<AFlowGraphNode*> AFlowGraphNode::FlowGraphSources;
 
+// Matching
 AFlowGraphNode::AFlowGraphNode()
 {
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+// Matching
 void AFlowGraphNode::BeginPlay()
 {
 	FlowConnectors.Empty();
@@ -27,63 +29,69 @@ void AFlowGraphNode::BeginPlay()
 	Super::BeginPlay();
 }
 
+// Matching
+void AFlowGraphNode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
+// Matching
 void AFlowGraphNode::CalculateFlow()
 {
-	// inaccurate todo diff this
-	
-	TArray<AFlowGraphNode*> Array1{this};
-	TArray<AFlowGraphNode*> Array2;
+	TArray<AFlowGraphNode*> NodesToVisit;
+	TArray<AFlowGraphNode*> NodesVisited;
+
+	NodesToVisit.Add(this);
 
 	bool bConnectedToFlow = false;
-	while (Array1.Num() > 0)
+	while (NodesToVisit.Num() > 0)
 	{
-		Array2.Add(Array1.Pop());
-		for (UFlowGraphConnector* Connector : FlowConnectors)
+		AFlowGraphNode* Node = NodesToVisit[0]; 
+		NodesToVisit.RemoveAt(0);
+		NodesVisited.Add(Node);
+		
+		for (UFlowGraphConnector* const Connector : Node->FlowConnectors)
 		{
 			UFlowGraphConnector* ConnectedTo = Connector->GetConnectedConnector();
-			if (!ConnectedTo)
-				continue;
+			if (ConnectedTo)
+			{
+				AFlowGraphNode* NodeOwner = ConnectedTo->GetNodeOwner();
+				if (NodeOwner)
+				{
+					if (NodeOwner->bIsFlowSource)
+						bConnectedToFlow = true;
 
-			AFlowGraphNode* NodeOwner = ConnectedTo->GetNodeOwner();
-			if (!NodeOwner)
-				continue;
-			
-			if (NodeOwner->bIsFlowSource)
-				bConnectedToFlow = true;
-
-			if (!Array2.Contains(NodeOwner))
-				Array1.AddUnique(NodeOwner);
+					if (!NodesVisited.Contains(NodeOwner))
+						NodesToVisit.AddUnique(NodeOwner);
+				}
+			}
 		}
 	}
 	
-	while (Array2.Num() > 0)
+	while (NodesVisited.Num() > 0)
 	{
-		AFlowGraphNode* Node = Array2[0]; 
-		Array2.Pop(); // def wrong but idk ill just diff it bro
-
+		AFlowGraphNode* Node = NodesVisited[0]; 
+		NodesVisited.RemoveAt(0);
 		Node->ChangeFlowStatus(bConnectedToFlow);
 	}
 }
 
+// Matching
 void AFlowGraphNode::CheckConnections()
 {
-	// not sure abt this
 	for (UFlowGraphConnector* Connector : FlowConnectors)
 	{
 		Connector->CheckConnection();
 	}
 }
 
-void AFlowGraphNode::FlowTypeSwitch(EFlowGraphFlowType& FlowType)
-{
-	FlowType = HasFlow() ? EFlowGraphFlowType::HasFlow : EFlowGraphFlowType::NoFlow;
-}
-
+// Matching
 bool AFlowGraphNode::HasFlow() const
 {
 	return bIsFlowSource || bIsConnectedToFlow;
 }
 
+// Matching
 void AFlowGraphNode::SetFlowSource(bool EnableAsFlowSource)
 {
 	if (bIsFlowSource != EnableAsFlowSource)
@@ -102,6 +110,7 @@ void AFlowGraphNode::SetFlowSource(bool EnableAsFlowSource)
 	}
 }
 
+// Matching
 void AFlowGraphNode::ChangeFlowStatus(bool bConnectedToFlow)
 {
 	if (bConnectedToFlow != bIsConnectedToFlow && !bIsFlowSource)
@@ -123,6 +132,7 @@ void AFlowGraphNode::RegisterConnector(UFlowGraphConnector* Connector)
 	
 }
 
+// Matching
 void AFlowGraphNode::internal_OnConnectorConnected(
 	UFlowGraphConnector* MyConnector, UFlowGraphConnector* TheirConnector)
 {
@@ -130,6 +140,7 @@ void AFlowGraphNode::internal_OnConnectorConnected(
 	OnConnectorConnected(MyConnector, TheirConnector);
 }
 
+// Matching
 void AFlowGraphNode::internal_OnConnectorDisconnected(UFlowGraphConnector* MyConnector)
 {
 	CalculateFlow();

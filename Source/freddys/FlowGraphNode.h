@@ -21,6 +21,7 @@ public:
 	AFlowGraphNode();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	
 private:
 	UPROPERTY(EditAnywhere)
@@ -38,16 +39,21 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void CheckConnections();
-	
+
+	// Matching
 	UFUNCTION(BlueprintCallable, meta=(ExpandEnumAsExecs="FlowType"))
-	void FlowTypeSwitch(EFlowGraphFlowType& FlowType);
+	void FlowTypeSwitch(EFlowGraphFlowType& FlowType)
+	{
+		FlowType = HasFlow() ? EFlowGraphFlowType::HasFlow : EFlowGraphFlowType::NoFlow;
+	}
 
 	UFUNCTION(BlueprintPure)
 	bool HasFlow() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetFlowSource(bool EnableAsFlowSource);
-	
+
+	// Matching
 	UFUNCTION(BlueprintPure)
 	bool IsFlowSource() const
 	{
@@ -73,6 +79,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RegisterConnector(UFlowGraphConnector* Connector);
 	
+	// Matching
 	UFUNCTION(BlueprintPure)
 	TArray<UFlowGraphConnector*> GetConnectors() const
 	{
