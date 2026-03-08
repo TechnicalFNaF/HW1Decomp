@@ -233,7 +233,7 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 
 			// these four ifs should be lambda calls
 
-			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int Mask)
+			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int32 X, int32 Y, uint32 Mask)
 			{
 				int Distance = (node.x + (node.y + 1) * GridWidth);
 				if ((CellPassability & Mask) != false)
@@ -247,7 +247,7 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 			};
 				
 			if (node.y < GridHeight - 1)
-				cfb(0xFF00);
+				cfb(0, 0, 0xFF00);
 
 			// TODO FINISH
 
