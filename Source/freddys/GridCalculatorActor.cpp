@@ -233,10 +233,10 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 
 			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int32 X, int32 Y, uint32 Mask)
 			{
-				int Distance = ((node.x + X) + (node.y + Y)) * GridWidth;
+				int Distance = GridWidth * ((node.x + X) + (node.y + Y));
 				if ((CellPassability & Mask) != false)
 				{
-					if (Distances[Distance] > nextVal)
+					if (nextVal < Distances[Distance])
 					{
 						Distances[Distance] = nextVal;
 						NodesToVisit.Add({ node.x + X, node.y + Y });
@@ -244,10 +244,10 @@ void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32
 				}
 			};
 				
-			if (node.y + 1 < GridHeight)
+			if (node.y < GridHeight - 1)
 				cfb(0, 0, 0x0000FF00);
 
-			if (node.x + 1 < GridHeight)
+			if (node.x < GridHeight - 1)
 				cfb(1, 0, 0x000000FF);
 
 			if (node.y > 0)
