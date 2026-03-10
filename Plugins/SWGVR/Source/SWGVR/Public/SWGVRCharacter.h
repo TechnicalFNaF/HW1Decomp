@@ -118,7 +118,7 @@ public:
 	FMotionControllerInfo& GetHandInfo(EVRHandType Hand);
 
 	UFUNCTION(BlueprintPure)
-	FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor);
+	const FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor);
 
 	UFUNCTION(BlueprintPure)
 	FVector GetHeldOffset(EVRHandType Hand, int32 ItemIndex);
