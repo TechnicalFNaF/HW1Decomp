@@ -11,7 +11,7 @@ AGridCalculatorActor::AGridCalculatorActor(const FObjectInitializer& ObjectIniti
 	RootComponent = Root = CreateDefaultSubobject<USceneComponent>("Root");
 }
 
-// TODO Check if matching
+// TODO Not matching
 void AGridCalculatorActor::BeginPlay()
 {
 	int GridSize = GridHeight * GridWidth;
@@ -25,21 +25,17 @@ void AGridCalculatorActor::BeginPlay()
 	const FVector YAxis = GetActorRightVector();
 	const FVector WorldLocation = GetActorLocation();
 
-	// Probably wrong, TODO diff
-	
 	auto CalcPosition = [XAxis, YAxis, WorldLocation, this](int32 X, int32 Y)
 	{
 		const float Cell = GridCellSize;
-		return WorldLocation + XAxis * (X * Cell) + YAxis * (Y * Cell);
+		return WorldLocation + X * Cell * XAxis + Y * Cell * YAxis;
 	};
 
 	auto CheckCell = [this, CalcPosition](int32 StartX, int32 StartY, int32 EndX, int32 EndY) -> uint8
 	{
 		FHitResult Hit;
-
 		FVector Start = CalcPosition(StartX, StartY);
 		FVector End = CalcPosition(EndX, EndY);
-
 		return !GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility);
 	};
 
@@ -47,10 +43,10 @@ void AGridCalculatorActor::BeginPlay()
 	{
 		for (int32 Y = 0; Y < GridHeight; ++Y)
 		{
-			uint8 A = CheckCell(X, 		Y,		0, 0);
-			uint8 B = CheckCell(X + 1, 	Y,		0, 0);
-			uint8 C = CheckCell(X + 1, 	Y + 1,	0, 0);
-			uint8 D = CheckCell(X, 		Y + 1,	0, 0);
+			uint8 A = CheckCell(X,   Y,   X+1, Y  );
+			uint8 B = CheckCell(X+1, Y,   X+1, Y+1);
+			uint8 C = CheckCell(X+1, Y+1, X,   Y+1);
+			uint8 D = CheckCell(X,   Y+1, X,   Y  );
 
 			PassabilityMap[X + Y * GridWidth] = A | (B << 8) | (C << 16) | (D << 24);
 		}
