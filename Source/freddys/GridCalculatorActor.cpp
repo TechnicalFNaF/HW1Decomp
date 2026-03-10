@@ -33,28 +33,26 @@ void AGridCalculatorActor::BeginPlay()
 		return WorldLocation + XAxis * (X * Cell) + YAxis * (Y * Cell);
 	};
 
-	auto CheckCell = [this, CalcPosition](int32 X, int32 Y)
+	auto CheckCell = [this, CalcPosition](int32 StartX, int32 StartY, int32 EndX, int32 EndY) -> uint8
 	{
 		FHitResult Hit;
 
-		FVector A = CalcPosition(X, Y);
-		FVector B = CalcPosition(X + 1, Y);
-		FVector C = CalcPosition(X + 1, Y + 1);
-		FVector D = CalcPosition(X, Y + 1);
+		FVector Start = CalcPosition(StartX, StartY);
+		FVector End = CalcPosition(EndX, EndY);
 
-		bool b0 = !GetWorld()->LineTraceSingleByChannel(Hit, A, B, ECC_Visibility);
-		bool b1 = !GetWorld()->LineTraceSingleByChannel(Hit, B, C, ECC_Visibility);
-		bool b2 = !GetWorld()->LineTraceSingleByChannel(Hit, C, D, ECC_Visibility);
-		bool b3 = !GetWorld()->LineTraceSingleByChannel(Hit, D, A, ECC_Visibility);
-
-		return (uint32)b0 | (uint32)b1 << 8 | (uint32)b2 << 16 | (uint32)b3 << 24;
+		return !GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility);
 	};
 
 	for (int32 X = 0; X < GridWidth; ++X)
 	{
 		for (int32 Y = 0; Y < GridHeight; ++Y)
 		{
-			PassabilityMap[X + Y * GridWidth] = CheckCell(X, Y);
+			uint8 A = CheckCell(X, 		Y,		0, 0);
+			uint8 B = CheckCell(X + 1, 	Y,		0, 0);
+			uint8 C = CheckCell(X + 1, 	Y + 1,	0, 0);
+			uint8 D = CheckCell(X, 		Y + 1,	0, 0);
+
+			PassabilityMap[X + Y * GridWidth] = A | (B << 8) | (C << 16) | (D << 24);
 		}
 	}
 	
