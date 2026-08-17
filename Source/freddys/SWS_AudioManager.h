@@ -31,20 +31,12 @@ private:
 	
 private:
 
-	// TODO Not matching
-	FORCEINLINE void LoadAudioData()
+	// Matching
+	static FORCEINLINE TArray<FAudioData*> LoadAudioData(UDataTable* AudioAssetData)
 	{
-		FString location = "/Game/ProductionAssets/Audio";
-		FString sceneName = GetWorld()->GetName();
-		location += sceneName + "_AudioAssets";
-
-		static ConstructorHelpers::FObjectFinder<UDataTable> myTable(*location);
-
-		if (myTable.Object)
-			AudioAssetData = myTable.Object;
-
-		UDataTable* AudioAsset = AudioAssetData;
-		AudioAsset->GetAllRows<FAudioData>("", SoundList);
+		TArray<FAudioData*> OutRowArray;
+		AudioAssetData->GetAllRows<FAudioData>("", OutRowArray);
+		return OutRowArray;
 	}
 
 protected:

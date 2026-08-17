@@ -16,12 +16,21 @@ ASWS_AudioManager::ASWS_AudioManager(const FObjectInitializer& ObjectInitializer
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// TODO Not matching
+// Matching
 void ASWS_AudioManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	LoadAudioData();
+	FString location = "/Game/ProductionAssets/Audio";
+	FString sceneName = location + GetWorld()->GetName();
+	sceneName += "_AudioAssets";
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> myTable(*sceneName);
+
+	if (myTable.Object)
+		AudioAssetData = myTable.Object;
+	
+	TArray<FAudioData*> Data = LoadAudioData(AudioAssetData);
 }
 
 // Matching
