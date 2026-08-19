@@ -1,15 +1,13 @@
 #include "SWGVRPlayerControllerBase.h"
 #include "SWGVRCharacter.h"
 
-bool ASWGVRPlayerControllerBase::bIsUsingGamepad = false;
+bool ASWGVRPlayerControllerBase::bIsUsingGamepad; // game does not initialize this
 
-// TODO Not matching
+// Matching
 bool ASWGVRPlayerControllerBase::InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
 {
-	if (Delta > (bGamepad ? 0.5f : 1.0f))
-	{
+	if ((bGamepad && Delta > 0.5f) || (!bGamepad && Delta > 1.0f))
 		UpdateUsingGamepadState(bGamepad);
-	}
 	
 	return Super::InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
 }
