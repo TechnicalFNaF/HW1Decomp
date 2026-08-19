@@ -5,6 +5,6 @@
 // Matching
 const FString& USWGPlatformUtilFunctions::GetVersionString() 
 {
-	static FString VersionString = {TEXT("unversioned")};
+	static FString VersionString{TEXT("unversioned")};
 	return VersionString;
 }

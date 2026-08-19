@@ -2,17 +2,20 @@
 #include "SWS_AudioSource.h"
 #include "Sound/SoundCue.h"
 
+// Matching
 void USWS_GroupComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-USWS_GroupComponent::USWS_GroupComponent(const FObjectInitializer& ObjectInitializer) 
-	: Super(ObjectInitializer), ListOfAudioSources()
+// Matching
+USWS_GroupComponent::USWS_GroupComponent() 
+	: Super(FObjectInitializer::Get()), ListOfAudioSources()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+// Matching
 void USWS_GroupComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
@@ -32,6 +35,7 @@ void USWS_GroupComponent::Initialize(int id)
 	}
 }
 
+// Matching
 void USWS_GroupComponent::UnRegisterAudioSource(ASWS_AudioSource* cue) 
 {
 	ListOfAudioSources.Remove(cue);

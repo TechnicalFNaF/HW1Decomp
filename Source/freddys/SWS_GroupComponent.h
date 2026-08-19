@@ -10,7 +10,7 @@ class FREDDYS_API USWS_GroupComponent : public UActorComponent
 
 public:
 
-	USWS_GroupComponent(const FObjectInitializer& ObjectInitializer);
+	USWS_GroupComponent();
 
 protected:
 	

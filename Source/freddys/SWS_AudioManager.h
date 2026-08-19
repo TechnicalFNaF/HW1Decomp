@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "SWS_AudioManager.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAudioManagerSpawned, ASWS_AudioManager*)
+DECLARE_MULTICAST_DELEGATE_OneParam(OnAudioManagerSpawned, ASWS_AudioManager*)
 
 UCLASS()
 class FREDDYS_API ASWS_AudioManager : public AActor 
@@ -27,7 +27,7 @@ private:
 	TArray<FAudioHandle*> currentlyPlayingAudio;
 
 	static FAudioHandle NullHandle;
-	FOnAudioManagerSpawned OnAudioManagerSpawned;
+	OnAudioManagerSpawned OnAudioManagerSpawned;
 	
 private:
 
