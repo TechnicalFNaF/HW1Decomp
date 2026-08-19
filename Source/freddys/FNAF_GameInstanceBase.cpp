@@ -83,7 +83,7 @@ void UFNAF_GameInstanceBase::MyDLCShutdownCallback::OnFailure(int error_code)
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, fstring);
 }
 
-// TODO check, but i believe its Matching
+// Matching
 void UFNAF_GameInstanceBase::MyIsDLCReadyCallback::OnSuccess()
 {
 	UE_LOG(LogTemp, Log, TEXT("[UFNAF_GameInstanceBase][MyIsDLCReadyCallback] IsReady success."));
