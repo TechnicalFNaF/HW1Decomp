@@ -7,7 +7,9 @@ bool ASWGVRPlayerControllerBase::bIsUsingGamepad; // game does not initialize th
 bool ASWGVRPlayerControllerBase::InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
 {
 	if ((bGamepad && Delta > 0.5f) || (!bGamepad && Delta > 1.0f))
+	{
 		UpdateUsingGamepadState(bGamepad);
+	}
 	
 	return Super::InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
 }
