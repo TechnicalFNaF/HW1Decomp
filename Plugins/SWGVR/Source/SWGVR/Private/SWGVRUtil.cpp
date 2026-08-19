@@ -15,7 +15,7 @@ EVRPlayType USWGVRUtil::GetPlayType()
 }
 
 // Matching
-FORCENOINLINE void USWGVRUtil::ChangePlayType(EVRPlayType VRPlayMode)
+void USWGVRUtil::ChangePlayType(EVRPlayType VRPlayMode)
 {
 	CurrentPlayType = VRPlayMode;
 }
