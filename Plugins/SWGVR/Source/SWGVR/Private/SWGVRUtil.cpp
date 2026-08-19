@@ -1,3 +1,3 @@
 #include "SWGVRUtil.h"
 
-EVRPlayType USWGVRUtil::CurrentPlayType = EVRPlayType::NotUsingVR;
+EVRPlayType USWGVRUtil::CurrentPlayType; // game does not initialize this
