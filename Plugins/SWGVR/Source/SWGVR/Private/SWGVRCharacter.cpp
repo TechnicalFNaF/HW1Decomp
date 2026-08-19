@@ -606,7 +606,7 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 	if (CurrentHoveredActor != newHoverActor)
 	{
 		if (IsValid(newHoverActor) && newHoverActor->IsValidLowLevel() &&
-			CurrentHoveredActor->Implements<USWGVRHoverReceiver>())
+			CurrentHoveredActor && CurrentHoveredActor->Implements<USWGVRHoverReceiver>())
 		{
 			ISWGVRHoverReceiver::Execute_OnVRHoverEnd(CurrentHoveredActor, this, Hand);
 			OnHoverEnd(CurrentHoveredActor, Hand);

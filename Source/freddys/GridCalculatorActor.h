@@ -34,7 +34,7 @@ public:
 	void CalculateDistancesFromWorldPosition(const FVector& WorldPosition);
 	
 	UFUNCTION(BlueprintCallable)
-	void CalculateDistancesFromGridPosition(int32 GridX, int32 GridY);
+	void CalculateDistancesFromGridPosition(int GridX, int GridY);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetCellDebugDisplay(int32 CellID, int32 CellX, int32 CellY, int32 CellDistance);

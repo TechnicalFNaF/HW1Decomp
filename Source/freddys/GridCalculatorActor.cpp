@@ -173,12 +173,17 @@ int32 AGridCalculatorActor::GetCellIDFromGridPosition(int32 CellX, int32 CellY) 
 // TODO Not matching, functionally identical
 TArray<int32> AGridCalculatorActor::FindPathFromWorldPositions(const FVector& WorldPositionStart, const FVector& WorldPositionEnd) const 
 {
-	if (GetCellIDFromGridPosition(WorldPositionEnd.X, WorldPositionEnd.Y) < 0)
+	float something = 1.0 / GridCellSize;
+
+	if (GetCellIDFromGridPosition(something * WorldPositionStart.X, something * WorldPositionStart.Y)
+		&& GetCellIDFromGridPosition(something * WorldPositionEnd.X, something * WorldPositionEnd.Y))
 	{
-		int og = GetCellIDFromGridPosition(WorldPositionEnd.X, WorldPositionEnd.Y);
 		return {};
 	}
-	return {};
+	else
+	{
+		return {};
+	}
 }
 
 // TODO Not matching, functionally identical
@@ -201,56 +206,71 @@ void AGridCalculatorActor::CalculateDistancesFromWorldPosition(const FVector& Wo
 }
 
 // TODO Not matching
-void AGridCalculatorActor::CalculateDistancesFromGridPosition(int32 GridX, int32 GridY) 
+void AGridCalculatorActor::CalculateDistancesFromGridPosition(int GridX, int GridY) 
 {
 	ResetDistances();
 
-	if (GridX >= 0 && GridY >= 0 && GridX < GridWidth && GridY < GridHeight)
+	if (GridX < 0 || GridY < 0)
+		return;
+
+	if (GridX >= GridWidth || GridY >= GridHeight)
+		return;
+
+	struct VisitNode
 	{
-		struct VisitNode
+		int32 x;
+		int32 y;
+	};
+
+	TArray<VisitNode> NodesToVisit;
+
+	NodesToVisit.Add({ GridX, GridY });
+
+	Distances[GridX + GridY * GridWidth] = 0;
+
+	while (NodesToVisit.Num() > 0)
+	{
+		const VisitNode node = NodesToVisit[0];
+
+		int CurrentIndex = node.x + node.y * GridWidth;
+		int NextDistance = Distances[CurrentIndex] + 1;
+		int Passability = PassabilityMap[CurrentIndex];
+
+		auto VisitNodePos = [&](int OffsetX, int OffsetY, int Mask)
 		{
-			int x;
-			int y;
+			int X = node.x + OffsetX;
+			int Y = node.y + OffsetY;
+			int Index = X + Y * this->GridWidth;
+
+			if ((Passability & Mask) != 0 &&
+				NextDistance < this->Distances[Index])
+			{
+				this->Distances[Index] = NextDistance;
+
+				VisitNode NewNode;
+				NewNode.x = X;
+				NewNode.y = Y;
+
+				NodesToVisit.Add(NewNode);
+			}
 		};
 
-		TArray<VisitNode> NodesToVisit;
-		Distances[GridX + GridY * GridWidth] = 0;
+		// +Y
+		if (node.y < GridHeight - 1)
+			VisitNodePos(0, 1, 0x0000FF00);
 
-		NodesToVisit.Push({ GridX, GridY });
+		// +X
+		if (node.x < GridWidth - 1)
+			VisitNodePos(1, 0, 0x000000FF);
 
-		while (NodesToVisit.Num() > 0)
-		{
-			VisitNode node = NodesToVisit[0];
+		// -Y
+		if (node.y > 0)
+			VisitNodePos(0, -1, 0xFF000000);
 
-			int nextVal = (node.x + node.y * GridWidth) + 1;
-			const int CellPassability = PassabilityMap[node.x + node.y * GridWidth];
+		// -X
+		if (node.x > 0)
+			VisitNodePos(-1, 0, 0x00FF0000);
 
-			auto cfb = [node, this, nextVal, &NodesToVisit, CellPassability](int32 X, int32 Y, uint32 Mask)
-			{
-				int Distance = GridWidth * ((node.x + X) + (node.y + Y));
-				if ((CellPassability & Mask) != false)
-				{
-					if (nextVal < Distances[Distance])
-					{
-						Distances[Distance] = nextVal;
-						NodesToVisit.Add({ node.x + X, node.y + Y });
-					}
-				}
-			};
-				
-			if (node.y < GridHeight - 1)
-				cfb(0, 0, 0x0000FF00);
-
-			if (node.x < GridHeight - 1)
-				cfb(1, 0, 0x000000FF);
-
-			if (node.y > 0)
-				cfb(0, -1, 0xFF000000);
-
-			if (node.x > 0)
-				cfb(-1, 0, 0x00FF0000);
-
-			NodesToVisit.RemoveAt(0);
-		}
+		NodesToVisit.RemoveAt(0);
 	}
 }
