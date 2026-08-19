@@ -1,5 +1,6 @@
 #include "FNAF_GameInstanceBase.h"
 
+#include "SWS_SaveGameMananger.h"
 #include "UserWidget.h"
 #include "ViveportDLC.h"
 #include "Engine/Engine.h"
@@ -82,44 +83,43 @@ void UFNAF_GameInstanceBase::MyDLCShutdownCallback::OnFailure(int error_code)
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, fstring);
 }
 
-// TODO Not matching
+// TODO check, but i believe its Matching
 void UFNAF_GameInstanceBase::MyIsDLCReadyCallback::OnSuccess()
 {
+	UE_LOG(LogTemp, Log, TEXT("[UFNAF_GameInstanceBase][MyIsDLCReadyCallback] IsReady success."));
 	FString debugstring = FString::Printf(TEXT("DLC Viveport Is ready success"));
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, debugstring);
 
 	// Get DLC count
 	int Count = UViveportDLC::GetCount();
+	UE_LOG(LogTemp, Log, TEXT("[UFNAF_GameInstanceBase][GetDLCCount] %d"), Count);
 	debugstring = FString::Printf(TEXT("GetDLCCount: %d"), Count);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, debugstring);
 
 	// Get DLC data by index
 	static FString dlcAppId = Instance->DLC_APP_ID;
 	static bool isAvailable = false;
-	if (UViveportDLC::GetIsAvailable(0, dlcAppId, isAvailable))
+	bool isIndexZeroInRange = UViveportDLC::GetIsAvailable(0, dlcAppId, isAvailable);
+	if (isIndexZeroInRange)
 	{
-		const wchar_t* appId = TEXT("");
-		const wchar_t* availability = TEXT("true");
-		
 		Instance->InstalledDLCList.Add(EFNAFDLCType::Halloween);
 		
 		if (isAvailable)
 			ViveportDLCValid = true;
+		
+		debugstring = FString::Printf(TEXT("DLC App ID: %s, Is available: %s"),
+            *dlcAppId,
+            isAvailable ? TEXT("true") : TEXT("false"));
 
-		if (!dlcAppId.IsEmpty())
-			appId = *dlcAppId;
-		
-		if (!isAvailable)
-			availability = TEXT("false");
-		
-		debugstring = FString::Printf(TEXT("DLC App ID: %s, Is available: %s"), appId, availability);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, debugstring);
 	}
 	else
 	{
+		UE_LOG(LogTemp, Log, TEXT("[UFNAF_GameInstanceBase][GetDLCDataByIndex] Index zero is not in range"));
 		debugstring = FString::Printf(TEXT("Index zero is not in range"));
-	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, debugstring);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::White, debugstring);
+	}
 }
 // Matching
 void UFNAF_GameInstanceBase::MyIsDLCReadyCallback::OnFailure(int error_code)
@@ -251,29 +251,6 @@ void UFNAF_GameInstanceBase::LoadLevelAsync(const FName& LevelName)
 
 	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
 }
-
-// todo find better place for this probably
-struct FSaveGameTask : FNonAbandonableTask
-{
-	USaveGame* SaveGameToStore;
-	FString SlotNameToStore;
-	int UserIndexToStore;
-
-	FSaveGameTask(USaveGame* InSaveGameToStore, const FString& InSlotNameToStore, int InUserIndexToStore)
-		: SaveGameToStore(InSaveGameToStore), SlotNameToStore(InSlotNameToStore), UserIndexToStore(InUserIndexToStore)
-	{
-	}
-	
-	void DoWork()
-	{
-		UGameplayStatics::SaveGameToSlot(SaveGameToStore, SlotNameToStore, UserIndexToStore);
-	}
-	
-	FORCEINLINE TStatId GetStatId() const
-	{
-		RETURN_QUICK_DECLARE_CYCLE_STAT(FSaveGameTask, STATGROUP_ThreadPoolAsyncTasks);
-	}
-};
 
 // Matching
 void UFNAF_GameInstanceBase::StartAsyncSaveGame(USaveGame* SaveGame, const FString& SlotName, int32 UserIndex)

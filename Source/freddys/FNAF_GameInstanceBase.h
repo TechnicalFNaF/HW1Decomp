@@ -27,7 +27,6 @@ class FREDDYS_API UFNAF_GameInstanceBase : public UGameInstance
 	bool IsDemoMode() const;
 
 public:
-	// TODO wrap these with TEXT()
 	FString VIVEPORT_ID = "8bdd0597-0591-4b01-8051-0bd9382bc552";
 	FString VIVEPORT_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgni4MT6/xNmZm1WRU3b9fOSTb+2NDyzCdYKwArcM2a8MXr4wssMu1TfY8q+2N98bRbmcCvLqG+UkJKE64IuzppBzhS7DDtA7I/ONu0aUpjnjCFoqwl8pH7uE8Bw2W0MwV+WoC+s+QzPQqwJes2CcqB53deOng+hvANNrlgS5m0QIDAQAB";
 	FString DLC_APP_ID = "4e17c449-c278-4acb-89bb-cc85f7ebf90f";
