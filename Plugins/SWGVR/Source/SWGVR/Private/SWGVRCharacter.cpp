@@ -578,7 +578,7 @@ void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputCompone
 	}
 }
 
-// TODO Not matching, very very close
+// Matching
 void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent,
 										 AActor* newHoverActor, UPrimitiveComponent* newHoverComponent,
 										 EVRHandType Hand)
@@ -612,8 +612,8 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 			ISWGVRHoverReceiver::Execute_OnVRHoverEnd(CurrentHoveredActor, this, Hand);
 			OnHoverEnd(CurrentHoveredActor, Hand);
 			
-			TArray<AActor*>& HoveredObjects = Hand == EVRHandType::Left ? LeftController.HoveredObjects : RightController.HoveredObjects;
-			HoveredObjects.Remove(CurrentHoveredActor);
+			TArray<AActor*>* HoveredObjects = Hand == EVRHandType::Left ? &LeftController.HoveredObjects : &RightController.HoveredObjects;
+			HoveredObjects->Remove(CurrentHoveredActor);
 		}
 		CurrentHoveredActor = newHoverActor;
 
@@ -623,8 +623,8 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 			ISWGVRHoverReceiver::Execute_OnVRHoverBegin(newHoverActor, this, Hand);
 			OnHoverBegin(newHoverActor, Hand);
 			
-			TArray<AActor*>& HoveredObjects = Hand == EVRHandType::Left ? LeftController.HoveredObjects : RightController.HoveredObjects;
-			HoveredObjects.Add(newHoverActor);
+			TArray<AActor*>* HoveredObjects = Hand == EVRHandType::Left ? &LeftController.HoveredObjects : &RightController.HoveredObjects;
+			HoveredObjects->Add(newHoverActor);
 		}
 	}
 }
