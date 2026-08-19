@@ -578,14 +578,15 @@ void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputCompone
 	}
 }
 
-// TODO: Check if matching
+// TODO Not matching, very very close
 void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent,
 										 AActor* newHoverActor, UPrimitiveComponent* newHoverComponent,
 										 EVRHandType Hand)
 {
 	if (CurrentHoveredComponent != newHoverComponent)
 	{
-		if (IsValid(CurrentHoveredActor) && CurrentHoveredActor->IsValidLowLevel() &&
+		if (CurrentHoveredComponent &&
+			IsValid(CurrentHoveredActor) && CurrentHoveredActor->IsValidLowLevel() &&
 			CurrentHoveredActor->Implements<USWGVRHoverReceiver>() &&
 			CurrentHoveredActor->Implements<USWGVRHoverReceiver>()) // not sure why they check this twice
 		{
@@ -605,14 +606,14 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 
 	if (CurrentHoveredActor != newHoverActor)
 	{
-		if (IsValid(newHoverActor) && newHoverActor->IsValidLowLevel() &&
-			CurrentHoveredActor && CurrentHoveredActor->Implements<USWGVRHoverReceiver>())
+		if (IsValid(CurrentHoveredActor) && CurrentHoveredActor->IsValidLowLevel() &&
+			CurrentHoveredActor->Implements<USWGVRHoverReceiver>())
 		{
 			ISWGVRHoverReceiver::Execute_OnVRHoverEnd(CurrentHoveredActor, this, Hand);
 			OnHoverEnd(CurrentHoveredActor, Hand);
 			
-			TArray<AActor*>& HoveredGrabbables = Hand == EVRHandType::Left ? LeftController.HoveredGrabbables : RightController.HoveredGrabbables;
-			HoveredGrabbables.Remove(CurrentHoveredActor);
+			TArray<AActor*>& HoveredObjects = Hand == EVRHandType::Left ? LeftController.HoveredObjects : RightController.HoveredObjects;
+			HoveredObjects.Remove(CurrentHoveredActor);
 		}
 		CurrentHoveredActor = newHoverActor;
 
@@ -622,8 +623,8 @@ void ASWGVRCharacter::ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiv
 			ISWGVRHoverReceiver::Execute_OnVRHoverBegin(newHoverActor, this, Hand);
 			OnHoverBegin(newHoverActor, Hand);
 			
-			TArray<AActor*>& HoveredGrabbables = Hand == EVRHandType::Left ? LeftController.HoveredGrabbables : RightController.HoveredGrabbables;
-			HoveredGrabbables.Add(newHoverActor);
+			TArray<AActor*>& HoveredObjects = Hand == EVRHandType::Left ? LeftController.HoveredObjects : RightController.HoveredObjects;
+			HoveredObjects.Add(newHoverActor);
 		}
 	}
 }
