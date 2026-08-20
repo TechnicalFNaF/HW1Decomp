@@ -123,11 +123,19 @@ ASWGVRCharacter::ASWGVRCharacter(const FObjectInitializer& ObjectInitializer)
 	//PadInteractionPointer->SetupAttachment(PadMotionComponent); --- They do not do this? so they do not attach this arrow to anything?
 }
 
-// TODO Not matching
+// TODO Not matching, functionally identical, it might match from what i can tell, so double check
 void ASWGVRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	CheckPSVRHandStatus();
+	if (GEngine)
+	{
+		IXRTrackingSystem* XRSystem = GEngine->XRSystem.Get();
+		if (GEngine->XRSystem.IsValid())
+		{
+			if (XRSystem->GetSystemName() == "PSVR")
+				VRTrackingOrigin = EHMDTrackingOrigin::Eye;
+		}
+	}
 
 	if (IsInVRMode())
 	{
@@ -135,14 +143,16 @@ void ASWGVRCharacter::Tick(float DeltaTime)
 		if (WorldToMeters != m_previousWorldToMeters)
 		{
 			m_previousWorldToMeters = WorldToMeters;
-			FVector NewLocation = VRCameraAdjuster->GetComponentLocation();
-			NewLocation.Z = (WorldToMeters * 0.0099999998) * EyeOffset;
 
-			VRCameraAdjuster->SetRelativeLocationAndRotation(NewLocation, VRCameraAdjuster->GetComponentRotation());
+			FVector NewLocation(ForceInitToZero);
+			const FRotationConversionCache& RotationCache = VRCameraAdjuster->GetRelativeRotationCache();
+			NewLocation.Z = (WorldToMeters * 0.01f) * EyeOffset;
+			
+			VRCameraAdjuster->SetRelativeLocationAndRotation(NewLocation, RotationCache.RotatorToQuat(VRCameraAdjuster->RelativeRotation));
 		}
 	}
 
-	if (USWGVRUtil::GetPlayType() == EVRPlayType::NotUsingVR)
+	if (!IsInVRMode())
 	{
 		if (LeftHandComponent->GetAttachParent() != CameraComp)
 		{
@@ -162,7 +172,7 @@ void ASWGVRCharacter::Tick(float DeltaTime)
 	}
 
 	ProcMotionController(EVRHandType::Right, RightHandComponent, RightController, RightAttachPoint);
-
+	
 	if (bPerfCounterEnabled)
 	{
 		int ImmediateSeconds = DeltaTime + PerfCounterImmediateSeconds;
@@ -188,12 +198,8 @@ void ASWGVRCharacter::Tick(float DeltaTime)
 
 			float FPS = NewAverageFrameCounter / Seconds;
 			FPSAverageOverTime = FPS;
-
-			FPerformanceInfo PerfInfo;
-			PerfInfo.TimeStamp = TimeStamp;
-			PerfInfo.FPS = FPS;
-
-			PerformanceList.Add(PerfInfo);
+			
+			PerformanceList.Add({TimeStamp, FPS});
 		}
 	}
 }
@@ -293,12 +299,14 @@ void ASWGVRCharacter::BeginPlay()
 // TODO Check if matching (inlined in BeginPlay)
 void ASWGVRCharacter::CheckPSVRHandStatus()
 {
-	if (GEngine && GEngine->XRSystem.IsValid())
+	if (GEngine)
 	{
-		FName SystemName = GEngine->XRSystem->GetSystemName();
-
-		if (SystemName == "PSVR")
-			VRTrackingOrigin = EHMDTrackingOrigin::Eye;
+		IXRTrackingSystem* XRSystem = GEngine->XRSystem.Get();
+		if (GEngine->XRSystem.IsValid())
+		{
+			if (XRSystem->GetSystemName() == "PSVR")
+				VRTrackingOrigin = EHMDTrackingOrigin::Eye;
+		}
 	}
 }
 
