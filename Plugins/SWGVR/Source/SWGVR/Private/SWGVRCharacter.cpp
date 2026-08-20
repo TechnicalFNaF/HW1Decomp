@@ -1169,7 +1169,7 @@ FName ASWGVRCharacter::GetPadTrackingSource() const
 	return "Pad";
 }
 
-// TODO Check if matching
+// TODO Not matching, functionally identical
 FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
 {
 	static FMotionControllerInfo EmptyControllerInfo;
