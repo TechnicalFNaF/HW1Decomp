@@ -1210,20 +1210,19 @@ FVector ASWGVRCharacter::GetHeldOffset(EVRHandType Hand, int32 ItemIndex)
 	return FVector::ZeroVector;
 }
 
-// TODO Check if matching
+// TODO Not matching, functionally identical
 USceneComponent* ASWGVRCharacter::GetHandAttachPoint(EVRHandType Hand) const
 {
-	if (Hand == EVRHandType::None)
+	if (Hand != EVRHandType::None)
 	{
-		return nullptr;
-	}
-	if (Hand == EVRHandType::Left)
-	{
-		return LeftAttachPoint;
-	}
-	if (Hand == EVRHandType::Right)
-	{
-		return RightAttachPoint;
+		if (Hand == EVRHandType::Left)
+		{
+			return LeftAttachPoint;
+		}
+		if (Hand == EVRHandType::Right)
+		{
+			return RightAttachPoint;
+		}
 	}
 	return nullptr;
 }
