@@ -1147,21 +1147,18 @@ bool ASWGVRCharacter::InitialIsInVR() const
 	}
 }
 
-// TODO Check if matching
+// TODO Not matching, functionally identical
 void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bForce)
 {
-	EVRHandType OtherHand = Hand; // what
 	if (Grabbable)
 	{
 		if (Hand == EVRHandType::Left)
 		{
-			AttemptGrab(Hand, &LeftController, Grabbable, OtherHand,
-			            LeftAttachPoint, &LeftController);
+			AttemptGrab(Hand, &LeftController, Grabbable, EVRHandType::Left, LeftAttachPoint, &LeftController);
 		}
 		else if (Hand == EVRHandType::Right)
 		{
-			AttemptGrab(Hand, &RightController, Grabbable, OtherHand,
-			            RightAttachPoint, &RightController);
+			AttemptGrab(Hand, &RightController, Grabbable, EVRHandType::Right, RightAttachPoint, &RightController);
 		}
 	}
 }
