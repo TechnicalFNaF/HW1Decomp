@@ -461,12 +461,16 @@ void ASWGVRCharacter::BindGrabActions(class UInputComponent* PlayerInputComponen
 	}
 }
 
-// TODO Check if matching
+// TODO Not matching, functionally identical
 bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce,
 	const FVector& Velocity, FMotionControllerInfo* ControllerInfo)
 {
-	if (!IsValid(Grabbable) || !Grabbable->IsValidLowLevel() ||
-		!bForce && !ISWGGrabbable::Execute_AttemptRelease(Grabbable, this, Hand))
+	if (!IsValid(Grabbable) || !Grabbable->IsValidLowLevel())
+	{
+		return false;
+	}
+	
+	if (!bForce && !ISWGGrabbable::Execute_AttemptRelease(Grabbable, this, Hand))
 	{
 		return false;
 	}
@@ -477,31 +481,30 @@ bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Ha
 	if (IsValid(Grabbable) && Grabbable->IsValidLowLevel())
 	{
 		FHeldGrabbableInfo* GrabbableInfo = ControllerInfo->HeldInfo.Find(Grabbable);
-		if (GrabbableInfo)
+		if (!GrabbableInfo)
 		{
-			if (GrabbableInfo->GrabSnapType == EGrabSnapType::SnapToHand)
-			{
-				Grabbable->DetachFromActor({ EDetachmentRule::KeepWorld, true });
-			}
-
-			UPrimitiveComponent* GrabbableRoot = Cast<UPrimitiveComponent>(Grabbable->GetRootComponent());
-			if (GrabbableRoot)
-			{
-				GrabbableRoot->SetCollisionEnabled(GrabbableInfo->Collision);
-				GrabbableRoot->SetSimulatePhysics(GrabbableInfo->bUsePhysics);
-				if (GrabbableRoot->IsSimulatingPhysics())
-				{
-					GrabbableRoot->AddImpulse(thrownVelocity, NAME_None, true);
-				}
-			}
-			
-			ControllerInfo->HeldInfo.Remove(Grabbable);
-			goto LABEL_32; // todo maybe not use goto lol
+			return false;
 		}
-	}
-	return false;
 
-LABEL_32:
+		if (GrabbableInfo->GrabSnapType == EGrabSnapType::SnapToHand)
+		{
+			Grabbable->DetachFromActor({EDetachmentRule::KeepWorld, true});
+		}
+
+		UPrimitiveComponent* GrabbableRoot = Cast<UPrimitiveComponent>(Grabbable->GetRootComponent());
+		if (GrabbableRoot)
+		{
+			GrabbableRoot->SetCollisionEnabled(GrabbableInfo->Collision);
+			GrabbableRoot->SetSimulatePhysics(GrabbableInfo->bUsePhysics);
+			if (GrabbableRoot->IsSimulatingPhysics())
+			{
+				GrabbableRoot->AddImpulse(thrownVelocity, NAME_None, true);
+			}
+		}
+
+		ControllerInfo->HeldInfo.Remove(Grabbable);
+	}
+
 	ISWGGrabbable::Execute_OnVRReleased(Grabbable, this, Hand, thrownVelocity);
 	OnRelease(Grabbable, Hand);
 	OnActorReleased.Broadcast(this, Grabbable, Hand);
@@ -521,7 +524,7 @@ LABEL_32:
 	{
 		if (Grabbable->Implements<USWGVRHoverReceiver>())
 		{
-			if (!ControllerInfo->HoveredObjects.Contains(Grabbable))
+			if (ControllerInfo->HoveredObjects.Contains(Grabbable)) // not sure why they're doing this
 			{
 				ISWGVRHoverReceiver::Execute_OnVRHoverBegin(Grabbable, this, Hand);
 				ControllerInfo->HoveredObjects.AddUnique(Grabbable);
