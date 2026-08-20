@@ -1186,7 +1186,7 @@ FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
 	return EmptyControllerInfo;
 }
 
-// TODO Check if matching
+// Matching
 const FHeldGrabbableInfo& ASWGVRCharacter::GetGrabbableInfo(const AActor* HeldActor)
 {
 	static FHeldGrabbableInfo EmptyHeldInfo;
