@@ -249,7 +249,7 @@ private:
 	void BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
 	bool ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce, const FVector& Velocity, FMotionControllerInfo* ControllerInfo);
 	void OnInteractAction(EVRHandType Hand);
-	void SendOnVRInteract(UObject* Object /* Guess */, EVRHandType Hand);
+	void SendOnVRInteract(UObject* Object, EVRHandType Hand);
 	void BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
 	void ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent, AActor* newHoverActor, UPrimitiveComponent* newHoverComponent, EVRHandType Hand);
 	void ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController, FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint);
