@@ -313,10 +313,23 @@ void ASWGVRCharacter::CheckPSVRHandStatus()
 // TODO Not matching
 void ASWGVRCharacter::RemoveDestroyedActor(FMotionControllerInfo& ControllerInfo, AActor* DestroyedActor)
 {
+	// This is what is wrong here
 	if (ControllerInfo.HeldGrabbables.Contains(DestroyedActor))
 	{
 		ReleaseGrabbable(DestroyedActor, true, false, FVector::ZeroVector);
 	}
+	
+	// TODO Finish this (RemoveDestroyedActor) i think theyre doing something iterating related
+	//if (ControllerInfo.HeldGrabbables.Contains(DestroyedActor))
+	//{
+	//	for (AActor* HeldGrabbable : ControllerInfo.HeldGrabbables)
+	//	{
+	//		if (HeldGrabbable != DestroyedActor)
+	//			continue;
+	//		
+	//		ReleaseGrabbable(DestroyedActor, true, false, FVector::ZeroVector);
+	//	}
+	//}
 
 	ControllerInfo.HeldGrabbables.Remove(DestroyedActor);
 	ControllerInfo.HeldInfo.Remove(DestroyedActor);
