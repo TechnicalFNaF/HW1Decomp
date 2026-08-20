@@ -904,7 +904,7 @@ void ASWGVRCharacter::StopFrameCounters()
 	}
 }
 
-// TODO Check if matching
+// Matching
 void ASWGVRCharacter::StartFrameCounters()
 {
 	if (!bPerfCounterEnabled)
