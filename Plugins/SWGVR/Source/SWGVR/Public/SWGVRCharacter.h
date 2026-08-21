@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Engine/EngineTypes.h"
 #include "HeadMountedDisplayTypes.h"
+#include "SWGVRInteractive.h"
 #include "SWGVRTypes.h"
 #include "SWGVRCharacter.generated.h"
 
@@ -114,8 +115,23 @@ public:
 	UFUNCTION()
 	bool InitialIsInVR() const;
 
+	// TODO Not matching, functionally identical
 	UFUNCTION(BlueprintPure)
-	FMotionControllerInfo& GetHandInfo(EVRHandType Hand);
+	FORCEINLINE FMotionControllerInfo& GetHandInfo(EVRHandType Hand)
+	{
+		static FMotionControllerInfo EmptyControllerInfo;
+
+		if (Hand == EVRHandType::Left)
+		{
+			return LeftController;
+		}
+		if (Hand == EVRHandType::Right)
+		{
+			return RightController;
+		}
+
+		return EmptyControllerInfo;
+	}
 
 	UFUNCTION(BlueprintPure)
 	const FHeldGrabbableInfo& GetGrabbableInfo(const AActor* HeldActor);
@@ -249,7 +265,16 @@ private:
 	void BindGrabActions(class UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
 	bool ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Hand, bool bForce, const FVector& Velocity, FMotionControllerInfo* ControllerInfo);
 	void OnInteractAction(EVRHandType Hand);
-	void SendOnVRInteract(UObject* Object, EVRHandType Hand);
+
+	// Matching
+	FORCEINLINE void SendOnVRInteract(UObject* Object, EVRHandType Hand)
+	{
+		if (Object && Object->Implements<USWGVRInteractive>())
+		{
+			ISWGVRInteractive::Execute_OnVRInteract(Object, this, Hand);
+		}
+	}
+	
 	void BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName);
 	void ChangeHoveredActor(AActor*& CurrentHoveredActor, UPrimitiveComponent*& CurrentHoveredComponent, AActor* newHoverActor, UPrimitiveComponent* newHoverComponent, EVRHandType Hand);
 	void ProcMotionController(EVRHandType Hand, USceneComponent* ProcMotionController, FMotionControllerInfo& ControllerInfo, USceneComponent* AttachPoint);

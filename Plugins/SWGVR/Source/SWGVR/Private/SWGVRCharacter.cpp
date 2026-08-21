@@ -556,7 +556,7 @@ bool ASWGVRCharacter::ReleaseGrabbableInternal(AActor* Grabbable, EVRHandType Ha
 // TODO Not matching
 void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
 {
-	// TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3a9174d4fada2ec770f5cf32c01cad19___::Execute
+	// TBaseFunctorDelegateInstance_TTypeWrapper_void____cdecl_void___lambda_3a9174d4fada2ec770f5cf32c01cad19_____Execute
 
 	FMotionControllerInfo& ControllerInfo = GetHandInfo(Hand);
 	
@@ -572,18 +572,9 @@ void ASWGVRCharacter::OnInteractAction(EVRHandType Hand)
 }
 
 // TODO Not matching
-void ASWGVRCharacter::SendOnVRInteract(UObject* Object, EVRHandType Hand)
-{
-	if (IsValid(Object) && Object->Implements<USWGVRInteractive>())
-	{
-		ISWGVRInteractive::Execute_OnVRInteract(Object, this, Hand);
-	}
-}
-
-// TODO Not matching
 void ASWGVRCharacter::BindInteractionActions(UInputComponent* PlayerInputComponent, EVRHandType Hand, FName ActionName)
 {
-	if (static_cast<bool>(Hand & HandsThatInteract))
+	if (static_cast<bool>(HandsThatInteract & Hand))
 	{
 		FInputActionBinding InteractionBinding = FInputActionBinding(ActionName, IE_Pressed);
 		FInputActionHandlerSignature& PressedDelegate = InteractionBinding.ActionDelegate.GetDelegateForManualSet();
@@ -1182,23 +1173,6 @@ void ASWGVRCharacter::GrabGrabbable(AActor* Grabbable, EVRHandType Hand, bool bF
 FName ASWGVRCharacter::GetPadTrackingSource() const
 {
 	return "Pad";
-}
-
-// TODO Not matching, functionally identical
-FMotionControllerInfo& ASWGVRCharacter::GetHandInfo(EVRHandType Hand)
-{
-	static FMotionControllerInfo EmptyControllerInfo;
-
-	if (Hand == EVRHandType::Left)
-	{
-		return LeftController;
-	}
-	if (Hand == EVRHandType::Right)
-	{
-		return RightController;
-	}
-
-	return EmptyControllerInfo;
 }
 
 // Matching
