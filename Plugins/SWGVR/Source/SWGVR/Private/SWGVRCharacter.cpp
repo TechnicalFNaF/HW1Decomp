@@ -998,26 +998,30 @@ void ASWGVRCharacter::ReleaseGrabbable(AActor* Grabbable, bool bForce, bool bOve
 	}
 }
 
-// TODO Not matching
+// Matching
 void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVelocity, FVector Velocity)
 {
 	if (static_cast<bool>(Hand & EVRHandType::Right))
 	{
-		// todo maybe not copy here
 		TArray<AActor*> grabbableList = RightController.HeldGrabbables;
 		for (AActor* Grabbable : grabbableList)
 		{
-			ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+			if (Grabbable)
+			{
+				ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+			}
 		}
 	}
 	
 	if (static_cast<bool>(Hand & EVRHandType::Left))
 	{
-		// todo maybe not copy here
 		TArray<AActor*> grabbableList = LeftController.HeldGrabbables;
 		for (AActor* Grabbable : grabbableList)
 		{
-			ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+			if (Grabbable)
+			{
+				ReleaseGrabbable(Grabbable, bForce, bOverrideVelocity, Velocity);
+			}
 		}
 	}
 }
