@@ -1026,17 +1026,18 @@ void ASWGVRCharacter::ReleaseAll(EVRHandType Hand, bool bForce, bool bOverrideVe
 	}
 }
 
-// TODO Not matching
+// TODO Not matching, might be matching
 void ASWGVRCharacter::ProcessInterpolatedGrab_Implementation(const FTransform& AttachmentTransform,
                                                              FHeldGrabbableInfo& ActorGrabbablePair, AActor* HeldActor,
                                                              EVRHandType Hand)
 {
 	FVector FinalLoc = AttachmentTransform.TransformPosition(ActorGrabbablePair.AttachmentRelativeLocation);
 	FVector InterpLoc = FMath::VInterpConstantTo(HeldActor->GetActorLocation(),
-		FinalLoc, GetWorld()->DeltaTimeSeconds, LerpGrabSpeed);
+		FinalLoc, GetWorld()->GetDeltaSeconds(), LerpGrabSpeed);
 
-	FQuat Rot= AttachmentTransform.TransformRotation(ActorGrabbablePair.AttachmentRelativeRotation.Quaternion());
-	HeldActor->SetActorLocationAndRotation(InterpLoc, Rot);
+	FQuat RotQuat = ActorGrabbablePair.AttachmentRelativeRotation.Quaternion();
+
+	HeldActor->SetActorLocationAndRotation(InterpLoc, AttachmentTransform.TransformRotation(RotQuat));
 
 	if (FVector::PointsAreNear(InterpLoc, FinalLoc, 1.0f))
 	{
