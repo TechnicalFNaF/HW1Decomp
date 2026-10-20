@@ -79,3 +79,7 @@ DerivedDataCache/*
 
 !Plugins/ViveportSDK/ThirdParty/Viveport/Libraries/*/*
 *.pak
+
+Plugins/Unused/
+Content/
+/Content_Creation

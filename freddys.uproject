@@ -12,6 +12,14 @@
 				"Engine",
 				"ViveportSDK"
 			]
+		},
+		{
+			"Name": "freddysEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostDefault",
+			"AdditionalDependencies": [
+				"UnrealEd"
+			]
 		}
 	],
 	"Plugins": [

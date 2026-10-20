@@ -860,7 +860,7 @@ void ASWGVRCharacter::ProcMotionController(EVRHandType Hand, USceneComponent* Mo
 	}
 }
 
-// TODO Check if matching
+// TODO Check if matching, Functionally identical
 void ASWGVRCharacter::FindClosestActor(FVector CurrentLocation, float& closestDist, AActor*& closestActor,
                                        TArray<AActor*>& actorList)
 {
